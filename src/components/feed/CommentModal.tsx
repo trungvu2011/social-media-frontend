@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { X, Send, Image as ImageIcon, Trash2, MoreHorizontal, Flag } from "lucide-react";
 import {
   getPostComments,
@@ -200,14 +201,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
             const currentUserId = currentUser?._id;
             const commentAuthorId = comment.authorId?._id;
                         
-            console.log('Comment delete check:', {
-              currentUserId,
-              commentAuthorId,
-              postOwnerId,
-              currentUser,
-              comment
-            });
-            
             const canDelete = currentUser && (
               currentUserId === commentAuthorId || 
               currentUserId === postOwnerId
@@ -215,17 +208,19 @@ const CommentModal: React.FC<CommentModalProps> = ({
             
             return (
             <div key={comment._id} className="flex gap-3 group">
-              <img 
-                src={comment.authorId?.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
-                alt={comment.authorId?.userName}
-                className="w-8 h-8 rounded-full object-cover mt-1 flex-shrink-0"
-              />
+              <Link to={`/profile/${comment.authorId?.userName || ""}`} className="flex-shrink-0 mt-1">
+                <img 
+                  src={comment.authorId?.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
+                  alt={comment.authorId?.userName}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              </Link>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <div className="bg-gray-100 rounded-2xl p-3 inline-block max-w-full">
-                    <div className="font-semibold text-gray-900 text-sm mb-1">
+                    <Link to={`/profile/${comment.authorId?.userName || ""}`} className="font-semibold text-gray-900 text-sm mb-1 hover:underline block">
                       {comment.authorId?.fullName || comment.authorId?.userName || "Unknown"}
-                    </div>
+                    </Link>
                     {comment.content && (
                       <p className="text-gray-800 text-sm whitespace-pre-wrap break-words">{comment.content}</p>
                     )}
