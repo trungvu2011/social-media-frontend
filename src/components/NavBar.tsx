@@ -1,6 +1,6 @@
 import { useState } from "react";
-import appIcon from "../../assets/app_icon.svg";
-import avatar from "../../assets/avatar.png";
+import appIcon from "../assets/app_icon.svg";
+import avatar from "../assets/avatar.png";
 import HomeIcon from "../icons/HomeIcon";
 import ProfileIcon from "../icons/ProfileIcon";
 import MessageIcon from "../icons/MessageIcon";

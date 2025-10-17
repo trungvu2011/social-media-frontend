@@ -1,7 +1,8 @@
-import React from "react";
+import React from 'react';
+import RegisterForm from '../../components/RegisterForm';
 
-function RegisterPage() {
-  return <div>RegisterPage</div>;
-}
+const RegisterPage: React.FC = () => {
+  return <RegisterForm />;
+};
 
 export default RegisterPage;
