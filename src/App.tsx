@@ -13,7 +13,7 @@ function App() {
     <AppProviders>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path={ROUTERS.HOME} element={<HomePage />} />
         </Routes>
       </BrowserRouter>
     </AppProviders>
