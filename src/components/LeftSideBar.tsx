@@ -14,7 +14,7 @@ interface SidebarProps {
   onTabChange: (tab: string) => void;
 }
 
-export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function LeftSidebar({ activeTab, onTabChange }: SidebarProps) {
   const menuItems = [
     { id: "feed", icon: Home, label: "Feed", count: 10 },
     { id: "stories", icon: BookOpen, label: "Stories", count: null },
@@ -31,7 +31,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
   return (
     <div className="w-72 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col">
-      <div className="p-4 border-b border-gray-200 content-center">
+      <div className="p-4 content-center">
         <div className="flex items-center gap-2">
           <img src={AppIcon} alt="Logo" className="w-12 h-12 rounded-full" />
           <span className="font-bold text-xl content-center mb-2">slothui</span>
@@ -75,7 +75,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full"></div>
           <div className="flex-1 text-left">
             <div className="text-medium font-medium">John Doe</div>
-            <div className="text-sm text-gray-500">Basic Member</div>
+            <div className="text-sm text-gray-500">@johndoe</div>
           </div>
           <button className="text-gray-400 hover:text-gray-600">
             <LogOut className="w-6 h-6" />

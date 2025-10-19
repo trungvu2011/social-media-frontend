@@ -1,14 +1,18 @@
 import { useState } from "react";
-import Sidebar from "../../components/SideBar";
+import LeftSidebar from "../../components/LeftSideBar";
 import { useI18n } from "../../context/I18nContex";
+import Header from "../../components/Header";
+import RightSidebar from "../../components/RightSideBar";
 
 function HomePage() {
   const i18n = useI18n();
   const [activeTab, setActiveTab] = useState("feed");
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="border border-red-500 bg-gray-50">
+      <LeftSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <RightSidebar />
+      <Header />
     </div>
   );
 }
