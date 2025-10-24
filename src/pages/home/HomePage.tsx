@@ -1,18 +1,14 @@
 import { useState } from "react";
-import LeftSidebar from "../../components/LeftSideBar";
-import { useI18n } from "../../context/I18nContex";
-import Header from "../../components/Header";
-import RightSidebar from "../../components/RightSideBar";
+import Header from "./Header";
+import CreatePost from "./CreatePost";
 
 function HomePage() {
-  const i18n = useI18n();
-  const [activeTab, setActiveTab] = useState("feed");
+  const [feedType, setFeedType] = useState("forYou");
 
   return (
-    <div className="border border-red-500 bg-gray-50">
-      <LeftSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <RightSidebar />
-      <Header />
+    <div className="flex flex-1 flex-col ">
+      <Header feedType={feedType} setFeedType={setFeedType} />
+      <CreatePost />
     </div>
   );
 }

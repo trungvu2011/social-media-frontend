@@ -2,27 +2,25 @@ import {
   Home,
   BookOpen,
   Users,
-  CreditCard,
+  Bell,
   Settings,
   HelpCircle,
   LogOut,
 } from "lucide-react";
 import AppIcon from "../assets/app_icon.png";
+import { Link } from "react-router-dom";
 
-interface SidebarProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}
+interface SidebarProps {}
 
-export default function LeftSidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function LeftSidebar({}: SidebarProps) {
   const menuItems = [
-    { id: "feed", icon: Home, label: "Feed", count: 10 },
+    { id: "", icon: Home, label: "Home", count: 10 },
     { id: "stories", icon: BookOpen, label: "Stories", count: null },
     { id: "friends", icon: Users, label: "Friends", count: 2 },
     {
-      id: "subscription",
-      icon: CreditCard,
-      label: "Subscription",
+      id: "notifications",
+      icon: Bell,
+      label: "Notifications",
       count: null,
     },
     { id: "settings", icon: Settings, label: "Settings", count: null },
@@ -30,7 +28,7 @@ export default function LeftSidebar({ activeTab, onTabChange }: SidebarProps) {
   ];
 
   return (
-    <div className="w-72 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col">
+    <div className="w-72 bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
       <div className="p-4 content-center">
         <div className="flex items-center gap-2">
           <img src={AppIcon} alt="Logo" className="w-12 h-12 rounded-full" />
@@ -50,14 +48,10 @@ export default function LeftSidebar({ activeTab, onTabChange }: SidebarProps) {
 
       <nav className="flex-1 px-4 overflow-y-auto">
         {menuItems.map((item) => (
-          <button
+          <Link
             key={item.id}
-            onClick={() => onTabChange(item.id)}
-            className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors ${
-              activeTab === item.id
-                ? "bg-gray-100 text-gray-900"
-                : "text-gray-600 hover:bg-gray-50"
-            }`}
+            to={`/${item.id}`}
+            className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors`}
           >
             <item.icon className="w-6 h-6" />
             <span className="flex-1 text-left font-bold">{item.label}</span>
@@ -66,7 +60,7 @@ export default function LeftSidebar({ activeTab, onTabChange }: SidebarProps) {
                 {item.count}
               </span>
             )}
-          </button>
+          </Link>
         ))}
       </nav>
 

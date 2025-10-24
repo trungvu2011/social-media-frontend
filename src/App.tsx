@@ -1,8 +1,9 @@
 // src/App.tsx
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
 import HomePage from "./pages/home/HomePage";
 import { AppProviders } from "./context";
+import LeftSidebar from "./components/LeftSideBar";
+import RightSidebar from "./components/RightSideBar";
 
 const ROUTERS = {
   HOME: "/",
@@ -11,11 +12,15 @@ const ROUTERS = {
 function App() {
   return (
     <AppProviders>
-      <BrowserRouter>
-        <Routes>
-          <Route path={ROUTERS.HOME} element={<HomePage />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="flex min-h-screen flex-row">
+        <BrowserRouter>
+          <LeftSidebar />
+          <Routes>
+            <Route path={ROUTERS.HOME} element={<HomePage />} />
+          </Routes>
+          <RightSidebar />
+        </BrowserRouter>
+      </div>
     </AppProviders>
   );
 }
