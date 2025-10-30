@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { X, Send, Image as ImageIcon, Trash2, MoreHorizontal, Flag } from "lucide-react";
+import { X } from "lucide-react";
 import {
   getPostComments,
   addComment,
@@ -12,11 +11,14 @@ import {
 import type { Post as PostType } from "../../types/social";
 import Post from "./Post";
 import ReportModal from "../ReportModal";
+import CommentItem from "./CommentItem";
+
+import CommentInput from "./CommentInput";
 
 interface CommentModalProps {
   post: PostType;
   onClose: () => void;
-  onCommentChange?: (delta: number) => void; 
+  onCommentChange?: (delta: number) => void;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -26,32 +28,21 @@ const CommentModal: React.FC<CommentModalProps> = ({
 }) => {
   const postId = post.id;
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
+  const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
+  const [lastAddedReply, setLastAddedReply] = useState<Comment | null>(null);
   const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [reportCommentId, setReportCommentId] = useState<string | null>(null);
   
   const scrollRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     fetchComments(1);
     fetchCurrentUser();
-    
-    return () => {
-      document.body.style.overflow = "unset";
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
+    return () => { document.body.style.overflow = "unset"; };
   }, [postId]);
 
   const fetchCurrentUser = async () => {
@@ -87,33 +78,27 @@ const CommentModal: React.FC<CommentModalProps> = ({
     }
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    }
+  const handleReply = (comment: Comment) => {
+    setReplyingTo(comment);
+    // No need to focus textareaRef as input is now dynamic inside CommentItem
   };
 
-  const clearImage = () => {
-    setSelectedImage(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  const handleCancelReply = () => {
+    setReplyingTo(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if ((!newComment.trim() && !selectedImage) || submitting) return;
-
+  const handleCommentSubmit = async (content: string, image: File | null, parentId?: string) => {
     try {
-      setSubmitting(true);
-      
-      const res = await addComment(postId, newComment, selectedImage || undefined);
+      const res = await addComment(
+        postId, 
+        content, 
+        image || undefined,
+        parentId
+      );
       
       const createdComment = res.data;
 
+      // Optimistic user attachment
       if (!createdComment.authorId && currentUser) {
          createdComment.authorId = {
             _id: currentUser._id,
@@ -122,41 +107,45 @@ const CommentModal: React.FC<CommentModalProps> = ({
             avatar: currentUser.avatar
          };
       }
-
-      setComments((prev) => [createdComment, ...prev]);
-      setNewComment("");
-      clearImage();
       
-      if (onCommentChange) {
-         onCommentChange(1);
+      if (parentId) {
+          setLastAddedReply(createdComment);
+          // Update reply count for visual consistency
+          setComments(prev => prev.map(c => {
+              if (c._id === parentId) {
+                  return { ...c, replyCount: (c.replyCount || 0) + 1 };
+              }
+              return c;
+          }));
+          setReplyingTo(null); // Close inline input
+      } else {
+          setComments((prev) => [...prev, createdComment]);
+          // Scroll to bottom to see new comment
+          if (scrollRef.current) {
+              setTimeout(() => {
+                  if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+              }, 100);
+          }
       }
 
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = 0;
-      }
+      if (onCommentChange) onCommentChange(1);
+
     } catch (error) {
       console.error("Failed to post comment", error);
-    } finally {
-      setSubmitting(false);
+      alert("Failed to post comment");
     }
   };
 
   const handleDelete = async (commentId: string) => {
-    if (isDeleting) return;
-    
-    setIsDeleting(true);
     try {
       await deleteComment(commentId);
       setComments((prev) => prev.filter((c) => c._id !== commentId));
       if (onCommentChange) {
         onCommentChange(-1);
       }
-      setDeleteConfirmId(null);
     } catch (error) {
       console.error("Failed to delete comment", error);
       alert('Unable to delete comment. Please try again.');
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -185,7 +174,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
         >
           {/* Post Content */}
           <div className="border-b border-gray-200">
-             <Post post={post} onCommentClick={() => fileInputRef.current?.previousElementSibling?.querySelector('textarea')?.focus()} />
+             <Post 
+                post={post} 
+                onCommentClick={() => {
+                   // Focus main input?
+                }} 
+             />
           </div>
 
           <div className="p-4 space-y-4">
@@ -195,92 +189,21 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </div>
           )}
 
-          {comments.map((comment) => {
-            // Check if current user can delete: post owner or comment author
-            const postOwnerId = post.user.id;
-            const currentUserId = currentUser?._id;
-            const commentAuthorId = comment.authorId?._id;
-                        
-            const canDelete = currentUser && (
-              currentUserId === commentAuthorId || 
-              currentUserId === postOwnerId
-            );
-            
-            return (
-            <div key={comment._id} className="flex gap-3 group">
-              <Link to={`/profile/${comment.authorId?.userName || ""}`} className="flex-shrink-0 mt-1">
-                <img 
-                  src={comment.authorId?.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
-                  alt={comment.authorId?.userName}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              </Link>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <div className="bg-gray-100 rounded-2xl p-3 inline-block max-w-full">
-                    <Link to={`/profile/${comment.authorId?.userName || ""}`} className="font-semibold text-gray-900 text-sm mb-1 hover:underline block">
-                      {comment.authorId?.fullName || comment.authorId?.userName || "Unknown"}
-                    </Link>
-                    {comment.content && (
-                      <p className="text-gray-800 text-sm whitespace-pre-wrap break-words">{comment.content}</p>
-                    )}
-                    {comment.image && (
-                      <div className="mt-2 rounded-lg overflow-hidden max-w-sm border border-gray-200">
-                        <img src={comment.image} alt="Comment attachment" className="w-full h-auto object-cover" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Three-dot menu - right next to comment bubble */}
-                  <div className="relative flex-shrink-0">
-                    <button
-                      onClick={() => setOpenOptionsId(openOptionsId === comment._id ? null : comment._id)}
-                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <MoreHorizontal className="w-4 h-4 text-gray-400" />
-                    </button>
-                    
-                    {openOptionsId === comment._id && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-10 cursor-default" 
-                          onClick={() => setOpenOptionsId(null)}
-                        ></div>
-                        <div className="absolute left-0 mt-1 w-40 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-100">
-                          {canDelete && (
-                            <button
-                              onClick={() => {
-                                setOpenOptionsId(null);
-                                setDeleteConfirmId(comment._id);
-                              }}
-                              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              Delete
-                            </button>
-                          )}
-                          <button
-                            onClick={() => {
-                              setOpenOptionsId(null);
-                              setReportCommentId(comment._id);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                          >
-                            <Flag className="w-4 h-4" />
-                            Report
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 mt-1 ml-2 text-xs text-gray-500">
-                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-            );
-          })}
+          {comments.map((comment) => (
+            <CommentItem
+                key={comment._id}
+                comment={comment}
+                currentUser={currentUser}
+                postOwnerId={post.user.id}
+                onReply={handleReply}
+                onDelete={handleDelete}
+                onReport={(id) => setReportCommentId(id)}
+                lastAddedReply={lastAddedReply}
+                replyingToCommentId={replyingTo?._id}
+                onReplySubmit={handleCommentSubmit}
+                onCancelReply={handleCancelReply}
+            />
+          ))}
 
           {loading && (
              <div className="text-center text-gray-500 py-4">Loading comments...</div>
@@ -297,100 +220,29 @@ const CommentModal: React.FC<CommentModalProps> = ({
           </div>
         </div>
 
+        {/* Global Footer Input - Visible only when NOT replying to specific comment or always visible? 
+            Usually always visible for top-level comments. but if replying, maybe hide it? 
+            User said "another comment line at reply place". 
+            Let's keep global for Top Level, and disable or hide if replying inline? 
+            For now, let's keep it but if replyingTo is set, maybe it shouldn't confuse user.
+            Actually, if inline input is open, user is focused there.
+        */}
         <div className="p-4 border-t border-gray-100 bg-white">
-          {previewUrl && (
-            <div className="mb-2 relative inline-block">
-              <img src={previewUrl} alt="Preview" className="h-20 w-auto rounded-lg border border-gray-200" />
-              <button
-                onClick={clearImage}
-                className="absolute -top-2 -right-2 bg-gray-200 rounded-full p-1 text-gray-600 hover:bg-gray-300"
-              >
-                <X size={12} />
-              </button>
-            </div>
+          {!replyingTo && (
+            <CommentInput 
+                currentUser={currentUser}
+                onSubmit={(content, image) => handleCommentSubmit(content, image)}
+                placeholder="Write a comment..."
+            />
           )}
-          <form onSubmit={handleSubmit} className="flex items-end gap-2">
-             <img 
-                src={currentUser?.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
-                alt="Your avatar"
-                className="w-8 h-8 rounded-full object-cover mb-2"
-              />
-             <div className="flex-1 relative">
-               <textarea
-                 value={newComment}
-                 onChange={(e) => setNewComment(e.target.value)}
-                 placeholder="Write a comment..."
-                 className="w-full bg-gray-100 text-gray-900 rounded-2xl py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none min-h-[44px] max-h-32 placeholder-gray-500"
-                 rows={1}
-                 onKeyDown={(e) => {
-                   if (e.key === 'Enter' && !e.shiftKey) {
-                     e.preventDefault();
-                     handleSubmit(e);
-                   }
-                  const target = e.target as HTMLTextAreaElement;
-                  target.style.height = 'auto'; 
-                  target.style.height = `${target.scrollHeight}px`;
-                 }}
-               />
-               <input 
-                  type="file" 
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-               />
-               <div className="absolute right-2 bottom-2 flex items-center gap-1">
-                 <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full transition"
-                 >
-                   <ImageIcon size={20} />
-                 </button>
-                 <button 
-                   type="submit"
-                   disabled={(!newComment.trim() && !selectedImage) || submitting}
-                   className="p-1 text-blue-500 hover:bg-blue-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition"
-                 >
-                   <Send size={20} />
-                 </button>
-               </div>
-             </div>
-           </form>
-         </div>
-      </div>
-      
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
-          onClick={() => !isDeleting && setDeleteConfirmId(null)}
-        >
-          <div 
-            className="bg-white rounded-lg p-6 max-w-sm w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold mb-2">Delete Comment?</h3>
-            <p className="text-gray-600 mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteConfirmId(null)}
-                disabled={isDeleting}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(deleteConfirmId)}
-                disabled={isDeleting}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </div>
+          {replyingTo && (
+              <div className="text-center text-sm text-gray-500 py-2 bg-gray-50 rounded">
+                  Replying to <strong>{replyingTo.authorId.userName}</strong> above... 
+                  <button onClick={handleCancelReply} className="ml-2 text-blue-500 hover:underline">Cancel</button>
+              </div>
+          )}
         </div>
-      )}
+      </div>
       
       {/* Report Comment Modal */}
       {reportCommentId && (

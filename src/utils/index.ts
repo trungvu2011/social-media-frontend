@@ -74,6 +74,18 @@ export async function api<T = unknown>(
     | {};
 
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      // Token expired or invalid
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("auth_user");
+      sessionStorage.removeItem("access_token");
+      sessionStorage.removeItem("auth_user");
+      
+      // Only redirect if not already on login/register pages to avoid loops/bad UX
+      if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/register")) {
+         window.location.href = "/login";
+      }
+    }
     const message = (data as ApiErrorResponse)?.message || "Request failed";
     throw new Error(message);
   }
@@ -474,8 +486,12 @@ export type Comment = {
     fullName: string;
     avatar?: string;
   };
-  content: string; // Backend uses 'content', not 'text'
+  content: string;
   image?: string;
+  postId: string;
+  parentCommentId?: string;
+  replyCount?: number;
+  likeCount?: number;
   createdAt: string;
 };
 
@@ -492,12 +508,13 @@ export type GetSuggestionsResponse = {
 
 export async function getPostComments(
   postId: string,
-  params: { page?: number; limit?: number } = {}
+  params: { page?: number; limit?: number; parentCommentId?: string } = {}
 ): Promise<GetCommentsResponse> {
   const query = new URLSearchParams();
   query.set("postId", postId);
   if (params.page) query.set("page", String(params.page));
   if (params.limit) query.set("limit", String(params.limit));
+  if (params.parentCommentId) query.set("parentCommentId", params.parentCommentId);
 
   return api<GetCommentsResponse>(`/comments?${query.toString()}`, {
     method: "GET",
@@ -507,7 +524,8 @@ export async function getPostComments(
 export async function addComment(
   postId: string,
   content: string,
-  image?: File
+  image?: File,
+  parentCommentId?: string
 ): Promise<{ success: true; data: Comment }> {
   const token =
     localStorage.getItem("access_token") ||
@@ -518,6 +536,7 @@ export async function addComment(
     fd.append("postId", postId);
     fd.append("content", content);
     fd.append("image", image);
+    if (parentCommentId) fd.append("parentCommentId", parentCommentId);
 
     return api<{ success: true; data: Comment }>(`/comments`, {
       method: "POST",
@@ -528,7 +547,7 @@ export async function addComment(
 
   return api<{ success: true; data: Comment }>(`/comments`, {
     method: "POST",
-    body: { postId, content },
+    body: { postId, content, parentCommentId },
     token: token || undefined,
   });
 }

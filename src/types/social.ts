@@ -7,6 +7,18 @@ export interface User {
   isPro?: boolean;
 }
 
+export interface Comment {
+  _id: string;
+  content: string;
+  image?: string;
+  postId: string;
+  authorId: User;
+  parentCommentId?: string;
+  replyCount?: number;
+  likeCount: number;
+  createdAt: string;
+}
+
 export interface Post {
   id: string;
   user: User;
