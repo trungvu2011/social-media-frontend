@@ -3,8 +3,20 @@
 export type User = {
   id: string;
   email: string;
-  userName: string;
-  fullName: string;
+  userName?: string;
+  fullName?: string;
+};
+
+export type Post = {
+  _id: string;
+  authorId: string;
+  content: string;
+  images: string[];
+  likeCount: number;
+  commentCount: number;
+  visibility: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type LoginSuccessResponse = {
@@ -37,14 +49,22 @@ export async function api<T = unknown>(
 ): Promise<T> {
   const { method = "GET", headers = {}, body, token } = options;
 
+  const isFormData =
+    typeof FormData !== "undefined" && body instanceof FormData;
+
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body != null ? JSON.stringify(body) : undefined,
+    body:
+      body == null
+        ? undefined
+        : isFormData
+        ? (body as FormData)
+        : JSON.stringify(body),
   });
 
   const data = (await res.json().catch(() => ({}))) as
@@ -92,4 +112,30 @@ export async function signOut(): Promise<void> {
   } catch (e) {
     console.warn("Sign out API failed:", e);
   }
+}
+
+export async function createPost(
+  content: string,
+  images: File[] = []
+): Promise<Post> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+
+  if (images.length > 0) {
+    const fd = new FormData();
+    fd.append("content", content);
+    images.forEach((f) => fd.append("images", f));
+    return api<Post>(`/posts/`, {
+      method: "POST",
+      body: fd,
+      token: token || undefined,
+    });
+  }
+
+  return api<Post>(`/posts/`, {
+    method: "POST",
+    body: { content, images: [] },
+    token: token || undefined,
+  });
 }
