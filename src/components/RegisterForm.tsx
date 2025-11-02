@@ -10,7 +10,7 @@ import {
 } from '../utils/validation';
 import InputField from './Input';
 import { Link } from 'react-router-dom';
-import appIcon from "../assets/app_icon.svg";
+import appIcon from "../assets/app_icon.png";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({

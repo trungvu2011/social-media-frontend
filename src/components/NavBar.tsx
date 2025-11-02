@@ -1,5 +1,5 @@
 import { useState } from "react";
-import appIcon from "../assets/app_icon.svg";
+import appIcon from "../assets/app_icon.png";
 import avatar from "../assets/avatar.png";
 import HomeIcon from "../icons/HomeIcon";
 import ProfileIcon from "../icons/ProfileIcon";

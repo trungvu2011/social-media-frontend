@@ -3,7 +3,7 @@ import type { LoginFormData, LoginFormErrors } from '../types/auth';
 import InputField from './Input';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { Link } from 'react-router-dom';
-import appIcon from "../assets/app_icon.svg";
+import appIcon from "../assets/app_icon.png";
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -21,7 +21,6 @@ const LoginForm: React.FC = () => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name as keyof LoginFormErrors]) {
       setErrors((prev: any) => ({
         ...prev,

@@ -1,17 +1,36 @@
-import NavBar from "../../components/NavBar";
+import { useState } from "react";
 import { useI18n } from "../../context/I18nContex";
-import LoginForm from "../auth/LoginPage";
-import RegisterForm from "../../components/RegisterForm";
 
-function HomePage() {
-  const i18n = useI18n();
+import LoginForm from "../../components/LoginForm";
+import NavBar from "../../components/NavBar";
+
+import Layout from "../../components/layout/Layout";
+import CreatePost from "../../components/feed/CreatePost";
+import Stories from "../../components/feed/Stories";
+import Post from "../../components/feed/Post";
+
+import { mockPosts, mockEvents, mockFriendSuggestions, mockStories } from "../../data/mockData";
+
+const HomePage: React.FC = () => {
   return (
-    <div className="flex flex-col p-16">
-      {/* <NavBar /> */}
-      <LoginForm/>
-      {/* <RegisterForm/> */}
-    </div>
+    <Layout 
+      friendSuggestions={mockFriendSuggestions}
+      events={mockEvents}
+    >
+      {/* Stories */}
+      <Stories stories={mockStories} />
+      
+      {/* Create Post */}
+      <CreatePost />
+      
+      {/* Feed Posts */}
+      <div>
+        {mockPosts.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
+      </div>
+    </Layout>
   );
-}
+};
 
 export default HomePage;
