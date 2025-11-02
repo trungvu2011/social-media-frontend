@@ -1,4 +1,4 @@
-import { Paperclip, Smile, Mic, Send, Image } from "lucide-react";
+import { Smile, Send, Image } from "lucide-react";
 import { useRef, useState } from "react";
 
 const CreatePost = () => {
