@@ -1,5 +1,7 @@
 import { Eye, EyeOff, Loader } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signUp } from "../../utils";
 import RegisterImage from "../../assets/register_image.png";
 
 function RegisterPage() {
@@ -7,6 +9,7 @@ function RegisterPage() {
     firstName: "",
     lastName: "",
     email: "",
+    username: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
@@ -17,6 +20,7 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,6 +28,35 @@ function RegisterPage() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!agreed) {
+      setError("Please agree to the terms and privacy policies.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const userName = formData.username.trim();
+    setLoading(true);
+    try {
+      await signUp(userName, fullName, formData.email, formData.password);
+      setSuccess("Registration successful. Please log in.");
+      setTimeout(() => navigate("/login", { replace: true }), 800);
+    } catch (err: any) {
+      setError(err?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,7 +87,7 @@ function RegisterPage() {
             </p>
           </div>
 
-          <form onSubmit={() => {}} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
@@ -65,7 +98,7 @@ function RegisterPage() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="john.doe@gmail.com"
+                  placeholder="John"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   required
                 />
@@ -79,7 +112,7 @@ function RegisterPage() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="john.doe@gmail.com"
+                  placeholder="Doe"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   required
                 />
@@ -103,14 +136,14 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
-                  Phone Number
+                  Username
                 </label>
                 <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
+                  type="text"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
-                  placeholder="john.doe@gmail.com"
+                  placeholder="johndoe"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   required
                 />

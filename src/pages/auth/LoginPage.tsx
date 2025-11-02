@@ -1,5 +1,8 @@
 import { Eye, EyeOff, Loader } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../utils";
+import type { LoginSuccessResponse } from "../../utils";
 import LoginImage from "../../assets/login_image.png";
 import AppIcon from "../../assets/app_icon.png";
 
@@ -10,6 +13,35 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { user, accessToken }: LoginSuccessResponse = await login(
+        email,
+        password
+      );
+      if (!user || !accessToken) {
+        setError("Unexpected response from server.");
+        return;
+      }
+
+      const store = rememberMe ? window.localStorage : window.sessionStorage;
+      store.setItem("auth_user", JSON.stringify(user));
+      store.setItem("access_token", accessToken);
+
+      navigate("/", { replace: true });
+      setTimeout(() => window.location.reload(), 0);
+    } catch (err: any) {
+      setError(err?.message || "Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -32,7 +64,7 @@ function LoginPage() {
             <p className="text-gray-600">Login to access your account</p>
           </div>
 
-          <form onSubmit={() => {}} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">
                 Email

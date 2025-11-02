@@ -4,7 +4,7 @@ import HomePage from "./pages/home/HomePage";
 import { AppProviders } from "./context";
 import LeftSidebar from "./components/LeftSideBar";
 import RightSidebar from "./components/RightSideBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 
@@ -15,7 +15,32 @@ const ROUTERS = {
 };
 
 function App() {
-  const [authUser, setAuthUser] = useState(null);
+  const [authUser, setAuthUser] = useState<any>(() => {
+    try {
+      const stored =
+        localStorage.getItem("auth_user") ||
+        sessionStorage.getItem("auth_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Keep authUser in sync if storage changes in other tabs
+  useEffect(() => {
+    const onStorage = () => {
+      try {
+        const stored =
+          localStorage.getItem("auth_user") ||
+          sessionStorage.getItem("auth_user");
+        setAuthUser(stored ? JSON.parse(stored) : null);
+      } catch {
+        setAuthUser(null);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   return (
     <AppProviders>
@@ -29,11 +54,11 @@ function App() {
             />
             <Route
               path={ROUTERS.LOGIN}
-              element={!authUser ? <LoginPage /> : <Navigate to="/home" />}
+              element={!authUser ? <LoginPage /> : <Navigate to="/" />}
             />
             <Route
               path={ROUTERS.REGISTER}
-              element={!authUser ? <RegisterPage /> : <Navigate to="/home" />}
+              element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
             />
           </Routes>
           {authUser && <RightSidebar />}
