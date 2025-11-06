@@ -6,7 +6,7 @@ import type { FriendSuggestion, Event } from '../../types/social';
 interface LayoutProps {
   children: React.ReactNode;
   friendSuggestions: FriendSuggestion[];
-  events: Event[];
+  events?: Event[];
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, friendSuggestions, events }) => {
@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children, friendSuggestions, events }) 
 
       {/* Right Sidebar */}
       <div className="fixed right-0 top-0 h-screen z-30">
-        <RightSidebar />
+        <RightSidebar friendSuggestions={friendSuggestions} events={events} />
       </div>
     </div>
   );
