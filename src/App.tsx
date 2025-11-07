@@ -1,26 +1,68 @@
 // src/App.tsx
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/home/HomePage";
 import { AppProviders } from "./context";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import { useEffect, useState } from "react";
 
 const ROUTERS = {
   HOME: "/",
+  LOGIN: "/login",
+  REGISTER: "/register",
 };
 
 function App() {
+  const [authUser, setAuthUser] = useState<any>(() => {
+    try {
+      const stored =
+        localStorage.getItem("auth_user") ||
+        sessionStorage.getItem("auth_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Keep authUser in sync if storage changes in other tabs
+  useEffect(() => {
+    const onStorage = () => {
+      try {
+        const stored =
+          localStorage.getItem("auth_user") ||
+          sessionStorage.getItem("auth_user");
+        setAuthUser(stored ? JSON.parse(stored) : null);
+      } catch {
+        setAuthUser(null);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   return (
     <AppProviders>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="flex min-h-screen flex-row ">
+        <BrowserRouter>
+          {/* {authUser && <LeftSidebar />} */}
+          <Routes>
+            <Route
+              path={ROUTERS.HOME}
+              element={authUser ? <HomePage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.LOGIN}
+              element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path={ROUTERS.REGISTER}
+              element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
+            />
+          </Routes>
+          {/* {authUser && <RightSidebar />} */}
+        </BrowserRouter>
+      </div>
     </AppProviders>
   );
 }

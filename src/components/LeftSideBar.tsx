@@ -10,7 +10,7 @@ import {
 import AppIcon from "../../assets/app_icon.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { signOut } from "../../utils";
+import { signOut } from "../utils";
 
 interface SidebarProps {}
 
