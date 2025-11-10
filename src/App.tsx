@@ -15,6 +15,7 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AdminPage from "./pages/admin/AdminPage";
 import { ChatPage } from "./pages/chat/ChatPage";
 import BannedPage from "./pages/BannedPage";
+import SearchPage from "./pages/search/SearchPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -29,6 +30,7 @@ const ROUTERS = {
   ADMIN: "/admin",
   CHAT: "/chat",
   BANNED: "/banned",
+  SEARCH: "/search",
 };
 
 function App() {
@@ -191,6 +193,20 @@ function App() {
               }
             />
 
+            <Route
+              path={ROUTERS.SEARCH}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <SearchPage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
             <Route
               path="*"
               element={

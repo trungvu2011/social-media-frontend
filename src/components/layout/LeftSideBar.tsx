@@ -1,5 +1,5 @@
 import { House, LogOut, User, Bell, MessageCircle, Settings, X } from "lucide-react";
-import AppIcon from "../../assets/socialhub-horizontal.png";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
@@ -51,21 +51,28 @@ export default function LeftSidebar({ onClose }: LeftSidebarProps) {
   return (
     <div className="w-[300px] bg-white border-r border-gray-200 h-full left-0 top-0 flex flex-col">
       {/* Logo */}
-      <div className="p-5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2" onClick={onClose}>
-          <img src={AppIcon} alt="Logo" className="w-40 h-15 rounded-xl" />
-        </Link>
+      {/* Logo Area (Hidden on Desktop as it's in Header now) */}
+      <div className="lg:hidden p-5 flex items-center justify-between">
+         {/* Spacer or Title if needed, or just Close button */}
+         <div className="font-bold text-xl text-gray-800">Menu</div>
         {/* Close button for mobile */}
         {onClose && (
           <button
             onClick={onClose}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             aria-label="Close menu"
           >
             <X className="w-5 h-5 text-gray-600" />
           </button>
         )}
       </div>
+
+       {/* Desktop Spacer if needed? No, Header is fixed top. Sidebar is below header in desktop. */}
+       {/* Actually in Layout, Sidebar is "lg:top-0" but we changed it to "fixed top-16". So it starts AFTER header. 
+           So we don't need top padding for logo on desktop. 
+       */}
+      <div className="hidden lg:block h-4"></div> 
+
 
       {/* Navigation */}
       <nav className="flex-1 px-3">
