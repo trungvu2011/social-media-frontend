@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col w-full max-w-full relative">
       <Header onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
 
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 pt-0 justify-center">
         {/* Overlay backdrop for mobile menu */}
         {isMobileMenuOpen && (
           <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" />
@@ -61,7 +61,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           className={`
             w-[280px] h-[calc(100vh-64px)] z-40 overflow-y-auto
             fixed top-16 left-0
-            lg:relative lg:top-0 lg:h-[calc(100vh-64px)] 
+            lg:sticky lg:top-16 lg:h-[calc(100vh-64px)]
             ${
               isMobileMenuOpen
                 ? "translate-x-0"
@@ -75,7 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-full h-[calc(100vh-64px)] overflow-y-auto bg-gray-50 px-4 pb-4 pt-0 lg:px-6 lg:pb-6 lg:pt-0">
+        <main className="flex-1 w-full max-w-full bg-gray-50 px-4 pb-4 pt-0 lg:px-6 lg:pb-6 lg:pt-0">
           <div className="max-w-3xl mx-auto h-full">
             {children}
           </div>

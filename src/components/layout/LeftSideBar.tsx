@@ -49,7 +49,7 @@ export default function LeftSidebar({ onClose }: LeftSidebarProps) {
   };
 
   return (
-    <div className="w-[300px] bg-white border-r border-gray-200 h-full left-0 top-0 flex flex-col">
+    <div className="w-full bg-white border-r border-gray-200 h-full left-0 top-0 flex flex-col">
       {/* Logo */}
       {/* Logo Area (Hidden on Desktop as it's in Header now) */}
       <div className="lg:hidden p-5 flex items-center justify-between">

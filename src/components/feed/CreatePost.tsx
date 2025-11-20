@@ -86,7 +86,7 @@ const CreatePost = () => {
         {/* Text Input */}
         <input
           type="text"
-          placeholder="What's on your mind right now?"
+          placeholder="What's new?"
           className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 text-base focus:outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
