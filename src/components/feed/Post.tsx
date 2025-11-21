@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Post as PostType } from '../../types/social';
+import { Link } from 'react-router-dom';
 
 interface PostProps {
   post: PostType;
@@ -10,16 +11,32 @@ const Post: React.FC<PostProps> = ({ post }) => {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
       {/* Post Header */}
       <div className="flex items-center p-4">
-        <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"></div>
+        {/* Avatar với Link */}
+        <Link to={`/profile/${post.user.username}`} className="flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex-shrink-0 hover:opacity-80 transition-opacity"></div>
+        </Link>
+        
         <div className="ml-3">
+          {/* Tên user với Link */}
           <div className="flex items-center">
-            <h3 className="font-semibold text-gray-900">{post.user.displayName}</h3>
+            <Link 
+              to={`/profile/${post.user.username}`}
+              className="font-semibold text-gray-900 hover:underline hover:text-blue-600 transition-colors"
+            >
+              {post.user.displayName}
+            </Link>
             {post.user.isVerified && (
               <span className="ml-1 text-blue-500">✓</span>
             )}
           </div>
-          <p className="text-sm text-gray-500">@{post.user.username}</p>
+          <Link 
+            to={`/profile/${post.user.username}`}
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            @{post.user.username}
+          </Link>
         </div>
+        
         <button className="ml-auto text-gray-400 hover:text-gray-600">
           •••
         </button>

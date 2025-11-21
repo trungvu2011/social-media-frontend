@@ -1,10 +1,32 @@
-import type { User, Post, Story, FriendSuggestion, Event } from '../types/social';
+import type { User, Post, Story, FriendSuggestion, Event, Profile } from '../types/social';
 
 export const mockUser: User = {
   id: '1',
   username: 'azunyan',
   displayName: 'Azunyan U. Wu',
   isPro: false,
+};
+
+export const mockProfile: Profile = {
+  id: '1',
+  user: {
+    id: '5',
+    username: 'xtheobliterator',
+    displayName: 'X_AE_C-921',
+    avatar: '',
+    isVerified: true,
+  },
+  bio: "Hi there! I'm X-AE-A-19, an AI enthusiast and fitness aficionado. When I'm not crunching numbers or optimizing algorithms, you can find me hitting the gym.",
+  location: 'Osaka, Japan',
+  website: 'www.slothui.com',
+  phone: '+123456789000',
+  email: 'hello@slothui.com',
+  stats: {
+    posts: 548,
+    followers: 12700,
+    following: 221,
+  },
+  storyHighlights: ['France', 'Korea', 'USA', 'India', 'Su'],
 };
 
 export const mockPosts: Post[] = [
@@ -62,20 +84,30 @@ export const mockStories: Story[] = [
     user: {
       id: '5',
       username: 'user1',
-      displayName: 'user1',
+      displayName: 'Japan',
     },
     image: '/story1.jpg',
     isViewed: false,
   },
   {
-    id: '2',
+    id: '1',
     user: {
-      id: '2',
-      username: 'user2',
-      displayName: 'user2',
+      id: '5',
+      username: 'user1',
+      displayName: 'France',
     },
     image: '/story2.jpg',
     isViewed: true,
+  },
+  {
+    id: '3',
+    user: {
+      id: '2',
+      username: 'x_se_23b',
+      displayName: 'X_se-23b',
+    },
+    image: '/story3.jpg',
+    isViewed: false,
   },
 ];
 

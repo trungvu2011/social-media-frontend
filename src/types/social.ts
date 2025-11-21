@@ -38,3 +38,19 @@ export interface Event {
   date: string;
   type: 'birthday' | 'holiday' | 'meetup' | 'graduation';
 }
+
+export interface Profile {
+  id: string;
+  user: User;
+  bio: string;
+  location: string;
+  website?: string;
+  phone?: string;
+  email: string;
+  stats: {
+    posts: number;
+    followers: number;
+    following: number;
+  };
+  storyHighlights: string[];
+}

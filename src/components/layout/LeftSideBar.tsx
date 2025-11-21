@@ -8,7 +8,9 @@ import {
   LogOut,
 } from "lucide-react";
 import AppIcon from "../../assets/app_icon.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { signOut } from "../../utils";
 
 interface SidebarProps {}
 
@@ -26,6 +28,36 @@ export default function LeftSidebar({}: SidebarProps) {
     { id: "settings", icon: Settings, label: "Settings", count: null },
     { id: "help", icon: HelpCircle, label: "Help & Support", count: null },
   ];
+
+  const [authUser] = useState<any>(() => {
+    try {
+      const stored =
+        localStorage.getItem("auth_user") ||
+        sessionStorage.getItem("auth_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } finally {
+      try {
+        localStorage.removeItem("auth_user");
+        localStorage.removeItem("access_token");
+      } catch {}
+      try {
+        sessionStorage.removeItem("auth_user");
+        sessionStorage.removeItem("access_token");
+      } catch {}
+      navigate("/login", { replace: true });
+      setTimeout(() => window.location.reload(), 0);
+    }
+  };
 
   return (
     <div className="w-72 bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
@@ -68,10 +100,13 @@ export default function LeftSidebar({}: SidebarProps) {
         <div className="flex items-center gap-6">
           <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full"></div>
           <div className="flex-1 text-left">
-            <div className="text-medium font-medium">John Doe</div>
-            <div className="text-sm text-gray-500">@johndoe</div>
+            <div className="text-medium font-medium">{authUser?.fullName}</div>
+            <div className="text-sm text-gray-500">@{authUser?.userName}</div>
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
+          <button
+            onClick={handleLogout}
+            className="text-gray-400 hover:text-gray-600"
+          >
             <LogOut className="w-6 h-6" />
           </button>
         </div>
