@@ -1,5 +1,5 @@
 import { Plus, ArrowRight } from "lucide-react";
-import type { FriendSuggestion } from '../../types/social';
+import type { FriendSuggestion } from "../../types/social";
 
 interface FriendSuggestionsProps {
   suggestions: FriendSuggestion[];
@@ -10,7 +10,7 @@ const FriendSuggestions = ({ suggestions }: FriendSuggestionsProps) => {
   const getAvatarGradient = (id: string) => {
     const gradients = [
       "from-pink-400 to-rose-500",
-      "from-gray-600 to-gray-800", 
+      "from-gray-600 to-gray-800",
       "from-blue-400 to-indigo-500",
       "from-purple-400 to-pink-500",
       "from-orange-400 to-red-500",
@@ -38,10 +38,14 @@ const FriendSuggestions = ({ suggestions }: FriendSuggestionsProps) => {
             className="flex items-center gap-3 border-b pb-3 border-gray-200"
           >
             <div
-              className={`w-10 h-10 rounded-full bg-gradient-to-br ${getAvatarGradient(suggestion.id)}`}
+              className={`w-10 h-10 rounded-full bg-gradient-to-br ${getAvatarGradient(
+                suggestion.id
+              )}`}
             ></div>
             <div className="flex-1 min-w-0 text-left">
-              <div className="font-medium truncate">{suggestion.user.displayName}</div>
+              <div className="font-medium truncate">
+                {suggestion.user.displayName}
+              </div>
               <div className="text-sm text-gray-500 truncate">
                 @{suggestion.user.username}
               </div>

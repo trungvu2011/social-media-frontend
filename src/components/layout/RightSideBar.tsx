@@ -1,13 +1,13 @@
 import { Bell, MessageCircle, Settings } from "lucide-react";
 import FriendSuggestions from "../feed/FriendSuggestions";
-import type { FriendSuggestion, Event } from '../../types/social';
+import type { FriendSuggestion, Event } from "../../types/social";
 
 interface RightSidebarProps {
   friendSuggestions: FriendSuggestion[];
   events?: Event[];
 }
 
-const RightSidebar = ({ friendSuggestions, events }: RightSidebarProps) => {
+const RightSidebar = ({ friendSuggestions }: RightSidebarProps) => {
   return (
     <div className="w-72 bg-white border-l border-gray-200 h-screen right-0 top-0">
       <div className="h-16 w-full border-b border-gray-200">

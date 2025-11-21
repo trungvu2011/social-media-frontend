@@ -47,7 +47,7 @@ function App() {
     <AppProviders>
       <div className="flex min-h-screen flex-row">
         <BrowserRouter>
-          {authUser && <LeftSidebar />}
+          {/* {authUser && <LeftSidebar />} */}
           <Routes>
             <Route
               path={ROUTERS.HOME}

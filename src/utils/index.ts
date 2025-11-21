@@ -139,3 +139,52 @@ export async function createPost(
     token: token || undefined,
   });
 }
+
+// ---------- Posts (GET list) ----------
+export type BackendAuthor = {
+  _id: string;
+  userName: string;
+  fullName?: string;
+  avatar?: string;
+};
+
+export type BackendPostListItem = {
+  _id: string;
+  authorId: BackendAuthor;
+  content?: string;
+  text?: string;
+  images: string[];
+  likeCount: number;
+  commentCount: number;
+  visibility: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type GetAllPostsResponse = {
+  data: BackendPostListItem[];
+  meta: { total: number; page: number; limit: number; pages: number };
+};
+
+export async function getAllPosts(
+  params: {
+    page?: number;
+    limit?: number;
+    sortBy?: "createdAt" | "updatedAt" | "likeCount" | "commentCount";
+    order?: "asc" | "desc";
+    search?: string;
+    authorId?: string;
+  } = {}
+): Promise<GetAllPostsResponse> {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.sortBy) query.set("sortBy", params.sortBy);
+  if (params.order) query.set("order", params.order);
+  if (params.search) query.set("search", params.search);
+  if (params.authorId) query.set("authorId", params.authorId);
+
+  const qs = query.toString();
+  const path = `/posts${qs ? `?${qs}` : ""}`;
+  return api<GetAllPostsResponse>(path, { method: "GET" });
+}
