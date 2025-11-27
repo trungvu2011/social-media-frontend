@@ -53,23 +53,30 @@ export default function SearchPage() {
   // HomePage maps it manually. We should duplicate that mapping or extract it. 
   // For now I will import Post and map it inline like HomePage does.
 
-  const mapToSocialPost = (p: BackendPostListItem) => ({
-    id: p._id,
-    user: {
-      id: p.authorId?._id || "",
-      username: p.authorId?.userName || "unknown",
-      displayName: p.authorId?.fullName || "Unknown",
-      avatar: p.authorId?.avatar,
-      isVerified: false,
-    },
-    content: (p.text ?? p.content ?? "").toString(),
-    images: Array.isArray(p.images) ? p.images : [],
-    likes: p.likes || [],
-    commentCount: p.commentCount ?? 0,
-    shares: 0,
-    createdAt: p.createdAt,
-    isLiked: false, 
-  });
+  const mapToSocialPost = (p: BackendPostListItem): any => {
+    const mapped: any = {
+      id: p._id,
+      user: {
+        id: p.authorId?._id || "",
+        username: p.authorId?.userName || "unknown",
+        displayName: p.authorId?.fullName || "Unknown",
+        avatar: p.authorId?.avatar,
+        isVerified: false,
+      },
+      content: (p.text ?? p.content ?? "").toString(),
+      images: Array.isArray(p.images) ? p.images : [],
+      likes: p.likes || [],
+      commentCount: p.commentCount ?? 0,
+      shares: p.shareCount || 0,
+      createdAt: p.createdAt,
+      isLiked: false, 
+    };
+    
+    if (p.sharedPost) {
+        mapped.sharedPost = mapToSocialPost(p.sharedPost);
+    }
+    return mapped;
+  };
 
   return (
     <Layout>

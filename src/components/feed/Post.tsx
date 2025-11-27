@@ -12,6 +12,7 @@ interface PostProps {
 
 const CommentModal = React.lazy(() => import('./CommentModal'));
 const ReportModal = React.lazy(() => import('../ReportModal'));
+const ShareModal = React.lazy(() => import('./ShareModal'));
 
 interface PostProps {
   post: PostType;
@@ -42,6 +43,7 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Sync local state when prop updates (e.g. feed refresh)
@@ -242,34 +244,75 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
 
       {/* Post Content */}
       <div className="px-4 pb-3">
-        <p className="text-gray-800 text-medium whitespace-pre-line leading-relaxed">
+        {/* Caption */}
+        <p className="text-gray-800 text-medium whitespace-pre-line leading-relaxed mb-3">
           {post.content}
         </p>
-        
-        {/* Images */}
-        {Array.isArray(post.images) && post.images.length > 0 && (
-          <div className="mt-3 rounded-xl overflow-hidden">
-            {post.images.length === 1 ? (
-              <img
-                src={post.images[0]}
-                alt="post"
-                className="w-full h-64 object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div className="grid grid-cols-2 gap-1">
-                {post.images.slice(0, 4).map((src, idx) => (
-                  <img
-                    key={idx}
-                    src={src}
-                    alt={`post ${idx + 1}`}
-                    className="w-full h-40 object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+
+        {/* Shared Post Content */}
+        {post.sharedPost ? (
+           <div className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+             {/* Shared Post Header */}
+             <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-100">
+               <Link to={`/profile/${post.sharedPost.user.username}`} className="flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full overflow-hidden">
+                     <img src={post.sharedPost.user.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} alt="" className="w-full h-full object-cover" />
+                  </div>
+               </Link>
+               <div>
+                  <Link to={`/profile/${post.sharedPost.user.username}`} className="font-semibold text-sm text-gray-900 hover:underline">
+                      {post.sharedPost.user.displayName}
+                  </Link>
+                  <div className="text-xs text-gray-500">{formatTimeAgo(post.sharedPost.createdAt)}</div>
+               </div>
+             </div>
+             
+             {/* Shared Post Body */}
+             <div className="p-3">
+                <p className="text-gray-800 text-sm whitespace-pre-line leading-relaxed mb-2">
+                   {post.sharedPost.content}
+                </p>
+                {Array.isArray(post.sharedPost.images) && post.sharedPost.images.length > 0 && (
+                   <div className="rounded-lg overflow-hidden">
+                      {post.sharedPost.images.length === 1 ? (
+                        <img src={post.sharedPost.images[0]} alt="" className="w-full h-48 object-cover" />
+                      ) : (
+                         <div className="grid grid-cols-2 gap-1">
+                             {post.sharedPost.images.slice(0, 4).map((src, idx) => (
+                                <img key={idx} src={src} alt="" className="w-full h-32 object-cover" />
+                             ))}
+                         </div>
+                      )}
+                   </div>
+                )}
+             </div>
+           </div>
+        ) : (
+           /* Normal Post Images */
+           Array.isArray(post.images) && post.images.length > 0 && (
+            <div className="mt-3 rounded-xl overflow-hidden">
+              {post.images.length === 1 ? (
+                <img
+                  src={post.images[0]}
+                  alt="post"
+                  className="w-full h-64 object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="grid grid-cols-2 gap-1">
+                  {post.images.slice(0, 4).map((src, idx) => (
+                    <img
+                      key={idx}
+                      src={src}
+                      alt={`post ${idx + 1}`}
+                      className="w-full h-40 object-cover"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
         )}
       </div>
 
@@ -299,7 +342,10 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
           <MessageCircle className="w-5 h-5" />
           <span>Comment</span>
         </button>
-        <button className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+        <button 
+          onClick={() => setShowShareModal(true)}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+        >
           <Share2 className="w-5 h-5" />
           <span>Share</span>
         </button>
@@ -348,6 +394,20 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
           <ReportModal
             postId={post.id}
             onClose={() => setShowReportModal(false)}
+          />
+        </React.Suspense>
+      )}
+
+      {showShareModal && (
+        <React.Suspense fallback={null}>
+          <ShareModal
+            post={post}
+            onClose={() => setShowShareModal(false)}
+            onSuccess={() => {
+              // Optional: Show toast or something
+              // Reload page or update UI?
+              window.location.reload(); 
+            }}
           />
         </React.Suspense>
       )}

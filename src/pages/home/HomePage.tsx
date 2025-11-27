@@ -15,23 +15,31 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Map backend post to UI post type expected by <Post/>
-  const mapToSocialPost = (p: BackendPostListItem): SocialPost => ({
-    id: p._id,
-    user: {
-      id: p.authorId?._id || "",
-      username: p.authorId?.userName || "unknown",
-      displayName: p.authorId?.fullName || "Unknown",
-      avatar: p.authorId?.avatar,
-      isVerified: false,
-    },
-    content: (p.text ?? p.content ?? "").toString(),
-    images: Array.isArray(p.images) ? p.images : [],
-    likes: p.likes || [],
-    commentCount: p.commentCount ?? 0,
-    shares: 0,
-    createdAt: p.createdAt,
-    isLiked: false, // Post component handles this via useEffect
-  });
+  const mapToSocialPost = (p: BackendPostListItem): SocialPost => {
+     const mapped: SocialPost = {
+      id: p._id,
+      user: {
+        id: p.authorId?._id || "",
+        username: p.authorId?.userName || "unknown",
+        displayName: p.authorId?.fullName || "Unknown",
+        avatar: p.authorId?.avatar,
+        isVerified: false,
+      },
+      content: (p.text ?? p.content ?? "").toString(),
+      images: Array.isArray(p.images) ? p.images : [],
+      likes: p.likes || [],
+      commentCount: p.commentCount ?? 0,
+      shares: p.shareCount || 0,
+      createdAt: p.createdAt,
+      isLiked: false, // Post component handles this via useEffect
+    };
+
+    if (p.sharedPost) {
+       mapped.sharedPost = mapToSocialPost(p.sharedPost);
+    }
+    
+    return mapped;
+  };
 
   // Fetch posts when feedType changes
   useEffect(() => {

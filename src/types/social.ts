@@ -17,6 +17,7 @@ export interface Post {
   shares: number;
   createdAt: string;
   isLiked?: boolean;
+  sharedPost?: Post; // Recursive type for shared posts
 }
 
 export interface Story {

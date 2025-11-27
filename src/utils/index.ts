@@ -185,6 +185,8 @@ export type BackendPostListItem = {
   visibility: string;
   createdAt: string;
   updatedAt: string;
+  sharedPost?: BackendPostListItem; // Recursive type
+  shareCount?: number;
 };
 
 export type GetAllPostsResponse = {
@@ -777,3 +779,14 @@ export async function unbanUser(userId: string): Promise<void> {
     token: token || undefined,
   });
 }
+// ---------- Share Post API ----------
+export const sharePost = (postId: string, text: string) => {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api(`/posts/${postId}/share`, {
+    method: "POST",
+    body: { text },
+    token: token || undefined,
+  });
+};
