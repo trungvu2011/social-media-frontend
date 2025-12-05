@@ -59,7 +59,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <aside
           ref={sidebarRef}
           className={`
-            w-[280px] h-[calc(100vh-64px)] z-40 overflow-y-auto
+            w-[280px] h-[calc(100dvh-64px)] z-40 overflow-y-auto
             fixed top-16 left-0
             lg:sticky lg:top-16 lg:h-[calc(100vh-64px)]
             ${

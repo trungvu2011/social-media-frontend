@@ -155,16 +155,17 @@ const NotificationPage = () => {
                     <div className="mt-1">{getIcon(notification.type)}</div>
 
                     {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="flex-1 min-w-0">
+                      <div className="mb-1 break-words">
                         <Link
                           to={`/profile/${notification.senderId.userName}`}
-                          className="font-semibold text-gray-900 hover:underline"
+                          className="font-semibold text-gray-900 hover:underline inline"
                           onClick={(e) => e.stopPropagation()}
                         >
                           {notification.senderId.fullName || notification.senderId.userName}
                         </Link>
-                        <span className="text-gray-600">
+                        {" "}
+                        <span className="text-gray-600 inline">
                           {notification.content}
                         </span>
                       </div>
@@ -182,7 +183,7 @@ const NotificationPage = () => {
                     {notification.senderId.avatar && (
                        <img 
                          src={notification.senderId.avatar} 
-                         className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                         className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
                          alt=""
                        />
                     )}
