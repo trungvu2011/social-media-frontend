@@ -54,3 +54,18 @@ export interface Profile {
   };
   storyHighlights: string[];
 }
+
+export interface FollowUser {
+  id: string;
+  username: string;
+  displayName: string;
+  avatar?: string;
+  bio?: string;
+  isVerified?: boolean;
+  isFollowingBack?: boolean;
+}
+
+export interface FollowStats {
+  followers: number;
+  following: number;
+}

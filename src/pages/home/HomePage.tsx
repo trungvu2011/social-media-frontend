@@ -1,14 +1,12 @@
 import Layout from "../../components/layout/Layout";
 import CreatePost from "../../components/feed/CreatePost";
 import Post from "../../components/feed/Post";
-import { Link } from "react-router-dom";
 
-import { mockEvents, mockFriendSuggestions, mockPosts, mockStories } from "../../data/mockData";
+import { mockEvents, mockFriendSuggestions } from "../../data/mockData";
 import { useEffect, useState } from "react";
 import { getAllPosts, type BackendPostListItem } from "../../utils";
 import type { Post as SocialPost } from "../../types/social";
 import Header from "./Header";
-import Stories from "../../components/feed/Stories";
 
 const HomePage: React.FC = () => {
   const [feedType, setFeedType] = useState("forYou");
@@ -60,20 +58,31 @@ const HomePage: React.FC = () => {
   console.log("Posts loaded:", posts);
 
   return (
-    <Layout 
-      friendSuggestions={mockFriendSuggestions}
-      events={mockEvents}
-    >
-      <Stories stories={mockStories} />
-      
-      <CreatePost/>
-      
-      <div>
-        {mockPosts.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
+    <Layout friendSuggestions={mockFriendSuggestions} events={mockEvents}>
+      <Header feedType={feedType} setFeedType={setFeedType} />
+
+      {/* Create Post */}
+      <CreatePost />
+
+      {/* Feed Posts */}
+      <div className="mt-6 ">
+        {loading && (
+          <div className="text-center text-gray-500 py-8">
+            Đang tải bài viết…
+          </div>
+        )}
+        {error && !loading && (
+          <div className="text-center text-red-500 py-8">{error}</div>
+        )}
+        {!loading && !error && posts.length === 0 && (
+          <div className="text-center text-gray-500 py-8">
+            Chưa có bài viết nào.
+          </div>
+        )}
+        {!loading &&
+          !error &&
+          posts.map((post) => <Post key={post.id} post={post} />)}
       </div>
-      
     </Layout>
   );
 };

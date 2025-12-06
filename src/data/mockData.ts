@@ -1,4 +1,4 @@
-import type { User, Post, Story, FriendSuggestion, Event, Profile } from '../types/social';
+import type { User, Post, Story, FriendSuggestion, Event, Profile, FollowUser } from '../types/social';
 
 export const mockUser: User = {
   id: '1',
@@ -152,5 +152,91 @@ export const mockEvents: Event[] = [
     title: "Group Meetup",
     date: "Aug 19, 2024",
     type: "meetup"
+  },
+];
+
+export const mockFollowers: FollowUser[] = [
+  {
+    id: 'f1',
+    username: 'kienbigmummy',
+    displayName: 'm4n0w4r',
+    bio: 'Work hard in silence, let success make the noise.',
+    isVerified: false,
+    isFollowingBack: true,
+  },
+  {
+    id: 'f2',
+    username: 'Rafa_elaelaela',
+    displayName: 'Rafa',
+    bio: '今天吃什么',
+    isVerified: false,
+    isFollowingBack: true,
+  },
+  {
+    id: 'f3',
+    username: 'Yunouou10',
+    displayName: '旱欧欧',
+    bio: 'weibo:@旱欧欧 weibo.com/u/2720243414',
+    isVerified: false,
+    isFollowingBack: false,
+  },
+  {
+    id: 'f4',
+    username: 'noland0707',
+    displayName: 'Noland',
+    bio: '=禾策 | 201 Illustrator | 中文/日本語/English E-mail:hecehece73@163.com/AI',
+    isVerified: false,
+    isFollowingBack: true,
+  },
+  {
+    id: 'f5',
+    username: 'liaoruoxingche1',
+    displayName: '云间蓝',
+    bio: 'illustrator/Designer -E-mail: 442321044@qq.com',
+    isVerified: false,
+    isFollowingBack: false,
+  },
+  {
+    id: 'f6',
+    username: 'Snooa_o',
+    displayName: 'SnooAh',
+    bio: '',
+    isVerified: false,
+    isFollowingBack: true,
+  },
+];
+
+export const mockFollowing: FollowUser[] = [
+  {
+    id: 'fl1',
+    username: 'user1',
+    displayName: 'User One',
+    bio: 'Tech enthusiast and developer',
+    isVerified: true,
+    isFollowingBack: true,
+  },
+  {
+    id: 'fl2',
+    username: 'misierpai',
+    displayName: 'Misier Pai',
+    bio: 'Photographer and traveler',
+    isVerified: true,
+    isFollowingBack: true,
+  },
+  {
+    id: 'fl3',
+    username: 'saykotwitt',
+    displayName: 'Sayko',
+    bio: 'Web developer and designer',
+    isVerified: false,
+    isFollowingBack: false,
+  },
+  {
+    id: 'fl4',
+    username: 'juliasmith',
+    displayName: 'Julia Smith',
+    bio: 'Digital marketer',
+    isVerified: false,
+    isFollowingBack: true,
   },
 ];

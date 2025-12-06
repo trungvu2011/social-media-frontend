@@ -188,3 +188,11 @@ export async function getAllPosts(
   const path = `/posts${qs ? `?${qs}` : ""}`;
   return api<GetAllPostsResponse>(path, { method: "GET" });
 }
+
+export const getProfileByUsername = async (username: string): Promise<any> => {
+  return new Promise(resolve => setTimeout(() => resolve({ data: null }), 500));
+};
+
+export const getUserPosts = async (userId: string): Promise<any> => {
+  return new Promise(resolve => setTimeout(() => resolve({ data: [] }), 500));
+};
