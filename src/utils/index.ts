@@ -5,6 +5,8 @@ export type User = {
   email: string;
   userName?: string;
   fullName?: string;
+  avatar?: string;
+  backgroundImage?: string;
 };
 
 export type Post = {
@@ -189,10 +191,96 @@ export async function getAllPosts(
   return api<GetAllPostsResponse>(path, { method: "GET" });
 }
 
-export const getProfileByUsername = async (username: string): Promise<any> => {
-  return new Promise(resolve => setTimeout(() => resolve({ data: null }), 500));
+// Get posts from users that current user follows
+export async function getFollowedPosts(): Promise<GetAllPostsResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<GetAllPostsResponse>(`/posts/followed`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+// ---------- User Profile API ----------
+export type UserProfile = {
+  _id: string;
+  userName: string;
+  fullName: string;
+  email: string;
+  avatar?: string;
+  backgroundImage?: string;
+  bio?: string;
+  genre?: string;
+  birthday?: string;
+  isVerified?: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
-export const getUserPosts = async (userId: string): Promise<any> => {
-  return new Promise(resolve => setTimeout(() => resolve({ data: [] }), 500));
+export async function getProfile(): Promise<UserProfile> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<UserProfile>(`/users/profile`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+export async function getProfileById(userId: string): Promise<UserProfile> {
+  return api<UserProfile>(`/users/${userId}/profile`, { method: "GET" });
+}
+
+// ---------- Follow API ----------
+export type FollowUser = {
+  _id: string;
+  followerId: string;
+  followingId: {
+    _id: string;
+    userName: string;
+    fullName?: string;
+    avatar?: string;
+  };
+  createdAt: string;
 };
+
+export async function getFollowing(userId: string): Promise<FollowUser[]> {
+  return api<FollowUser[]>(`/follows/following/${userId}`, { method: "GET" });
+}
+
+export async function getFollowers(userId: string): Promise<FollowUser[]> {
+  return api<FollowUser[]>(`/follows/followers/${userId}`, { method: "GET" });
+}
+
+export async function followUser(userId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/follows/`, {
+    method: "POST",
+    body: { followingId: userId },
+    token: token || undefined,
+  });
+}
+
+// ---------- Like API ----------
+export async function likePost(postId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/posts/${postId}/like`, {
+    method: "POST",
+    token: token || undefined,
+  });
+}
+
+export async function unlikePost(postId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/posts/${postId}/like`, {
+    method: "DELETE",
+    token: token || undefined,
+  });
+}

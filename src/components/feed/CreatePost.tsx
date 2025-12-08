@@ -1,12 +1,10 @@
-import { Smile, Send, Image, X } from "lucide-react";
+import { Smile, Send, Paperclip, Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPost } from "../../utils";
 
 const CreatePost = () => {
   const [text, setText] = useState("");
-  const [images, setImages] = useState<Array<{ file: File; preview: string }>>(
-    []
-  );
+  const [images, setImages] = useState<Array<{ file: File; preview: string }>>([]);
   const [submitting, setSubmitting] = useState(false);
   const imgRef = useRef<HTMLInputElement | null>(null);
 
@@ -16,7 +14,6 @@ const CreatePost = () => {
 
   const onFilesChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
-    // Revoke old previews before replacing
     images.forEach((p) => URL.revokeObjectURL(p.preview));
     const next = files.map((f) => ({
       file: f,
@@ -43,20 +40,18 @@ const CreatePost = () => {
         text.trim(),
         images.map((i) => i.file)
       );
-      // Reset state after successful post
       setText("");
       images.forEach((p) => URL.revokeObjectURL(p.preview));
       setImages([]);
       if (imgRef.current) imgRef.current.value = "";
+      window.location.reload();
     } catch (err) {
       console.error("Create post failed", err);
-      // Optional: surface UI error state if desired
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Cleanup object URLs on unmount
   useEffect(() => {
     return () => {
       images.forEach((p) => URL.revokeObjectURL(p.preview));
@@ -65,7 +60,7 @@ const CreatePost = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-4 border-b border-gray-200 w-full p-4 bg-white">
+    <div className="bg-white p-4">
       <input
         type="file"
         accept="image/*"
@@ -75,50 +70,67 @@ const CreatePost = () => {
         className="hidden"
       />
 
-      {/* 2. Text Input (takes up remaining space) */}
-      <form className="flex-1 w-full" onSubmit={onSubmit}>
+      {/* Input Container */}
+      <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3">
+        {/* Attachment Icon */}
+        <button
+          type="button"
+          onClick={onPickImages}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <Paperclip className="w-5 h-5" />
+        </button>
+
+        {/* Text Input */}
         <input
           type="text"
-          placeholder="🧷 What's on your mind right now?"
-          className="w-full bg-transparent outline-none text-lg text-gray-800 placeholder-gray-500"
+          placeholder="What's on your mind right now?"
+          className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 text-base focus:outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onSubmit()}
         />
-      </form>
 
-      {/* 3. Right-side Icons & Button */}
-      <div className="flex items-center gap-4 w-full justify-end">
-        <Image
-          onClick={onPickImages}
-          className="h-6 w-6 text-gray-500 cursor-pointer hover:text-gray-700 transition-colors"
-        />
-        <Smile className="h-6 w-6 text-gray-500 cursor-pointer hover:text-gray-700 transition-colors" />
-
-        {/* Post Button */}
-        <button
-          className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full font-medium text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={onSubmit}
-          disabled={submitting || (!text.trim() && images.length === 0)}
-        >
-          {submitting ? "Posting..." : "Post"}
-          <Send className="h-4 w-4" />
-        </button>
+        {/* Right Icons */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onPickImages}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
+          >
+            <Image className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
+          >
+            <Smile className="w-5 h-5" />
+          </button>
+          <button
+            className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-full font-medium text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => onSubmit()}
+            disabled={submitting || (!text.trim() && images.length === 0)}
+          >
+            {submitting ? "..." : "Post"}
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Image thumbnails preview */}
+      {/* Image Preview */}
       {images.length > 0 && (
-        <div className="w-full flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {images.map((item, idx) => (
             <div key={idx} className="relative">
               <img
                 src={item.preview}
                 alt={`preview-${idx}`}
-                className="max-h-120 max-w-200 h-auto w-auto object-contain rounded border"
+                className="h-20 w-20 object-cover rounded-lg border border-gray-200"
               />
               <button
                 type="button"
                 onClick={() => removeImage(idx)}
-                className="absolute -top-2 -right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1"
+                className="absolute -top-2 -right-2 bg-gray-800 hover:bg-gray-900 text-white rounded-full p-1"
                 aria-label="Remove image"
               >
                 <X className="h-3 w-3" />

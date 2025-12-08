@@ -1,32 +1,13 @@
-import {
-  Home,
-  BookOpen,
-  Users,
-  Bell,
-  Settings,
-  HelpCircle,
-  LogOut,
-} from "lucide-react";
+import { Home, HelpCircle, LogOut } from "lucide-react";
 import AppIcon from "../../assets/app_icon.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
 
-interface SidebarProps {}
-
-export default function LeftSidebar({}: SidebarProps) {
+export default function LeftSidebar() {
   const menuItems = [
-    { id: "", icon: Home, label: "Home", count: 10 },
-    { id: "stories", icon: BookOpen, label: "Stories", count: null },
-    { id: "friends", icon: Users, label: "Friends", count: 2 },
-    {
-      id: "notifications",
-      icon: Bell,
-      label: "Notifications",
-      count: null,
-    },
-    { id: "settings", icon: Settings, label: "Settings", count: null },
-    { id: "help", icon: HelpCircle, label: "Help & Support", count: null },
+    { id: "", icon: Home, label: "Feed" },
+    { id: "help", icon: HelpCircle, label: "Help & Support" },
   ];
 
   const [authUser] = useState<any>(() => {
@@ -60,54 +41,68 @@ export default function LeftSidebar({}: SidebarProps) {
   };
 
   return (
-    <div className="w-72 bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
-      <div className="p-4 content-center">
+    <div className="w-[300px] bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
+      {/* Logo */}
+      <div className="p-5">
         <div className="flex items-center gap-2">
-          <img src={AppIcon} alt="Logo" className="w-12 h-12 rounded-full" />
-          <span className="font-bold text-xl content-center mb-2">slothui</span>
+          <img src={AppIcon} alt="Logo" className="w-10 h-10 rounded-xl" />
+          <span className="font-bold text-xl text-gray-900">slothui</span>
         </div>
       </div>
 
-      <div className="p-4">
+      {/* Search */}
+      <div className="px-4 pb-4">
         <div className="relative">
           <input
             type="text"
             placeholder="Search..."
-            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
       </div>
 
-      <nav className="flex-1 px-4 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 px-3">
         {menuItems.map((item) => (
           <Link
             key={item.id}
             to={`/${item.id}`}
-            className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors`}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <item.icon className="w-6 h-6" />
-            <span className="flex-1 text-left font-bold">{item.label}</span>
-            {item.count !== null && (
-              <span className="text-xs bg-[#EEF2FF] text-[#4F46E5] px-2 py-0.5 rounded-full border border-[#A5B4FC] font-medium">
-                {item.count}
-              </span>
-            )}
+            <item.icon className="w-5 h-5" />
+            <span className="font-medium">{item.label}</span>
           </Link>
         ))}
       </nav>
 
-      <div className="p-3 border-t border-gray-200">
-        <div className="flex items-center gap-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full"></div>
-          <div className="flex-1 text-left">
-            <div className="text-medium font-medium">{authUser?.fullName}</div>
-            <div className="text-sm text-gray-500">@{authUser?.userName}</div>
-          </div>
+      {/* User Profile */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center gap-3">
+          <Link
+            to={`/profile/${authUser?.userName || ''}`}
+            className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex-shrink-0 overflow-hidden hover:opacity-80 transition-opacity"
+          >
+            {authUser?.avatar && (
+              <img src={authUser.avatar} alt="" className="w-full h-full object-cover" />
+            )}
+          </Link>
+          <Link 
+            to={`/profile/${authUser?.userName || ''}`}
+            className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
+          >
+            <div className="text-medium font-semibold text-gray-900 truncate">
+              {authUser?.fullName || "User"}
+            </div>
+            <div className="text-sm text-gray-500 truncate">
+              @{authUser?.userName || "username"}
+            </div>
+          </Link>
           <button
             onClick={handleLogout}
-            className="text-gray-400 hover:text-gray-600"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Logout"
           >
-            <LogOut className="w-6 h-6" />
+            <LogOut className="w-5 h-5" />
           </button>
         </div>
       </div>

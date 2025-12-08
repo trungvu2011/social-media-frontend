@@ -2,9 +2,8 @@ import Layout from "../../components/layout/Layout";
 import CreatePost from "../../components/feed/CreatePost";
 import Post from "../../components/feed/Post";
 
-import { mockEvents, mockFriendSuggestions } from "../../data/mockData";
 import { useEffect, useState } from "react";
-import { getAllPosts, type BackendPostListItem } from "../../utils";
+import { getAllPosts, getFollowedPosts, type BackendPostListItem } from "../../utils";
 import type { Post as SocialPost } from "../../types/social";
 import Header from "./Header";
 
@@ -33,13 +32,24 @@ const HomePage: React.FC = () => {
     isLiked: false,
   });
 
+  // Fetch posts when feedType changes
   useEffect(() => {
     let isMounted = true;
-    (async () => {
+    
+    const fetchPosts = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await getAllPosts({ page: 1, limit: 5, order: "desc" });
+        
+        let res;
+        if (feedType === "forYou") {
+          // For You: Get all posts
+          res = await getAllPosts({ page: 1, limit: 20, order: "desc" });
+        } else {
+          // Following: Get posts from followed users
+          res = await getFollowedPosts();
+        }
+        
         if (!isMounted) return;
         const mapped = res.data.map(mapToSocialPost);
         setPosts(mapped);
@@ -49,26 +59,27 @@ const HomePage: React.FC = () => {
       } finally {
         if (isMounted) setLoading(false);
       }
-    })();
+    };
+
+    fetchPosts();
+    
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  console.log("Posts loaded:", posts);
+  }, [feedType]);
 
   return (
-    <Layout friendSuggestions={mockFriendSuggestions} events={mockEvents}>
+    <Layout>
       <Header feedType={feedType} setFeedType={setFeedType} />
 
       {/* Create Post */}
       <CreatePost />
 
       {/* Feed Posts */}
-      <div className="mt-6 ">
+      <div className="mt-4">
         {loading && (
           <div className="text-center text-gray-500 py-8">
-            Đang tải bài viết…
+            Loading posts...
           </div>
         )}
         {error && !loading && (
@@ -76,7 +87,9 @@ const HomePage: React.FC = () => {
         )}
         {!loading && !error && posts.length === 0 && (
           <div className="text-center text-gray-500 py-8">
-            Chưa có bài viết nào.
+            {feedType === "following" 
+              ? "No posts from people you follow yet."
+              : "No posts yet. Be the first to post!"}
           </div>
         )}
         {!loading &&

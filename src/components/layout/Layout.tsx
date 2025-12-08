@@ -1,37 +1,28 @@
 import React from "react";
 import LeftSidebar from "./LeftSideBar";
 import RightSidebar from "./RightSideBar";
-import type { FriendSuggestion, Event } from "../../types/social";
 
 interface LayoutProps {
   children: React.ReactNode;
-  friendSuggestions: FriendSuggestion[];
-  events?: Event[];
 }
 
-const Layout: React.FC<LayoutProps> = ({
-  children,
-  friendSuggestions,
-  events,
-}) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-100 flex w-full">
+    <div className="min-h-screen bg-gray-50 flex w-full">
       {/* Left Sidebar */}
-      <div className="fixed left-0 top-0 h-screen z-30">
+      <aside className="w-[300px] flex-shrink-0 h-screen sticky top-0">
         <LeftSidebar />
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 min-h-screen ml-72 mr-72 ">
-        <main className="">
-          <div className="max-w-3xl mx-auto">{children}</div>
-        </main>
-      </div>
+      {/* Main Content - centered with small gaps from sidebars */}
+      <main className="flex-1 min-h-screen bg-white shadow-lg mx-12">
+        {children}
+      </main>
 
       {/* Right Sidebar */}
-      <div className="fixed right-0 top-0 h-screen z-30">
-        <RightSidebar friendSuggestions={friendSuggestions} events={events} />
-      </div>
+      <aside className="w-[300px] flex-shrink-0 h-screen sticky top-0">
+        <RightSidebar />
+      </aside>
     </div>
   );
 };
