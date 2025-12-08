@@ -232,6 +232,41 @@ export async function getProfileById(userId: string): Promise<UserProfile> {
   return api<UserProfile>(`/users/${userId}/profile`, { method: "GET" });
 }
 
+// Update user profile
+export type UpdateProfileData = {
+  userName?: string;
+  fullName?: string;
+  email?: string;
+  bio?: string;
+  genre?: string;
+  birthday?: string;
+  avatar?: File;
+  backgroundImage?: File;
+};
+
+export async function updateProfile(data: UpdateProfileData): Promise<UserProfile> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  
+  // Use FormData for file upload
+  const fd = new FormData();
+  if (data.userName) fd.append("userName", data.userName);
+  if (data.fullName) fd.append("fullName", data.fullName);
+  if (data.email) fd.append("email", data.email);
+  if (data.bio) fd.append("bio", data.bio);
+  if (data.genre) fd.append("genre", data.genre);
+  if (data.birthday) fd.append("birthday", data.birthday);
+  if (data.avatar) fd.append("avatar", data.avatar);
+  if (data.backgroundImage) fd.append("backgroundImage", data.backgroundImage);
+
+  return api<UserProfile>(`/users/profile`, {
+    method: "PUT",
+    body: fd,
+    token: token || undefined,
+  });
+}
+
 // ---------- Follow API ----------
 export type FollowUser = {
   _id: string;
