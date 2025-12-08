@@ -1,4 +1,4 @@
-import { Home, HelpCircle, LogOut } from "lucide-react";
+import { Home, HelpCircle, LogOut, User } from "lucide-react";
 import AppIcon from "../../assets/app_icon.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { signOut } from "../../utils";
 export default function LeftSidebar() {
   const menuItems = [
     { id: "", icon: Home, label: "Feed" },
+    { id: "profile", icon: User, label: "Profile" },
     { id: "help", icon: HelpCircle, label: "Help & Support" },
   ];
 
@@ -63,16 +64,23 @@ export default function LeftSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-3">
-        {menuItems.map((item) => (
-          <Link
-            key={item.id}
-            to={`/${item.id}`}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <item.icon className="w-5 h-5" />
-            <span className="font-medium">{item.label}</span>
-          </Link>
-        ))}
+        {menuItems.map((item) => {
+          // Special handling for Profile - use current user's username
+          const path = item.id === "profile" 
+            ? `/profile/${authUser?.userName || ''}`
+            : `/${item.id}`;
+          
+          return (
+            <Link
+              key={item.id}
+              to={path}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       {/* User Profile */}
