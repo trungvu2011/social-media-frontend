@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
 import Post from "../../components/feed/Post";
 import { 
@@ -8,6 +8,7 @@ import {
   getFollowers, 
   getFollowing,
   followUser,
+  unfollowUser,
   updateProfile,
   type UserProfile,
   type BackendPostListItem
@@ -28,6 +29,7 @@ import {
 
 const ProfilePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [posts, setPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +158,8 @@ const ProfilePage: React.FC = () => {
             setFollowerCount(followers.length);
             setFollowingCount(following.length);
             setIsFollowing(
-              followers.some(f => f.followerId === authUser?.id)
+              // Backend returns the User objects directly in the list
+              (followers as any[]).some(f => f._id === authUser?.id || f.id === authUser?.id)
             );
           }
         } catch {
@@ -202,12 +205,29 @@ const ProfilePage: React.FC = () => {
   const handleFollow = async () => {
     if (!profile?._id) return;
     try {
-      await followUser(profile._id);
-      setIsFollowing(true);
-      setFollowerCount(prev => prev + 1);
+      if (isFollowing) {
+        await unfollowUser(profile._id);
+        setIsFollowing(false);
+        setFollowerCount(prev => Math.max(0, prev - 1));
+      } else {
+        await followUser(profile._id);
+        setIsFollowing(true);
+        setFollowerCount(prev => prev + 1);
+      }
     } catch (err) {
-      console.error("Failed to follow:", err);
+      console.error("Failed to toggle follow:", err);
     }
+  };
+
+  const navigateToFollows = (type: "followers" | "following") => {
+    if (!profile) return;
+    // Pass userId and fullName in state so FollowListPage doesn't have to guess or fetch it again
+    navigate(`/profile/${profile.userName}/${type}`, { 
+      state: { 
+        userId: profile._id,
+        fullName: profile.fullName
+      } 
+    });
   };
 
   const handleAvatarClick = () => {
@@ -407,10 +427,9 @@ const ProfilePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleFollow}
-                    disabled={isFollowing}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-colors ${
                       isFollowing
-                        ? "bg-gray-100 text-gray-600"
+                        ? "bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                         : "bg-indigo-600 hover:bg-indigo-700 text-white"
                     }`}
                   >
@@ -472,11 +491,17 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">{posts.length}</div>
               <div className="text-sm text-gray-500">Posts</div>
             </div>
-            <div className="text-center cursor-pointer hover:opacity-80">
+            <div 
+              className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigateToFollows("followers")}
+            >
               <div className="text-xl font-bold text-gray-900">{followerCount}</div>
               <div className="text-sm text-gray-500">Followers</div>
             </div>
-            <div className="text-center cursor-pointer hover:opacity-80">
+            <div 
+              className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigateToFollows("following")}
+            >
               <div className="text-xl font-bold text-gray-900">{followingCount}</div>
               <div className="text-sm text-gray-500">Following</div>
             </div>

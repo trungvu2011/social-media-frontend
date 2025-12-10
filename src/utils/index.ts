@@ -268,16 +268,14 @@ export async function updateProfile(data: UpdateProfileData): Promise<UserProfil
 }
 
 // ---------- Follow API ----------
+// Because controller maps to followerId/followingId which are populated User objects
 export type FollowUser = {
   _id: string;
-  followerId: string;
-  followingId: {
-    _id: string;
-    userName: string;
-    fullName?: string;
-    avatar?: string;
-  };
-  createdAt: string;
+  userName: string;
+  fullName?: string;
+  email?: string;
+  avatar?: string;
+  backgroundImage?: string;
 };
 
 export async function getFollowing(userId: string): Promise<FollowUser[]> {
@@ -295,6 +293,16 @@ export async function followUser(userId: string): Promise<void> {
   await api(`/follows/`, {
     method: "POST",
     body: { followingId: userId },
+    token: token || undefined,
+  });
+}
+
+export async function unfollowUser(userId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/follows/${userId}`, {
+    method: "DELETE",
     token: token || undefined,
   });
 }

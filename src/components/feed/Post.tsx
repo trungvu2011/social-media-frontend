@@ -11,8 +11,14 @@ interface PostProps {
 const Post: React.FC<PostProps> = ({ post }) => {
   // State for like functionality
   const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likes);
+  const [likeCount, setLikeCount] = useState(Math.max(0, post.likes));
   const [isLiking, setIsLiking] = useState(false);
+
+  // Sync local state when prop updates (e.g. feed refresh)
+  React.useEffect(() => {
+    setIsLiked(post.isLiked);
+    setLikeCount(Math.max(0, post.likes));
+  }, [post.isLiked, post.likes]);
 
   // Get current user for comment avatar
   const authUser = (() => {
@@ -29,18 +35,25 @@ const Post: React.FC<PostProps> = ({ post }) => {
     if (isLiking) return;
     
     setIsLiking(true);
+    // Store previous state for rollback
+    const prevIsLiked = isLiked;
+    const prevLikeCount = likeCount;
+
+    // Optimistic update
+    setIsLiked(!prevIsLiked);
+    setLikeCount(prev => prevIsLiked ? Math.max(0, prev - 1) : prev + 1);
+
     try {
-      if (isLiked) {
+      if (prevIsLiked) {
         await unlikePost(post.id);
-        setIsLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1));
       } else {
         await likePost(post.id);
-        setIsLiked(true);
-        setLikeCount(prev => prev + 1);
       }
     } catch (error) {
       console.error('Failed to like/unlike:', error);
+      // Revert on error
+      setIsLiked(prevIsLiked);
+      setLikeCount(prevLikeCount);
     } finally {
       setIsLiking(false);
     }
