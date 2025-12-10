@@ -1,17 +1,20 @@
-// src/App.tsx
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import "./App.css";
 import HomePage from "./pages/home/HomePage";
 import { AppProviders } from "./context";
-import LeftSidebar from "./components/LeftSideBar";
-import RightSidebar from "./components/RightSideBar";
-import { useEffect, useState } from "react";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import { useEffect, useState } from "react";
+import ProfilePage from "./pages/profile/ProfilePage";
+import FollowListPage from "./pages/profile/FollowListPage";
 
 const ROUTERS = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
+  PROFILE: "/profile/:username",
+  FOLLOWERS: "/profile/:username/followers",
+  FOLLOWING: "/profile/:username/following",
 };
 
 function App() {
@@ -46,12 +49,7 @@ function App() {
     <AppProviders>
       <div className="flex min-h-screen flex-row">
         <BrowserRouter>
-          {authUser && <LeftSidebar />}
           <Routes>
-            <Route
-              path={ROUTERS.HOME}
-              element={authUser ? <HomePage /> : <Navigate to="/login" />}
-            />
             <Route
               path={ROUTERS.LOGIN}
               element={!authUser ? <LoginPage /> : <Navigate to="/" />}
@@ -60,8 +58,31 @@ function App() {
               path={ROUTERS.REGISTER}
               element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
             />
+
+            <Route
+              path={ROUTERS.HOME}
+              element={authUser ? <HomePage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.PROFILE}
+              element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.FOLLOWERS}
+              element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.FOLLOWING}
+              element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
+            />
+
+            <Route
+              path="*"
+              element={
+                <Navigate to={authUser ? ROUTERS.HOME : ROUTERS.LOGIN} />
+              }
+            />
           </Routes>
-          {authUser && <RightSidebar />}
         </BrowserRouter>
       </div>
     </AppProviders>
