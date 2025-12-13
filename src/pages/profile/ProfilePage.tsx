@@ -4,6 +4,7 @@ import Layout from "../../components/layout/Layout";
 import Post from "../../components/feed/Post";
 import { 
   getProfileById, 
+  getProfileByUserName,
   getAllPosts, 
   getFollowers, 
   getFollowing,
@@ -71,125 +72,98 @@ const ProfilePage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-
-        const postsRes = await getAllPosts({ limit: 100 });
         
-        const userFromPost = postsRes.data.find(
-          p => p.authorId?.userName === username
-        )?.authorId;
+        if (!username) return;
 
+        let userProfile: UserProfile | null = null;
         let userId: string | null = null;
-
-        if (userFromPost) {
-          userId = userFromPost._id;
-        } else if (authUser?.userName === username) {
-          userId = authUser.id;
+        
+        // 1. Try to get profile by username directly
+        try {
+           userProfile = await getProfileByUserName(username);
+           userId = userProfile._id;
+        } catch (err) {
+           // If API fails, check if it's the current authenticated user (fallback)
+           if (authUser?.userName === username) {
+             userId = authUser.id;
+             userProfile = {
+               _id: authUser.id,
+               userName: authUser.userName,
+               fullName: authUser.fullName || authUser.userName,
+               email: authUser.email || "",
+               avatar: authUser.avatar,
+               backgroundImage: authUser.backgroundImage,
+               bio: authUser.bio,
+               genre: authUser.genre,
+               birthday: authUser.birthday,
+               isVerified: authUser.isVerified,
+               createdAt: "",
+               updatedAt: "",
+             };
+           }
         }
 
-        if (!userId) {
+        if (!userProfile || !userId) {
           if (isMounted) setError(`User @${username} not found`);
+          setLoading(false);
           return;
         }
 
-        // Set own profile flag
-        const ownProfile = authUser?.userName === username;
+        const isOwn = authUser?.userName === username;
 
-        try {
-          const fullProfile = await getProfileById(userId);
-          if (isMounted) {
-            setProfile(fullProfile);
-            setIsOwnProfile(ownProfile);
-            setEditFormData({
-              fullName: fullProfile.fullName || "",
-              bio: fullProfile.bio || "",
-              genre: fullProfile.genre || "",
-              birthday: fullProfile.birthday || "",
-            });
-          }
-        } catch {
-          if (authUser?.userName === username) {
-            const userProfile: UserProfile = {
-              _id: authUser.id,
-              userName: authUser.userName,
-              fullName: authUser.fullName || authUser.userName,
-              email: authUser.email || "",
-              avatar: authUser.avatar,
-              backgroundImage: authUser.backgroundImage,
-              bio: authUser.bio,
-              genre: authUser.genre,
-              birthday: authUser.birthday,
-              isVerified: authUser.isVerified,
-              createdAt: "",
-              updatedAt: "",
-            };
-            if (isMounted) {
-              setProfile(userProfile);
-              setIsOwnProfile(true);
-              setEditFormData({
-                fullName: userProfile.fullName || "",
-                bio: userProfile.bio || "",
-                genre: userProfile.genre || "",
-                birthday: userProfile.birthday || "",
-              });
-            }
-          } else if (userFromPost) {
-            const userProfile: UserProfile = {
-              _id: userFromPost._id,
-              userName: userFromPost.userName,
-              fullName: userFromPost.fullName || userFromPost.userName,
-              email: "",
-              avatar: userFromPost.avatar,
-              createdAt: "",
-              updatedAt: "",
-            };
-            if (isMounted) {
-              setProfile(userProfile);
-              setIsOwnProfile(false);
-            }
-          }
+        if (isMounted) {
+          setProfile(userProfile);
+          setIsOwnProfile(isOwn);
+          setEditFormData({
+            fullName: userProfile.fullName || "",
+            bio: userProfile.bio || "",
+            genre: userProfile.genre || "",
+            birthday: userProfile.birthday || "",
+          });
         }
 
+        // 2. Load extra data (posts, followers, etc.)
         try {
-          const [followers, following] = await Promise.all([
-            getFollowers(userId),
-            getFollowing(userId),
-          ]);
-          if (isMounted) {
-            setFollowerCount(followers.length);
-            setFollowingCount(following.length);
-            setIsFollowing(
-              // Backend returns the User objects directly in the list
-              (followers as any[]).some(f => f._id === authUser?.id || f.id === authUser?.id)
-            );
-          }
-        } catch {
-          console.error("Failed to load follow counts");
+           const [postsRes, followers, following] = await Promise.all([
+             getAllPosts({ authorId: userId, limit: 100 }), // Filter by authorId directly
+             getFollowers(userId),
+             getFollowing(userId),
+           ]);
+
+           if (isMounted) {
+             setFollowerCount(followers.length);
+             setFollowingCount(following.length);
+             setIsFollowing(
+               (followers as any[]).some(f => f._id === authUser?.id || f.id === authUser?.id)
+             );
+
+             const userPosts = postsRes.data.map((p: BackendPostListItem): SocialPost => ({
+               id: p._id,
+               user: {
+                 id: p.authorId?._id || "",
+                 username: p.authorId?.userName || "unknown",
+                 displayName: p.authorId?.fullName || "Unknown",
+                 avatar: p.authorId?.avatar,
+                 isVerified: false,
+               },
+               content: (p.text ?? p.content ?? "").toString(),
+               images: Array.isArray(p.images) ? p.images : [],
+               likes: p.likeCount ?? 0,
+               comments: p.commentCount ?? 0,
+               shares: 0,
+               createdAt: p.createdAt,
+               isLiked: false,
+             }));
+             setPosts(userPosts);
+           }
+        } catch (dataErr) {
+           console.error("Failed to load posts/stats", dataErr);
         }
 
-        const userPosts = postsRes.data
-          .filter(p => p.authorId?.userName === username)
-          .map((p: BackendPostListItem): SocialPost => ({
-            id: p._id,
-            user: {
-              id: p.authorId?._id || "",
-              username: p.authorId?.userName || "unknown",
-              displayName: p.authorId?.fullName || "Unknown",
-              avatar: p.authorId?.avatar,
-              isVerified: false,
-            },
-            content: (p.text ?? p.content ?? "").toString(),
-            images: Array.isArray(p.images) ? p.images : [],
-            likes: p.likeCount ?? 0,
-            comments: p.commentCount ?? 0,
-            shares: 0,
-            createdAt: p.createdAt,
-            isLiked: false,
-          }));
-
-        if (isMounted) setPosts(userPosts);
       } catch (err: unknown) {
-        if (!isMounted) return;
-        setError((err as Error)?.message || "Failed to load profile");
+        if (isMounted) {
+          setError((err as Error)?.message || "Failed to load profile");
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -387,17 +361,11 @@ const ProfilePage: React.FC = () => {
           <div className="relative -mt-16 mb-4 flex items-end justify-between">
             <div className="relative">
               <div className="w-32 h-32 rounded-full border-4 border-white bg-gradient-to-br from-indigo-400 to-purple-500 overflow-hidden shadow-lg">
-                {profile.avatar ? (
-                  <img
-                    src={profile.avatar}
-                    alt={profile.fullName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white text-4xl font-bold">
-                    {profile.fullName?.charAt(0)?.toUpperCase() || "U"}
-                  </div>
-                )}
+                <img
+                  src={profile.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
+                  alt={profile.fullName}
+                  className="w-full h-full object-cover"
+                />
               </div>
               {isOwnProfile && (
                 <button 

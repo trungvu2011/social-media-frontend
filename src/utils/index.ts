@@ -232,6 +232,10 @@ export async function getProfileById(userId: string): Promise<UserProfile> {
   return api<UserProfile>(`/users/${userId}/profile`, { method: "GET" });
 }
 
+export async function getProfileByUserName(username: string): Promise<UserProfile> {
+  return api<UserProfile>(`/users/username/${username}`, { method: "GET" });
+}
+
 // Update user profile
 export type UpdateProfileData = {
   userName?: string;
@@ -270,12 +274,14 @@ export async function updateProfile(data: UpdateProfileData): Promise<UserProfil
 // ---------- Follow API ----------
 // Because controller maps to followerId/followingId which are populated User objects
 export type FollowUser = {
+  followingId: any;
   _id: string;
   userName: string;
   fullName?: string;
   email?: string;
   avatar?: string;
   backgroundImage?: string;
+  birthday?: string;
 };
 
 export async function getFollowing(userId: string): Promise<FollowUser[]> {
@@ -324,6 +330,94 @@ export async function unlikePost(postId: string): Promise<void> {
     sessionStorage.getItem("access_token");
   await api(`/posts/${postId}/like`, {
     method: "DELETE",
+    token: token || undefined,
+  });
+}
+
+// ---------- Comment API ----------
+export type Comment = {
+  _id: string;
+  authorId: {
+    _id: string;
+    userName: string;
+    fullName: string;
+    avatar?: string;
+  };
+  content: string; // Backend uses 'content', not 'text'
+  image?: string;
+  createdAt: string;
+};
+
+export type GetCommentsResponse = {
+  data: Comment[];
+  meta: { total: number; page: number; limit: number; pages: number };
+};
+
+export type GetSuggestionsResponse = {
+  success: boolean;
+  data: UserProfile[];
+  debug?: any;
+};
+
+export async function getPostComments(
+  postId: string,
+  params: { page?: number; limit?: number } = {}
+): Promise<GetCommentsResponse> {
+  const query = new URLSearchParams();
+  query.set("postId", postId);
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+
+  return api<GetCommentsResponse>(`/comments?${query.toString()}`, {
+    method: "GET",
+  });
+}
+
+export async function addComment(
+  postId: string,
+  content: string,
+  image?: File
+): Promise<{ success: true; data: Comment }> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+
+  if (image) {
+    const fd = new FormData();
+    fd.append("postId", postId);
+    fd.append("content", content);
+    fd.append("image", image);
+    
+    return api<{ success: true; data: Comment }>(`/comments`, {
+      method: "POST",
+      body: fd,
+      token: token || undefined,
+    });
+  }
+
+  return api<{ success: true; data: Comment }>(`/comments`, {
+    method: "POST",
+    body: { postId, content },
+    token: token || undefined,
+  });
+}
+
+export async function deleteComment(commentId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/comments/${commentId}`, {
+    method: "DELETE",
+    token: token || undefined,
+  });
+}
+
+export async function getFriendSuggestions(): Promise<GetSuggestionsResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<GetSuggestionsResponse>(`/follows/suggestions`, {
+    method: "GET",
     token: token || undefined,
   });
 }

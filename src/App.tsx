@@ -13,8 +13,7 @@ const ROUTERS = {
   LOGIN: "/login",
   REGISTER: "/register",
   PROFILE: "/profile/:username",
-  FOLLOWERS: "/profile/:username/followers",
-  FOLLOWING: "/profile/:username/following",
+  FOLLOWS: "/profile/:username/:type",
 };
 
 function App() {
@@ -68,11 +67,7 @@ function App() {
               element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
             />
             <Route
-              path={ROUTERS.FOLLOWERS}
-              element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
-            />
-            <Route
-              path={ROUTERS.FOLLOWING}
+              path={ROUTERS.FOLLOWS}
               element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
             />
 

@@ -1,5 +1,5 @@
 import { Home, HelpCircle, LogOut, User } from "lucide-react";
-import AppIcon from "../../assets/app_icon.png";
+import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
@@ -45,10 +45,9 @@ export default function LeftSidebar() {
     <div className="w-[300px] bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
       {/* Logo */}
       <div className="p-5">
-        <div className="flex items-center gap-2">
-          <img src={AppIcon} alt="Logo" className="w-10 h-10 rounded-xl" />
-          <span className="font-bold text-xl text-gray-900">slothui</span>
-        </div>
+        <Link to="/" className="flex items-center gap-2">
+          <img src={AppIcon} alt="Logo" className="w-40 h-15 rounded-xl" />
+        </Link>
       </div>
 
       {/* Search */}

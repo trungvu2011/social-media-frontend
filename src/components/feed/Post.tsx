@@ -8,17 +8,24 @@ interface PostProps {
   post: PostType;
 }
 
+import CommentModal from './CommentModal';
+
 const Post: React.FC<PostProps> = ({ post }) => {
   // State for like functionality
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(Math.max(0, post.likes));
   const [isLiking, setIsLiking] = useState(false);
+  
+  // State for comments
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(post.comments || 0);
 
   // Sync local state when prop updates (e.g. feed refresh)
   React.useEffect(() => {
     setIsLiked(post.isLiked);
     setLikeCount(Math.max(0, post.likes));
-  }, [post.isLiked, post.likes]);
+    setCommentCount(post.comments || 0);
+  }, [post.isLiked, post.likes, post.comments]);
 
   // Get current user for comment avatar
   const authUser = (() => {
@@ -75,10 +82,8 @@ const Post: React.FC<PostProps> = ({ post }) => {
       <div className="flex items-start p-4 pb-3">
         {/* Avatar */}
         <Link to={`/profile/${post.user.username}`} className="flex-shrink-0">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full hover:opacity-80 transition-opacity overflow-hidden">
-            {post.user.avatar && (
-              <img src={post.user.avatar} alt="" className="w-full h-full object-cover" />
-            )}
+          <div className="w-10 h-10 rounded-full hover:opacity-80 transition-opacity overflow-hidden">
+              <img src={post.user.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} alt="" className="w-full h-full object-cover" />
           </div>
         </Link>
         
@@ -146,7 +151,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
       {/* Post Stats */}
       <div className="px-4 py-2 flex items-center gap-4 text-xs text-gray-500">
         <span>{likeCount} Likes</span>
-        <span>{post.comments} Comments</span>
+        <span>{commentCount} Comments</span>
         <span>{post.shares} Share</span>
       </div>
 
@@ -162,7 +167,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
           <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
           <span>Like</span>
         </button>
-        <button className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+        <button 
+          onClick={() => setShowComments(true)}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+        >
           <MessageCircle className="w-5 h-5" />
           <span>Comment</span>
         </button>
@@ -172,19 +180,18 @@ const Post: React.FC<PostProps> = ({ post }) => {
         </button>
       </div>
 
-      {/* Comment Input */}
-      <div className="px-4 py-3 border-t border-gray-100 flex items-center gap-3">
+      {/* Comment Input Preview (triggers modal) */}
+      {/* <div className="px-4 py-3 border-t border-gray-100 flex items-center gap-3">
         <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex-shrink-0 overflow-hidden">
           {authUser?.avatar && (
             <img src={authUser.avatar} alt="" className="w-full h-full object-cover" />
           )}
         </div>
-        <div className="flex-1 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2">
-          <input
-            type="text"
-            placeholder="Write your comment.."
-            className="flex-1 bg-transparent text-sm placeholder-gray-400 focus:outline-none"
-          />
+        <div 
+          onClick={() => setShowComments(true)}
+          className="flex-1 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-100 transition"
+        >
+          <span className="text-sm text-gray-400">Write your comment..</span>
         </div>
         <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
           <Paperclip className="w-4 h-4" />
@@ -192,12 +199,25 @@ const Post: React.FC<PostProps> = ({ post }) => {
         <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors">
           <Smile className="w-4 h-4" />
         </button>
-        <button className="p-2 text-indigo-600 hover:text-indigo-700 rounded-full border border-indigo-600 hover:bg-indigo-50 transition-colors">
+        <button 
+           onClick={() => setShowComments(true)}
+           className="p-2 text-indigo-600 hover:text-indigo-700 rounded-full border border-indigo-600 hover:bg-indigo-50 transition-colors"
+        >
           <Send className="w-4 h-4" />
         </button>
-      </div>
+      </div> */}
+
+      {/* Comment Modal */}
+      {showComments && (
+        <CommentModal
+          postId={post.id}
+          onClose={() => setShowComments(false)}
+          onCommentChange={(delta) => setCommentCount((prev) => prev + delta)}
+        />
+      )}
     </div>
   );
 };
 
 export default Post;
+

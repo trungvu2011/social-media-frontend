@@ -94,7 +94,11 @@ const HomePage: React.FC = () => {
         )}
         {!loading &&
           !error &&
-          posts.map((post) => <Post key={post.id} post={post} />)}
+          posts.map((post) => (
+            <div key={post.id} className="mb-4">
+              <Post post={post} />
+            </div>
+          ))}
       </div>
     </Layout>
   );

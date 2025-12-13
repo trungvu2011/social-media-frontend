@@ -57,7 +57,13 @@ const UserCard: React.FC<UserCardProps> = ({
       <div className="flex items-start space-x-3 flex-1">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full"></div>
+          <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 border border-gray-200">
+            <img 
+              src={user.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
+              alt={user.username} 
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
 
         {/* User Info */}
