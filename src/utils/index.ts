@@ -14,7 +14,7 @@ export type Post = {
   authorId: string;
   content: string;
   images: string[];
-  likeCount: number;
+  likes: string[];
   commentCount: number;
   visibility: string;
   createdAt: string;
@@ -142,6 +142,10 @@ export async function createPost(
   });
 }
 
+export async function getPostById(id: string): Promise<Post> {
+  return api<Post>(`/posts/${id}`, { method: "GET" });
+}
+
 // ---------- Posts (GET list) ----------
 export type BackendAuthor = {
   _id: string;
@@ -156,7 +160,7 @@ export type BackendPostListItem = {
   content?: string;
   text?: string;
   images: string[];
-  likeCount: number;
+  likes: string[];
   commentCount: number;
   visibility: string;
   createdAt: string;
@@ -418,6 +422,52 @@ export async function getFriendSuggestions(): Promise<GetSuggestionsResponse> {
     sessionStorage.getItem("access_token");
   return api<GetSuggestionsResponse>(`/follows/suggestions`, {
     method: "GET",
+    token: token || undefined,
+  });
+}
+
+// ---------- Notification API ----------
+export type Notification = {
+  _id: string;
+  type: "like" | "comment" | "follow";
+  senderId: {
+    userName: string;
+    fullName?: string;
+    avatar?: string;
+  };
+  receiverId: string;
+  isRead: boolean;
+  content: string;
+  referenceId?: string;
+  createdAt: string;
+};
+
+export async function getNotifications(): Promise<Notification[]> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<Notification[]>(`/notifications/`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+export async function markNotificationRead(id: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/notifications/${id}/read`, {
+    method: "PUT",
+    token: token || undefined,
+  });
+}
+
+export async function markAllNotificationsRead(): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/notifications/read-all`, {
+    method: "PUT",
     token: token || undefined,
   });
 }

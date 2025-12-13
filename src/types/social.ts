@@ -12,11 +12,11 @@ export interface Post {
   user: User;
   content: string;
   images?: string[];
-  likes: number;
-  comments: number;
+  likes: string[];
+  commentCount: number;
   shares: number;
   createdAt: string;
-  isLiked: boolean;
+  isLiked?: boolean;
 }
 
 export interface Story {

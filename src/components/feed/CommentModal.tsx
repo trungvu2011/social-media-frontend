@@ -8,18 +8,21 @@ import {
   getProfile,
   type UserProfile,
 } from "../../utils";
+import type { Post as PostType } from "../../types/social";
+import Post from "./Post";
 
 interface CommentModalProps {
-  postId: string;
+  post: PostType;
   onClose: () => void;
   onCommentChange?: (delta: number) => void; 
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
-  postId,
+  post,
   onClose,
   onCommentChange,
 }) => {
+  const postId = post.id;
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -154,8 +157,8 @@ const CommentModal: React.FC<CommentModalProps> = ({
       
       <div className="relative bg-white w-full max-w-2xl h-[80vh] rounded-xl flex flex-col shadow-2xl overflow-hidden border border-gray-200">
         
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 text-center w-full">Comments</h3>
+        <div className="flex items-center justify-between p-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <h3 className="text-xl font-bold text-gray-900 text-center w-full">Post</h3>
           <button 
             onClick={onClose}
             className="absolute right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition"
@@ -166,8 +169,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
         <div 
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-4 space-y-4"
+          className="flex-1 overflow-y-auto p-0 space-y-0"
         >
+          {/* Post Content */}
+          <div className="border-b border-gray-200">
+             <Post post={post} onCommentClick={() => fileInputRef.current?.previousElementSibling?.querySelector('textarea')?.focus()} />
+          </div>
+
+          <div className="p-4 space-y-4">
           {comments.length === 0 && !loading && (
             <div className="text-center text-gray-500 mt-10">
               No comments yet. Be the first to share your thoughts!
@@ -222,6 +231,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
               View more comments
             </button>
           )}
+          </div>
         </div>
 
         <div className="p-4 border-t border-gray-100 bg-white">

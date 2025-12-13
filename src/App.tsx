@@ -7,6 +7,8 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import { useEffect, useState } from "react";
 import ProfilePage from "./pages/profile/ProfilePage";
 import FollowListPage from "./pages/profile/FollowListPage";
+import NotificationPage from "./pages/notification/NotificationPage";
+import PostPage from "./pages/post/PostPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -14,6 +16,8 @@ const ROUTERS = {
   REGISTER: "/register",
   PROFILE: "/profile/:username",
   FOLLOWS: "/profile/:username/:type",
+  NOTIFICATIONS: "/notifications",
+  POST: "/post/:id",
 };
 
 function App() {
@@ -69,6 +73,14 @@ function App() {
             <Route
               path={ROUTERS.FOLLOWS}
               element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.NOTIFICATIONS}
+              element={authUser ? <NotificationPage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path={ROUTERS.POST}
+              element={authUser ? <PostPage /> : <Navigate to="/login" />}
             />
 
             <Route

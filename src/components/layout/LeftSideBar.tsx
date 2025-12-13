@@ -1,4 +1,4 @@
-import { Home, HelpCircle, LogOut, User } from "lucide-react";
+import { Home, HelpCircle, LogOut, User, Bell } from "lucide-react";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { signOut } from "../../utils";
 export default function LeftSidebar() {
   const menuItems = [
     { id: "", icon: Home, label: "Feed" },
+    { id: "notifications", icon: Bell, label: "Notifications" },
     { id: "profile", icon: User, label: "Profile" },
     { id: "help", icon: HelpCircle, label: "Help & Support" },
   ];
@@ -27,17 +28,17 @@ export default function LeftSidebar() {
   const handleLogout = async () => {
     try {
       await signOut();
-    } finally {
-      try {
-        localStorage.removeItem("auth_user");
-        localStorage.removeItem("access_token");
-      } catch {}
-      try {
-        sessionStorage.removeItem("auth_user");
-        sessionStorage.removeItem("access_token");
-      } catch {}
-      navigate("/login", { replace: true });
-      setTimeout(() => window.location.reload(), 0);
+      localStorage.removeItem("auth_user");
+      localStorage.removeItem("access_token");
+      sessionStorage.removeItem("auth_user");
+      sessionStorage.removeItem("access_token");
+      
+      // Dispatch storage event to update App state immediately
+      window.dispatchEvent(new Event("storage"));
+      
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
     }
   };
 

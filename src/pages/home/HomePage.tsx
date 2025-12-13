@@ -25,11 +25,11 @@ const HomePage: React.FC = () => {
     },
     content: (p.text ?? p.content ?? "").toString(),
     images: Array.isArray(p.images) ? p.images : [],
-    likes: p.likeCount ?? 0,
-    comments: p.commentCount ?? 0,
+    likes: p.likes || [],
+    commentCount: p.commentCount ?? 0,
     shares: 0,
     createdAt: p.createdAt,
-    isLiked: false,
+    isLiked: false, // Post component handles this via useEffect
   });
 
   // Fetch posts when feedType changes

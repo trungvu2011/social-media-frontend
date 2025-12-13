@@ -8,26 +8,16 @@ interface PostProps {
   post: PostType;
 }
 
-import CommentModal from './CommentModal';
 
-const Post: React.FC<PostProps> = ({ post }) => {
-  // State for like functionality
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(Math.max(0, post.likes));
-  const [isLiking, setIsLiking] = useState(false);
-  
-  // State for comments
-  const [showComments, setShowComments] = useState(false);
-  const [commentCount, setCommentCount] = useState(post.comments || 0);
+const CommentModal = React.lazy(() => import('./CommentModal'));
 
-  // Sync local state when prop updates (e.g. feed refresh)
-  React.useEffect(() => {
-    setIsLiked(post.isLiked);
-    setLikeCount(Math.max(0, post.likes));
-    setCommentCount(post.comments || 0);
-  }, [post.isLiked, post.likes, post.comments]);
+interface PostProps {
+  post: PostType;
+  onCommentClick?: () => void;
+}
 
-  // Get current user for comment avatar
+const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
+  // Get current user for checks
   const authUser = (() => {
     try {
       const stored = localStorage.getItem("auth_user") || sessionStorage.getItem("auth_user");
@@ -36,6 +26,27 @@ const Post: React.FC<PostProps> = ({ post }) => {
       return null;
     }
   })();
+
+  // State for like functionality
+  const [isLiked, setIsLiked] = useState(Array.isArray(post.likes) ? post.likes.includes(authUser?.id || authUser?._id) : false);
+  const [likeCount, setLikeCount] = useState(Array.isArray(post.likes) ? post.likes.length : 0);
+  const [isLiking, setIsLiking] = useState(false);
+  
+  // State for comments
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(post.commentCount || 0);
+
+  // Sync local state when prop updates (e.g. feed refresh)
+  React.useEffect(() => {
+    console.log(post);
+    console.log(authUser);
+    if (Array.isArray(post.likes)) {
+       setIsLiked(post.likes.includes(authUser?.id || authUser?._id));
+       setLikeCount(post.likes.length);
+    }
+    setCommentCount(post.commentCount || 0); 
+  }, [post.likes, post.commentCount]);
+
 
   // Handle like/unlike
   const handleLike = async () => {
@@ -168,7 +179,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
           <span>Like</span>
         </button>
         <button 
-          onClick={() => setShowComments(true)}
+          onClick={onCommentClick ? onCommentClick : () => setShowComments(true)}
           className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
         >
           <MessageCircle className="w-5 h-5" />
@@ -209,11 +220,13 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
       {/* Comment Modal */}
       {showComments && (
-        <CommentModal
-          postId={post.id}
-          onClose={() => setShowComments(false)}
-          onCommentChange={(delta) => setCommentCount((prev) => prev + delta)}
-        />
+        <React.Suspense fallback={null}>
+          <CommentModal
+            post={post}
+            onClose={() => setShowComments(false)}
+            onCommentChange={(delta) => setCommentCount((prev) => prev + delta)}
+          />
+        </React.Suspense>
       )}
     </div>
   );
