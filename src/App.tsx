@@ -8,7 +8,10 @@ import { useEffect, useState } from "react";
 import ProfilePage from "./pages/profile/ProfilePage";
 import FollowListPage from "./pages/profile/FollowListPage";
 import NotificationPage from "./pages/notification/NotificationPage";
+
 import PostPage from "./pages/post/PostPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -18,6 +21,8 @@ const ROUTERS = {
   FOLLOWS: "/profile/:username/:type",
   NOTIFICATIONS: "/notifications",
   POST: "/post/:id",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
 };
 
 function App() {
@@ -60,6 +65,14 @@ function App() {
             <Route
               path={ROUTERS.REGISTER}
               element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path={ROUTERS.FORGOT_PASSWORD}
+              element={!authUser ? <ForgotPasswordPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path={ROUTERS.RESET_PASSWORD}
+              element={!authUser ? <ResetPasswordPage /> : <Navigate to="/" />}
             />
 
             <Route

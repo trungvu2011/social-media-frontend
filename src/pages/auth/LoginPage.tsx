@@ -123,7 +123,7 @@ function LoginPage() {
                 <span className="text-sm text-gray-700">Remember me</span>
               </label>
               <a
-                href="#"
+                href="/forgot-password"
                 className="text-sm text-red-600 hover:text-red-700 font-medium"
               >
                 Forgot Password
