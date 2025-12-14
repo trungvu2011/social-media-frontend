@@ -338,6 +338,17 @@ export async function unlikePost(postId: string): Promise<void> {
   });
 }
 
+// Get posts liked by user
+export async function getLikedPosts(userId: string): Promise<GetAllPostsResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<GetAllPostsResponse>(`/likes/user/${userId}/posts`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
 // ---------- Comment API ----------
 export type Comment = {
   _id: string;

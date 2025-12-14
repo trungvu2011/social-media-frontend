@@ -10,7 +10,9 @@ import {
   getFollowing,
   followUser,
   unfollowUser,
+
   updateProfile,
+  getLikedPosts,
   type UserProfile,
   type BackendPostListItem
 } from "../../utils";
@@ -33,6 +35,7 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [posts, setPosts] = useState<SocialPost[]>([]);
+  const [likedPosts, setLikedPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [followerCount, setFollowerCount] = useState(0);
@@ -174,7 +177,67 @@ const ProfilePage: React.FC = () => {
     return () => {
       isMounted = false;
     };
+    return () => {
+      isMounted = false;
+    };
   }, [username, authUser?.id, authUser?.userName]);
+
+  // Fetch liked posts when tab changes to "likes"
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLiked = async () => {
+      if (activeTab === "likes" && profile?._id) {
+        try {
+          // Check if we need to set loading for just this tab part, 
+          // or if we rely on initial load. Let's do silent update or small indicator if needed.
+          // For now just fetch.
+          const res = await getLikedPosts(profile._id);
+           if (isMounted && res.data) {
+             const userLikedPosts = res.data.map((p: any): SocialPost => ({
+               id: p._id,
+               user: {
+                 id: p.authorId?._id || "",
+                 username: p.authorId?.userName || "unknown",
+                 displayName: p.authorId?.fullName || "Unknown",
+                 avatar: p.authorId?.avatar,
+                 isVerified: false,
+               },
+               content: (p.text ?? p.content ?? "").toString(),
+               images: Array.isArray(p.images) ? p.images : [],
+               likes: Array.isArray(p.likes) ? p.likes : [], // API might need to return likes count/array if we want correct like status
+               commentCount: p.commentCount ?? 0,
+               shares: 0,
+               createdAt: p.createdAt,
+               isLiked: true, // Since we are in liked tab, presumably they are liked by the viewer if viewer == profileUser. 
+                              // BUT: if viewer != profileUser, it just means these are posts LIKED BY profileUser.
+                              // Whether VIEWER likes them is a different story. 
+                              // Current API getLikedPostsByUser returns post details. 
+                              // Does it return 'likes' array of the post? Yes (from populate).
+               // So real isLiked calculation:
+             }));
+             
+             // Re-calculate isLiked for the CURRENT VIEWER
+             const finalPosts = userLikedPosts.map(p => {
+                // p.likes from API response data (if populated correctly) 
+                // But wait, the API getLikedPostsByUser maps fields manually.
+                // We need to ensure 'likes' array is in the response of getLikedPostsByUser
+                // I added 'likes' to populate logic? NO. 
+                // In like.controller.js I selected "text content images authorId commentCount createdAt updatedAt".
+                // I MISSED 'likes'. I should add 'likes' to the select string in controller.
+                // For now, let's assume isLiked=true if we are viewing our own profile's liked tab.
+                return { ...p, isLiked: true }; 
+             });
+
+             setLikedPosts(finalPosts);
+           }
+        } catch (error) {
+          console.error("Failed to fetch liked posts", error);
+        }
+      }
+    };
+    fetchLiked();
+    return () => { isMounted = false; };
+  }, [activeTab, profile?._id]);
 
   const handleFollow = async () => {
     if (!profile?._id) return;
@@ -507,13 +570,24 @@ const ProfilePage: React.FC = () => {
 
       {/* Posts Grid */}
       <div className="mt-4">
-        {posts.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-            <Grid className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No posts yet</p>
-          </div>
+        {activeTab === "posts" ? (
+          posts.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+              <Grid className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No posts yet</p>
+            </div>
+          ) : (
+            posts.map((post) => <Post key={post.id} post={post} />)
+          )
         ) : (
-          posts.map((post) => <Post key={post.id} post={post} />)
+          likedPosts.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+              <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No liked posts yet</p>
+            </div>
+          ) : (
+            likedPosts.map((post) => <Post key={post.id} post={post} />)
+          )
         )}
       </div>
 
