@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
 import Post from "../../components/feed/Post";
-import { getPostById, type BackendPostListItem, type BackendAuthor } from "../../utils"; // Using direct utils type first to fetch, then map
+import { getPostById } from "../../utils"; // Using direct utils type first to fetch, then map
 import type { Post as SocialPost } from "../../types/social";
 
 const PostPage: React.FC = () => {

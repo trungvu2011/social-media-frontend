@@ -3,14 +3,12 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
 import Post from "../../components/feed/Post";
 import { 
-  getProfileById, 
   getProfileByUserName,
   getAllPosts, 
   getFollowers, 
   getFollowing,
   followUser,
   unfollowUser,
-
   updateProfile,
   getLikedPosts,
   type UserProfile,

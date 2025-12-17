@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { ArrowRight, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getFriendSuggestions, followUser, type UserProfile } from "../../utils";
 

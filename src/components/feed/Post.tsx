@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Post as PostType } from '../../types/social';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Paperclip, Smile, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { likePost, unlikePost } from '../../utils';
 
 interface PostProps {

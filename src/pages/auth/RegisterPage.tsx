@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signUp, googleLogin } from "../../utils";
 import { useGoogleLogin } from '@react-oauth/google';
-import type { LoginSuccessResponse } from "../../utils";
 import RegisterImage from "../../assets/register_image.png";
 
 function RegisterPage() {
