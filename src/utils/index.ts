@@ -90,6 +90,15 @@ export async function login(
   });
 }
 
+export async function googleLogin(
+  credential: string
+): Promise<LoginSuccessResponse> {
+  return api<LoginSuccessResponse>(`/users/google-login`, {
+    method: "POST",
+    body: { credential },
+  });
+}
+
 export async function signUp(
   userName: string,
   fullName: string,
