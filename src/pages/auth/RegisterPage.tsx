@@ -5,6 +5,8 @@ import { signUp, googleLogin } from "../../utils";
 import { useGoogleLogin } from '@react-oauth/google';
 import RegisterImage from "../../assets/register_image.png";
 
+import SocialHubLogo from "../../assets/socialhub-horizontal.png";
+
 function RegisterPage() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -97,10 +99,7 @@ function RegisterPage() {
         <div className="lg:pr-8">
           <div className="mb-8 flex justify-end">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">S</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">slothui</span>
+              <img src={SocialHubLogo} alt="SocialHub" className="h-12 w-auto" />
             </div>
           </div>
 

@@ -27,3 +27,13 @@ export interface RegisterFormErrors {
   confirmPassword?: string;
   username?: string;
 }
+
+export interface User {
+  _id: string;
+  userName: string;
+  fullName: string;
+  email: string;
+  avatar?: string;
+  backgroundImage?: string;
+  role?: "user" | "admin";
+}

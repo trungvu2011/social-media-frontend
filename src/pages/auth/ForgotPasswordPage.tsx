@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Loader } from "lucide-react";
-import AppIcon from "../../assets/app_icon.png";
+import SocialHubLogo from "../../assets/socialhub-horizontal.png";
 import { api } from "../../utils";
 
 function ForgotPasswordPage() {
@@ -38,7 +38,7 @@ function ForgotPasswordPage() {
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img src={AppIcon} alt="Logo" className="w-12 h-12 rounded-full" />
+            <img src={SocialHubLogo} alt="SocialHub" className="h-12 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Forgot Password

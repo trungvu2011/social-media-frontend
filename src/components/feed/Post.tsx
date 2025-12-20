@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Post as PostType } from '../../types/social';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Flag } from 'lucide-react';
 import { likePost, unlikePost } from '../../utils';
 
 interface PostProps {
@@ -10,6 +10,7 @@ interface PostProps {
 
 
 const CommentModal = React.lazy(() => import('./CommentModal'));
+const ReportModal = React.lazy(() => import('../ReportModal'));
 
 interface PostProps {
   post: PostType;
@@ -35,6 +36,10 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
   // State for comments
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(post.commentCount || 0);
+
+  // State for report/options
+  const [showOptions, setShowOptions] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   // Sync local state when prop updates (e.g. feed refresh)
   React.useEffect(() => {
@@ -121,9 +126,35 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
           </Link>
         </div>
         
-        <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-          <MoreHorizontal className="w-5 h-5 text-gray-400" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={() => setShowOptions(!showOptions)}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <MoreHorizontal className="w-5 h-5 text-gray-400" />
+          </button>
+          
+          {showOptions && (
+            <>
+              <div 
+                className="fixed inset-0 z-10 cursor-default" 
+                onClick={() => setShowOptions(false)}
+              ></div>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-100">
+                <button
+                  onClick={() => {
+                    setShowOptions(false);
+                    setShowReportModal(true);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                >
+                  <Flag className="w-4 h-4" />
+                  Report Post
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Post Content */}
@@ -225,6 +256,15 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
             post={post}
             onClose={() => setShowComments(false)}
             onCommentChange={(delta) => setCommentCount((prev) => prev + delta)}
+          />
+        </React.Suspense>
+      )}
+
+      {showReportModal && (
+        <React.Suspense fallback={null}>
+          <ReportModal
+            postId={post.id}
+            onClose={() => setShowReportModal(false)}
           />
         </React.Suspense>
       )}

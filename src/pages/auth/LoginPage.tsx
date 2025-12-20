@@ -5,7 +5,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { login, googleLogin } from "../../utils";
 import type { LoginSuccessResponse } from "../../utils";
 import LoginImage from "../../assets/login_image.png";
-import AppIcon from "../../assets/app_icon.png";
+import SocialHubLogo from "../../assets/socialhub-horizontal.png";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -72,13 +72,10 @@ function LoginPage() {
           <div className="mb-8">
             <div className="flex items-center gap-2">
               <img
-                src={AppIcon}
-                alt="Logo"
-                className="w-12 h-12 rounded-full"
+                src={SocialHubLogo}
+                alt="SocialHub"
+                className="h-12 w-auto"
               />
-              <span className="font-bold text-xl content-center mb-2">
-                slothui
-              </span>
             </div>
           </div>
 

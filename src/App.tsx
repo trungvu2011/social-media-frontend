@@ -12,6 +12,7 @@ import NotificationPage from "./pages/notification/NotificationPage";
 import PostPage from "./pages/post/PostPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import AdminPage from "./pages/admin/AdminPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -23,6 +24,7 @@ const ROUTERS = {
   POST: "/post/:id",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
+  ADMIN: "/admin",
 };
 
 function App() {
@@ -94,6 +96,17 @@ function App() {
             <Route
               path={ROUTERS.POST}
               element={authUser ? <PostPage /> : <Navigate to="/login" />}
+            />
+
+            <Route
+              path={ROUTERS.ADMIN}
+              element={
+                authUser && authUser.role === "admin" ? (
+                  <AdminPage />
+                ) : (
+                  <Navigate to={ROUTERS.HOME} />
+                )
+              }
             />
 
             <Route

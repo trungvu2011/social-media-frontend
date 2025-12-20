@@ -151,8 +151,8 @@ export async function createPost(
   });
 }
 
-export async function getPostById(id: string): Promise<Post> {
-  return api<Post>(`/posts/${id}`, { method: "GET" });
+export async function getPostById(id: string): Promise<BackendPostListItem> {
+  return api<BackendPostListItem>(`/posts/${id}`, { method: "GET" });
 }
 
 // ---------- Posts (GET list) ----------
@@ -215,6 +215,33 @@ export async function getFollowedPosts(): Promise<GetAllPostsResponse> {
   });
 }
 
+export async function deletePost(id: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/posts/${id}`, {
+    method: "DELETE",
+    token: token || undefined,
+  });
+}
+
+export type AdminStats = {
+  totalUsers: number;
+  totalPosts: number;
+  userGrowth: { _id: string; count: number }[];
+  postGrowth: { _id: string; count: number }[];
+};
+
+export async function getAdminStats(): Promise<AdminStats> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<AdminStats>(`/users/stats`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
 // ---------- User Profile API ----------
 export type UserProfile = {
   _id: string;
@@ -229,6 +256,8 @@ export type UserProfile = {
   isVerified?: boolean;
   createdAt: string;
   updatedAt: string;
+  postCount?: number;
+  role?: "user" | "admin";
 };
 
 export async function getProfile(): Promise<UserProfile> {
@@ -280,6 +309,26 @@ export async function updateProfile(data: UpdateProfileData): Promise<UserProfil
   return api<UserProfile>(`/users/profile`, {
     method: "PUT",
     body: fd,
+    token: token || undefined,
+  });
+}
+
+export async function getAllUsers(): Promise<UserProfile[]> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<UserProfile[]>(`/users`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/users/${userId}`, {
+    method: "DELETE",
     token: token || undefined,
   });
 }
@@ -490,4 +539,69 @@ export async function markAllNotificationsRead(): Promise<void> {
     method: "PUT",
     token: token || undefined,
   });
+}
+
+// ---------- Report API ----------
+export async function createReport(postId: string, reason: string, details?: string): Promise<void> {
+  const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+  await api(`/reports`, {
+    method: "POST",
+    body: { postId, reason, details },
+    token: token || undefined,
+  });
+}
+
+export type Report = {
+  _id: string;
+  reporterId: {
+    _id: string;
+    userName: string;
+    fullName: string;
+    avatar?: string;
+  };
+  postId: {
+    _id: string;
+    text?: string;
+    content?: string;
+    images?: string[];
+    authorId: {
+      fullName: string;
+      userName: string;
+      avatar?: string;
+    };
+    createdAt: string;
+  };
+  reason: string;
+  details?: string;
+  status: "pending" | "resolved" | "dismissed";
+  createdAt: string;
+};
+
+export type GetReportsResponse = {
+  reports: Report[];
+  currentPage: number;
+  totalPages: number;
+  totalReports: number;
+};
+
+export async function getReports(page: number = 1, limit: number = 10, status?: string): Promise<GetReportsResponse> {
+    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+    const query = new URLSearchParams();
+    query.set("page", String(page));
+    query.set("limit", String(limit));
+    if (status) query.set("status", status);
+
+    return api<GetReportsResponse>(`/reports?${query.toString()}`, {
+        method: "GET",
+        token: token || undefined,
+    });
+}
+
+export async function updateReportStatus(reportId: string, status: "resolved" | "dismissed"): Promise<void> {
+    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+    await api(`/reports/${reportId}`, {
+        method: "PATCH",
+        body: { status },
+        token: token || undefined,
+    });
 }
