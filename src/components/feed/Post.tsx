@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Post as PostType } from '../../types/social';
 import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Flag } from 'lucide-react';
 import { likePost, unlikePost } from '../../utils';
+import { useSocketContext } from '../../context/SocketContext';
 
 interface PostProps {
   post: PostType;
@@ -43,8 +44,6 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
 
   // Sync local state when prop updates (e.g. feed refresh)
   React.useEffect(() => {
-    console.log(post);
-    console.log(authUser);
     if (Array.isArray(post.likes)) {
        setIsLiked(post.likes.includes(authUser?.id || authUser?._id));
        setLikeCount(post.likes.length);
@@ -52,6 +51,55 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
     setCommentCount(post.commentCount || 0); 
   }, [post.likes, post.commentCount]);
 
+  // Real-time Socket.io listeners
+  const { socket, isConnected } = useSocketContext();
+
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    // Join post room to receive updates
+    const postId = post.id;
+    // ...
+    socket.emit('join:post', postId);
+
+    // Listen for like events
+    const handlePostLiked = (data: any) => {
+      if (data.postId === postId) {
+        setLikeCount(data.likeCount);
+        // Update isLiked if current user liked
+        if (data.userId === (authUser?.id || authUser?._id)) {
+          setIsLiked(true);
+        }
+      }
+    };
+
+    const handlePostUnliked = (data: any) => {
+      if (data.postId === postId) {
+        setLikeCount(data.likeCount);
+        // Update isLiked if current user unliked
+        if (data.userId === (authUser?.id || authUser?._id)) {
+          setIsLiked(false);
+        }
+      }
+    };
+
+    const handleCommentAdded = (data: any) => {
+      if (data.postId === postId) {
+        setCommentCount(data.commentCount);
+      }
+    };
+
+    socket.on('post:liked', handlePostLiked);
+    socket.on('post:unliked', handlePostUnliked);
+    socket.on('comment:added', handleCommentAdded);
+
+    return () => {
+      socket.emit('leave:post', postId);
+      socket.off('post:liked', handlePostLiked);
+      socket.off('post:unliked', handlePostUnliked);
+      socket.off('comment:added', handleCommentAdded);
+    };
+  }, [socket, isConnected, post.id, authUser?.id, authUser?._id]);
 
   // Handle like/unlike
   const handleLike = async () => {

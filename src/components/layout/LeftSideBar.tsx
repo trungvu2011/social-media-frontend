@@ -3,6 +3,7 @@ import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
+import { NotificationBadge } from "./NotificationBadge";
 
 export default function LeftSidebar() {
   const menuItems = [
@@ -76,7 +77,11 @@ export default function LeftSidebar() {
               to={path}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <item.icon className="w-5 h-5" />
+              {item.id === "notifications" ? (
+                <NotificationBadge />
+              ) : (
+                <item.icon className="w-6 h-6" />
+              )}
               <span className="font-medium">{item.label}</span>
             </Link>
           );

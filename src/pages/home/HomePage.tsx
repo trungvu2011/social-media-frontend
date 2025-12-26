@@ -1,6 +1,7 @@
 import Layout from "../../components/layout/Layout";
 import CreatePost from "../../components/feed/CreatePost";
 import Post from "../../components/feed/Post";
+import { NewPostsBanner } from "../../components/feed/NewPostsBanner";
 
 import { useEffect, useState } from "react";
 import { getAllPosts, getFollowedPosts, type BackendPostListItem } from "../../utils";
@@ -68,12 +69,36 @@ const HomePage: React.FC = () => {
     };
   }, [feedType]);
 
+  const handleLoadNewPosts = async () => {
+    try {
+      setLoading(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      
+      let res;
+      if (feedType === "forYou") {
+        res = await getAllPosts({ page: 1, limit: 20, order: "desc" });
+      } else {
+        res = await getFollowedPosts();
+      }
+      
+      const mapped = res.data.map(mapToSocialPost);
+      setPosts(mapped);
+    } catch (e) {
+      console.error("Failed to refresh feed:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <Header feedType={feedType} setFeedType={setFeedType} />
 
       {/* Create Post */}
       <CreatePost />
+
+      {/* New Posts Banner */}
+      <NewPostsBanner onLoadNewPosts={handleLoadNewPosts} />
 
       {/* Feed Posts */}
       <div className="mt-4">
