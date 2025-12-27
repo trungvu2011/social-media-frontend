@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useSocketContext } from "../../context/SocketContext";
 import { X, Send, Image as ImageIcon, Trash2 } from "lucide-react";
 import {
   getPostComments,
@@ -37,35 +36,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { socket, isConnected } = useSocketContext(); // Get socket context
-
-  useEffect(() => {
-    if (!socket || !isConnected) return;
-
-    // Join room just in case
-    // Join room just in case
-    socket.emit("join:post", postId);
-
-    const handleCommentAdded = (data: any) => {
-      if (data.postId === postId) {
-        setComments((prev) => {
-          const exists = prev.some((c) => c._id === data.comment._id);
-          if (exists) return prev;
-          
-          // Post component handles count update via its own listener
-          return [data.comment, ...prev];
-        });
-      }
-    };
-
-    socket.on("comment:added", handleCommentAdded);
-    
-    return () => {
-      socket.emit("leave:post", postId); // Clean up
-      socket.off("comment:added", handleCommentAdded);
-    };
-  }, [socket, isConnected, postId, onCommentChange]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -147,13 +117,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
          };
       }
 
-      setComments((prev) => {
-        // Optimistic update: Check if socket already added it
-        if (prev.some(c => c._id === createdComment._id)) {
-           return prev;
-        }
-        return [createdComment, ...prev];
-      });
+      setComments((prev) => [createdComment, ...prev]);
       setNewComment("");
       clearImage();
       
