@@ -649,7 +649,9 @@ export type ChatConversation = {
   _id: string;
   members: ChatUser[];
   lastMessage?: ChatMessage;
+  isDraft?: boolean;
 };
+
 export async function getUserConversations(): Promise<ChatConversation[]> {
   const token =
     localStorage.getItem("access_token") ||

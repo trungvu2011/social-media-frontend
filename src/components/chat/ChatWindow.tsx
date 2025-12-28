@@ -1,16 +1,17 @@
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
-import { type ChatMessage } from "../../utils";
+import { type ChatMessage, type ChatUser } from "../../utils";
+import { Info, Video } from "lucide-react";
 
 interface ChatWindowProps {
   messages: ChatMessage[];
+  otherUser: ChatUser | undefined;
   currentUserId: string;
   onSendMessage: (content: string) => void;
   loading: boolean;
   isConnected: boolean;
   hasMore: boolean;
   onLoadMore: () => void;
-  conversationName?: string;
   isTyping?: boolean;
   onTyping?: () => void;
 }
@@ -18,43 +19,58 @@ interface ChatWindowProps {
 export const ChatWindow = ({
   messages,
   currentUserId,
+  otherUser,
   onSendMessage,
   loading,
   isConnected,
   hasMore,
   onLoadMore,
-  conversationName,
   isTyping = false,
   onTyping,
 }: ChatWindowProps) => {
   return (
-    <div className="flex-1 flex flex-col bg-gray-50">
+    <div className="flex-1  flex flex-col bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mx-10 my-4">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800">
-            {conversationName || "Chọn một cuộc trò chuyện"}
-          </h2>
-          {/* <div className="flex items-center gap-2 mt-1">
-            <div
-              className={`w-2 h-2 rounded-full ${
-                isConnected ? "bg-green-500" : "bg-red-500"
-              }`}
+        <div className="flex items-center space-x-4">
+          {/* avatar and name */}
+          {otherUser?.avatar ? (
+            <img
+              src={otherUser.avatar}
+              alt={otherUser.fullName || otherUser.userName}
+              className="w-12 h-12 rounded-full object-cover"
             />
-            <span className="text-xs text-gray-500">
-              {isTyping
-                ? "Đang nhập..."
-                : isConnected
-                ? "Đang hoạt động"
-                : "Mất kết nối"}
-            </span>
-          </div> */}
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-lg">
+              {(otherUser?.fullName ||
+                otherUser?.userName ||
+                "? ")[0].toUpperCase()}
+            </div>
+          )}
+          <div className="flex flex-col">
+            <h3 className={`truncate font-semibold text-gray-900`}>
+              {otherUser?.fullName || otherUser?.userName || "Unknown"}
+            </h3>
+            {isTyping && (
+              <div className="text-sm text-gray-500">Đang nhập…</div>
+            )}
+          </div>
+        </div>
+        {/* icon button */}
+        <div>
+          <button className="p-2 rounded-full hover:bg-gray-100 transition ">
+            <Video size={20} />
+          </button>
+          <button className="p-2 rounded-full hover:bg-gray-100 transition ml-2">
+            <Info size={20} />
+          </button>
         </div>
       </div>
 
       {/* Messages */}
       <MessageList
         messages={messages}
+        otherUser={otherUser}
         currentUserId={currentUserId}
         loading={loading}
         hasMore={hasMore}

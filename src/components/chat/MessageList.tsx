@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef } from "react";
-import { type ChatMessage } from "../../utils";
+import { type ChatMessage, type ChatUser } from "../../utils";
 
 interface MessageListProps {
   messages: ChatMessage[];
+  otherUser?: ChatUser;
   currentUserId: string;
   loading: boolean;
   hasMore: boolean;
@@ -11,6 +12,7 @@ interface MessageListProps {
 
 export const MessageList = ({
   messages,
+  otherUser,
   currentUserId,
   loading,
   hasMore,
@@ -68,11 +70,36 @@ export const MessageList = ({
             new Date(messages[index - 1].createdAt).getTime() >
             5 * 60 * 1000; // 5 minutes
 
+        // Check if this is the first message from the same sender (show avatar)
+        const isFirstMessageFromSender =
+          index === 0 || messages[index - 1].senderId !== message.senderId;
+
         return (
           <div
             key={message._id}
             className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
           >
+            {!isOwnMessage && (
+              <div className="flex items-start   ">
+                {isFirstMessageFromSender ? (
+                  otherUser?.avatar ? (
+                    <img
+                      src={otherUser.avatar}
+                      alt={otherUser.userName}
+                      className="w-8 h-8 rounded-full mr-2 object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-sm mr-2">
+                      {(otherUser?.fullName ||
+                        otherUser?.userName ||
+                        "? ")[0].toUpperCase()}
+                    </div>
+                  )
+                ) : (
+                  <div className="w-8 h-8 mr-2" />
+                )}
+              </div>
+            )}
             <div
               className={`max-w-[70%] ${
                 isOwnMessage ? "items-end" : "items-start"

@@ -60,7 +60,6 @@ export const useChat = () => {
   const sendMessage = useCallback(
     (content: string, toUserId: string) => {
       if (!content.trim()) return;
-
       emit("send_message", {
         toUserId,
         content: content.trim(),
@@ -73,6 +72,11 @@ export const useChat = () => {
   const markAsSeen = useCallback(
     (conversationId: string) => {
       if (socket && isConnected) {
+        //log
+        console.log(
+          " Marking messages as seen for conversation:",
+          conversationId
+        );
         emit("seen_message", { conversationId });
       }
     },
@@ -95,7 +99,9 @@ export const useChat = () => {
 
     const handleReceiveMessage = (message: ChatMessage) => {
       console.log("📨 Received message:", message);
-
+      if (activeConversationId === null) {
+        setActiveConversationId(message.conversationId);
+      }
       // Add to messages if it's for active conversation
       if (message.conversationId === activeConversationId) {
         setMessages((prev) => [...prev, message]);
@@ -104,14 +110,7 @@ export const useChat = () => {
         markAsSeen(message.conversationId);
       }
 
-      // Update last message in conversations list
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv._id === message.conversationId
-            ? { ...conv, lastMessageData: message }
-            : conv
-        )
-      );
+      // Note: Conversation list will be updated via conversation_updated event
     };
 
     const handleMessageSeen = ({
@@ -154,16 +153,42 @@ export const useChat = () => {
       // You can show toast notification here
     };
 
+    const handleConversationUpdated = (
+      updatedConversation: ChatConversation
+    ) => {
+      console.log("🔄 Conversation updated:", updatedConversation);
+
+      setConversations((prev) => {
+        const existingIndex = prev.findIndex(
+          (conv) => conv._id === updatedConversation._id
+        );
+
+        if (existingIndex >= 0) {
+          // Update existing conversation and move to top
+          const updated = [...prev];
+          updated[existingIndex] = updatedConversation;
+          // Move to top
+          updated.unshift(updated.splice(existingIndex, 1)[0]);
+          return updated;
+        } else {
+          // Add new conversation at top
+          return [updatedConversation, ...prev];
+        }
+      });
+    };
+
     on("receive_message", handleReceiveMessage);
     on("message_seen", handleMessageSeen);
     on("typing", handleTyping);
     on("chat_error", handleChatError);
+    on("conversation_updated", handleConversationUpdated);
 
     return () => {
       off("receive_message", handleReceiveMessage);
       off("message_seen", handleMessageSeen);
       off("typing", handleTyping);
       off("chat_error", handleChatError);
+      off("conversation_updated", handleConversationUpdated);
     };
   }, [socket, activeConversationId, on, off, markAsSeen]);
 
@@ -182,6 +207,7 @@ export const useChat = () => {
 
   return {
     conversations,
+    setConversations,
     messages,
     activeConversationId,
     setActiveConversationId,

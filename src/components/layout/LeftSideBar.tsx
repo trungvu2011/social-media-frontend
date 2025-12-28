@@ -33,10 +33,10 @@ export default function LeftSidebar() {
       localStorage.removeItem("access_token");
       sessionStorage.removeItem("auth_user");
       sessionStorage.removeItem("access_token");
-      
+
       // Dispatch storage event to update App state immediately
       window.dispatchEvent(new Event("storage"));
-      
+
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
@@ -67,10 +67,11 @@ export default function LeftSidebar() {
       <nav className="flex-1 px-3">
         {menuItems.map((item) => {
           // Special handling for Profile - use current user's username
-          const path = item.id === "profile" 
-            ? `/profile/${authUser?.userName || ''}`
-            : `/${item.id}`;
-          
+          const path =
+            item.id === "profile"
+              ? `/profile/${authUser?.userName || ""}`
+              : `/${item.id}`;
+
           return (
             <Link
               key={item.id}
@@ -92,15 +93,19 @@ export default function LeftSidebar() {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
           <Link
-            to={`/profile/${authUser?.userName || ''}`}
+            to={`/profile/${authUser?.userName || ""}`}
             className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex-shrink-0 overflow-hidden hover:opacity-80 transition-opacity"
           >
             {authUser?.avatar && (
-              <img src={authUser.avatar} alt="" className="w-full h-full object-cover" />
+              <img
+                src={authUser.avatar}
+                alt=""
+                className="w-full h-full object-cover"
+              />
             )}
           </Link>
-          <Link 
-            to={`/profile/${authUser?.userName || ''}`}
+          <Link
+            to={`/profile/${authUser?.userName || ""}`}
             className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
           >
             <div className="text-medium font-semibold text-gray-900 truncate">
