@@ -1,10 +1,12 @@
-import { Smile, Send, Paperclip, Image, X } from "lucide-react";
+import { Send, Paperclip, Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPost } from "../../utils";
 
 const CreatePost = () => {
   const [text, setText] = useState("");
-  const [images, setImages] = useState<Array<{ file: File; preview: string }>>([]);
+  const [images, setImages] = useState<Array<{ file: File; preview: string }>>(
+    []
+  );
   const [submitting, setSubmitting] = useState(false);
   const imgRef = useRef<HTMLInputElement | null>(null);
 
@@ -71,14 +73,14 @@ const CreatePost = () => {
       />
 
       {/* Input Container */}
-      <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3">
+      <div className="flex items-center gap-2 sm:gap-3 bg-gray-50 border border-gray-200 rounded-2xl px-2 sm:px-4 py-3">
         {/* Attachment Icon */}
         <button
           type="button"
           onClick={onPickImages}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
+          className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
         >
-          <Paperclip className="w-5 h-5" />
+          <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Text Input */}
@@ -92,26 +94,28 @@ const CreatePost = () => {
         />
 
         {/* Right Icons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           <button
             type="button"
             onClick={onPickImages}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors flex-shrink-0"
           >
-            <Image className="w-5 h-5" />
+            <Image className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <button
+          {/* <button
             type="button"
             className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
           >
             <Smile className="w-5 h-5" />
-          </button>
+          </button> */}
           <button
-            className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-full font-medium text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white px-2 sm:px-5 py-2 sm:py-2.5 rounded-full font-medium text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             onClick={() => onSubmit()}
             disabled={submitting || (!text.trim() && images.length === 0)}
           >
-            {submitting ? "..." : "Post"}
+            <span className="hidden sm:inline">
+              {submitting ? "..." : "Post"}
+            </span>
             <Send className="w-4 h-4" />
           </button>
         </div>

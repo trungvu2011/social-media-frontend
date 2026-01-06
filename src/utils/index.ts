@@ -274,7 +274,9 @@ export async function getProfileById(userId: string): Promise<UserProfile> {
   return api<UserProfile>(`/users/${userId}/profile`, { method: "GET" });
 }
 
-export async function getProfileByUserName(username: string): Promise<UserProfile> {
+export async function getProfileByUserName(
+  username: string
+): Promise<UserProfile> {
   return api<UserProfile>(`/users/username/${username}`, { method: "GET" });
 }
 
@@ -290,11 +292,13 @@ export type UpdateProfileData = {
   backgroundImage?: File;
 };
 
-export async function updateProfile(data: UpdateProfileData): Promise<UserProfile> {
+export async function updateProfile(
+  data: UpdateProfileData
+): Promise<UserProfile> {
   const token =
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token");
-  
+
   // Use FormData for file upload
   const fd = new FormData();
   if (data.userName) fd.append("userName", data.userName);
@@ -318,6 +322,42 @@ export async function getAllUsers(): Promise<UserProfile[]> {
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token");
   return api<UserProfile[]>(`/users`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+export type SearchUsersResponse = {
+  total: number;
+  page: number;
+  limit: number;
+  users: Array<{
+    _id: string;
+    userName: string;
+    fullName?: string;
+    avatar?: string;
+  }>;
+};
+
+export async function searchUsers(
+  key: string,
+  params: { page?: number; limit?: number } = {}
+): Promise<SearchUsersResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+
+  const trimmed = key.trim();
+  if (!trimmed) {
+    throw new Error("Search keyword is required");
+  }
+
+  const query = new URLSearchParams();
+  query.set("key", trimmed);
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+
+  return api<SearchUsersResponse>(`/users/search?${query.toString()}`, {
     method: "GET",
     token: token || undefined,
   });
@@ -397,7 +437,9 @@ export async function unlikePost(postId: string): Promise<void> {
 }
 
 // Get posts liked by user
-export async function getLikedPosts(userId: string): Promise<GetAllPostsResponse> {
+export async function getLikedPosts(
+  userId: string
+): Promise<GetAllPostsResponse> {
   const token =
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token");
@@ -460,7 +502,7 @@ export async function addComment(
     fd.append("postId", postId);
     fd.append("content", content);
     fd.append("image", image);
-    
+
     return api<{ success: true; data: Comment }>(`/comments`, {
       method: "POST",
       body: fd,
@@ -542,8 +584,14 @@ export async function markAllNotificationsRead(): Promise<void> {
 }
 
 // ---------- Report API ----------
-export async function createReport(postId: string, reason: string, details?: string): Promise<void> {
-  const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+export async function createReport(
+  postId: string,
+  reason: string,
+  details?: string
+): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
   await api(`/reports`, {
     method: "POST",
     body: { postId, reason, details },
@@ -584,24 +632,89 @@ export type GetReportsResponse = {
   totalReports: number;
 };
 
-export async function getReports(page: number = 1, limit: number = 10, status?: string): Promise<GetReportsResponse> {
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    const query = new URLSearchParams();
-    query.set("page", String(page));
-    query.set("limit", String(limit));
-    if (status) query.set("status", status);
+export async function getReports(
+  page: number = 1,
+  limit: number = 10,
+  status?: string
+): Promise<GetReportsResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  const query = new URLSearchParams();
+  query.set("page", String(page));
+  query.set("limit", String(limit));
+  if (status) query.set("status", status);
 
-    return api<GetReportsResponse>(`/reports?${query.toString()}`, {
-        method: "GET",
-        token: token || undefined,
-    });
+  return api<GetReportsResponse>(`/reports?${query.toString()}`, {
+    method: "GET",
+    token: token || undefined,
+  });
 }
 
-export async function updateReportStatus(reportId: string, status: "resolved" | "dismissed"): Promise<void> {
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    await api(`/reports/${reportId}`, {
-        method: "PATCH",
-        body: { status },
-        token: token || undefined,
-    });
+export async function updateReportStatus(
+  reportId: string,
+  status: "resolved" | "dismissed"
+): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/reports/${reportId}`, {
+    method: "PATCH",
+    body: { status },
+    token: token || undefined,
+  });
+}
+
+// ---------- Chat API ----------
+export type ChatUser = {
+  _id: string;
+  userName: string;
+  fullName?: string;
+  avatar?: string;
+};
+export type ChatMessage = {
+  _id: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+  conversationId: string;
+  isDelivered?: boolean;
+  isSeen?: boolean;
+};
+export type ChatConversation = {
+  _id: string;
+  members: ChatUser[];
+  lastMessage?: ChatMessage;
+  isDraft?: boolean;
+};
+
+export async function getUserConversations(): Promise<ChatConversation[]> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<ChatConversation[]>(`/conversations`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+export async function getConversationMessages(
+  conversationId: string,
+  params: { page?: number; limit?: number } = {}
+): Promise<{
+  data: ChatMessage[];
+  meta: { total: number; page: number; limit: number; pages: number };
+}> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  return api<{
+    data: ChatMessage[];
+    meta: { total: number; page: number; limit: number; pages: number };
+  }>(`/messages/${conversationId}?${query.toString()}`, {
+    method: "GET",
+    token: token || undefined,
+  });
 }

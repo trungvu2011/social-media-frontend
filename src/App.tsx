@@ -13,6 +13,7 @@ import PostPage from "./pages/post/PostPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AdminPage from "./pages/admin/AdminPage";
+import { ChatPage } from "./pages/chat/ChatPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -25,6 +26,7 @@ const ROUTERS = {
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
   ADMIN: "/admin",
+  CHAT: "/chat",
 };
 
 function App() {
@@ -91,7 +93,9 @@ function App() {
             />
             <Route
               path={ROUTERS.NOTIFICATIONS}
-              element={authUser ? <NotificationPage /> : <Navigate to="/login" />}
+              element={
+                authUser ? <NotificationPage /> : <Navigate to="/login" />
+              }
             />
             <Route
               path={ROUTERS.POST}
@@ -107,6 +111,11 @@ function App() {
                   <Navigate to={ROUTERS.HOME} />
                 )
               }
+            />
+
+            <Route
+              path={ROUTERS.CHAT}
+              element={authUser ? <ChatPage /> : <Navigate to="/login" />}
             />
 
             <Route
