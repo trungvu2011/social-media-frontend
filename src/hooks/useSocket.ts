@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
@@ -50,8 +50,27 @@ export const useSocket = () => {
     };
   }, []);
 
+  // Helper methods
+  const emit = useCallback((event: string, data: any) => {
+    socketRef.current?.emit(event, data);
+  }, []);
+
+  const on = useCallback((event: string, handler: (...args: any[]) => void) => {
+    socketRef.current?.on(event, handler);
+  }, []);
+
+  const off = useCallback(
+    (event: string, handler?: (...args: any[]) => void) => {
+      socketRef.current?.off(event, handler);
+    },
+    []
+  );
+
   return {
     socket: socketRef.current,
     isConnected,
+    emit,
+    on,
+    off,
   };
 };

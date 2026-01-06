@@ -1,16 +1,21 @@
-import { Home, HelpCircle, LogOut, User, Bell } from "lucide-react";
+import { House, LogOut, User, Bell, MessageCircle, Settings, X } from "lucide-react";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
 import { NotificationBadge } from "./NotificationBadge";
 
-export default function LeftSidebar() {
+interface LeftSidebarProps {
+  onClose?: () => void;
+}
+
+export default function LeftSidebar({ onClose }: LeftSidebarProps) {
   const menuItems = [
-    { id: "", icon: Home, label: "Feed" },
+    { id: "", icon: House, label: "Feed" },
     { id: "notifications", icon: Bell, label: "Notifications" },
     { id: "profile", icon: User, label: "Profile" },
-    { id: "help", icon: HelpCircle, label: "Help & Support" },
+    { id: "chat", icon: MessageCircle, label: "Messages" },
+    { id: "help", icon: Settings, label: "Help & Support" },
   ];
 
   const [authUser] = useState<any>(() => {
@@ -33,10 +38,10 @@ export default function LeftSidebar() {
       localStorage.removeItem("access_token");
       sessionStorage.removeItem("auth_user");
       sessionStorage.removeItem("access_token");
-      
+
       // Dispatch storage event to update App state immediately
       window.dispatchEvent(new Event("storage"));
-      
+
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
@@ -44,37 +49,38 @@ export default function LeftSidebar() {
   };
 
   return (
-    <div className="w-[300px] bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
+    <div className="w-[300px] bg-white border-r border-gray-200 h-full left-0 top-0 flex flex-col">
       {/* Logo */}
-      <div className="p-5">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="p-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2" onClick={onClose}>
           <img src={AppIcon} alt="Logo" className="w-40 h-15 rounded-xl" />
         </Link>
-      </div>
-
-      {/* Search */}
-      <div className="px-4 pb-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        </div>
+        {/* Close button for mobile */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3">
         {menuItems.map((item) => {
           // Special handling for Profile - use current user's username
-          const path = item.id === "profile" 
-            ? `/profile/${authUser?.userName || ''}`
-            : `/${item.id}`;
-          
+          const path =
+            item.id === "profile"
+              ? `/profile/${authUser?.userName || ""}`
+              : `/${item.id}`;
+
           return (
             <Link
               key={item.id}
               to={path}
+              onClick={onClose}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               {item.id === "notifications" ? (
@@ -92,15 +98,19 @@ export default function LeftSidebar() {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
           <Link
-            to={`/profile/${authUser?.userName || ''}`}
+            to={`/profile/${authUser?.userName || ""}`}
             className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex-shrink-0 overflow-hidden hover:opacity-80 transition-opacity"
           >
             {authUser?.avatar && (
-              <img src={authUser.avatar} alt="" className="w-full h-full object-cover" />
+              <img
+                src={authUser.avatar}
+                alt=""
+                className="w-full h-full object-cover"
+              />
             )}
           </Link>
-          <Link 
-            to={`/profile/${authUser?.userName || ''}`}
+          <Link
+            to={`/profile/${authUser?.userName || ""}`}
             className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
           >
             <div className="text-medium font-semibold text-gray-900 truncate">
