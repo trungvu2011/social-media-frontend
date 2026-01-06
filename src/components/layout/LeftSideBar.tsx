@@ -1,4 +1,4 @@
-import { House, LifeBuoy, LogOut, User, Bell } from "lucide-react";
+import { House, LogOut, User, Bell, MessageCircle, Settings } from "lucide-react";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -10,7 +10,8 @@ export default function LeftSidebar() {
     { id: "", icon: House, label: "Feed" },
     { id: "notifications", icon: Bell, label: "Notifications" },
     { id: "profile", icon: User, label: "Profile" },
-    { id: "help", icon: LifeBuoy, label: "Help & Support" },
+    { id: "chat", icon: MessageCircle, label: "Messages" },
+    { id: "help", icon: Settings, label: "Help & Support" },
   ];
 
   const [authUser] = useState<any>(() => {
