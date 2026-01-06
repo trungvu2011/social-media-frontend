@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { useLocation } from "react-router-dom";
 import { type ChatUser } from "../../utils";
+import { useState } from "react";
 
 export const ChatPage = () => {
+  const [showMobileSidebar, setShowMobileSidebar] = useState(true);
   const {
     conversations,
     messages,
@@ -54,6 +56,17 @@ export const ChatPage = () => {
 
   const isOtherUserTyping = otherUser ? typingUsers.has(otherUser._id) : false;
 
+  // Handle conversation selection
+  const handleSelectConversation = (conversationId: string) => {
+    setActiveConversationId(conversationId);
+    setShowMobileSidebar(false); // Hide sidebar on mobile when conversation selected
+  };
+
+  // Handle back to conversations (mobile)
+  const handleBackToConversations = () => {
+    setShowMobileSidebar(true);
+  };
+
   // Handle send message - pass toUserId
   const handleSendMessage = (content: string) => {
     if (toUserId) {
@@ -82,28 +95,43 @@ export const ChatPage = () => {
         </div>
       </div>
       <div className="flex-1 w-screen flex bg-gray-50 overflow-hidden">
-        <ChatSidebar
-          conversations={conversations}
-          activeConversationId={activeConversationId}
-          onSelectConversation={setActiveConversationId}
-          currentUserId={currentUserId}
-        />
-
-        {activeConversationId || toUserId ? (
-          <ChatWindow
-            messages={messages}
-            otherUser={otherUser}
+        {/* Chat Sidebar - responsive visibility */}
+        <div
+          className={`${
+            showMobileSidebar ? "block" : "hidden"
+          } md:block w-full md:w-auto`}
+        >
+          <ChatSidebar
+            conversations={conversations}
+            activeConversationId={activeConversationId}
+            onSelectConversation={handleSelectConversation}
             currentUserId={currentUserId}
-            onSendMessage={handleSendMessage}
-            onTyping={handleTyping}
-            loading={loading}
-            isConnected={isConnected}
-            hasMore={hasMore}
-            onLoadMore={loadMoreMessages}
-            isTyping={isOtherUserTyping}
           />
+        </div>
+
+        {/* Chat Window - responsive visibility */}
+        {activeConversationId || toUserId ? (
+          <div
+            className={`${
+              showMobileSidebar ? "hidden" : "flex-1 h-full"
+            } md:flex md:flex-1 md:h-auto`}
+          >
+            <ChatWindow
+              messages={messages}
+              otherUser={otherUser}
+              currentUserId={currentUserId}
+              onSendMessage={handleSendMessage}
+              onTyping={handleTyping}
+              loading={loading}
+              isConnected={isConnected}
+              hasMore={hasMore}
+              onLoadMore={loadMoreMessages}
+              isTyping={isOtherUserTyping}
+              onBack={handleBackToConversations}
+            />
+          </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="flex-1 hidden md:flex items-center justify-center bg-gray-50">
             <div className="text-center">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
                 Chào mừng đến với Chat
@@ -115,11 +143,12 @@ export const ChatPage = () => {
           </div>
         )}
 
+        {/* Chat Setting - hidden on mobile and tablet */}
         {activeConversation || toUserId ? (
-          <ChatSetting otherUser={otherUser} />
-        ) : (
-          <div></div>
-        )}
+          <div className="hidden xl:block">
+            <ChatSetting otherUser={otherUser} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

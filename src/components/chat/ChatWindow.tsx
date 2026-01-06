@@ -1,7 +1,7 @@
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { type ChatMessage, type ChatUser } from "../../utils";
-import { Info, Video } from "lucide-react";
+import { Info, Video, ArrowLeft } from "lucide-react";
 
 interface ChatWindowProps {
   messages: ChatMessage[];
@@ -14,6 +14,7 @@ interface ChatWindowProps {
   onLoadMore: () => void;
   isTyping?: boolean;
   onTyping?: () => void;
+  onBack?: () => void;
 }
 
 export const ChatWindow = ({
@@ -27,11 +28,22 @@ export const ChatWindow = ({
   onLoadMore,
   isTyping = false,
   onTyping,
+  onBack,
 }: ChatWindowProps) => {
   return (
-    <div className="flex-1  flex flex-col bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mx-10 my-4">
+    <div className="flex-1 h-full flex flex-col bg-white md:rounded-xl md:shadow-md md:border border-gray-200 overflow-hidden mx-0 md:mx-10 my-0 md:my-4">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+        {/* Back button for mobile */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+            aria-label="Back to conversations"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+        )}
         <div className="flex items-center space-x-4">
           {/* avatar and name */}
           {otherUser?.avatar ? (

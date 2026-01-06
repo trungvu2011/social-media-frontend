@@ -54,8 +54,9 @@ export const MessageList = ({
     <div
       ref={messagesContainerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto p-4 space-y-4"
+      className="flex-1 overflow-y-auto p-4 flex flex-col justify-end"
     >
+      <div className="space-y-4">
       {loading && (
         <div className="text-center py-2">
           <span className="text-sm text-gray-500">Đang tải...</span>
@@ -128,5 +129,6 @@ export const MessageList = ({
 
       <div ref={messagesEndRef} />
     </div>
+  </div>
   );
 };

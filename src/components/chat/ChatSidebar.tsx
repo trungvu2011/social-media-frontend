@@ -34,7 +34,7 @@ export const ChatSidebar = ({
   };
 
   return (
-    <div className="bg-white border-r border-gray-200 flex flex-col h-full w-80">
+    <div className="bg-white border-r border-gray-200 flex flex-col h-full w-full md:w-80">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800">Messages</h2>

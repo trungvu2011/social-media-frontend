@@ -1,11 +1,15 @@
-import { House, LogOut, User, Bell, MessageCircle, Settings } from "lucide-react";
+import { House, LogOut, User, Bell, MessageCircle, Settings, X } from "lucide-react";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
 import { NotificationBadge } from "./NotificationBadge";
 
-export default function LeftSidebar() {
+interface LeftSidebarProps {
+  onClose?: () => void;
+}
+
+export default function LeftSidebar({ onClose }: LeftSidebarProps) {
   const menuItems = [
     { id: "", icon: House, label: "Feed" },
     { id: "notifications", icon: Bell, label: "Notifications" },
@@ -45,12 +49,22 @@ export default function LeftSidebar() {
   };
 
   return (
-    <div className="w-[300px] bg-white border-r border-gray-200 h-screen left-0 top-0 flex flex-col">
+    <div className="w-[300px] bg-white border-r border-gray-200 h-full left-0 top-0 flex flex-col">
       {/* Logo */}
-      <div className="p-5">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="p-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2" onClick={onClose}>
           <img src={AppIcon} alt="Logo" className="w-40 h-15 rounded-xl" />
         </Link>
+        {/* Close button for mobile */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -66,6 +80,7 @@ export default function LeftSidebar() {
             <Link
               key={item.id}
               to={path}
+              onClick={onClose}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               {item.id === "notifications" ? (
