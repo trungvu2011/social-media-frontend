@@ -118,7 +118,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [isMobileMenuOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex w-full max-w-full overflow-x-hidden relative">
+    <div className="h-screen bg-gray-50 flex w-full max-w-full overflow-hidden relative">
       {/* Hamburger Menu Button - visible on mobile/tablet */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -141,8 +141,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <aside
         ref={sidebarRef}
         className={`
-          w-[300px] h-screen z-40
-          fixed lg:sticky top-0
+          w-[300px] h-full z-40 overflow-y-auto
+          fixed lg:relative
           ${
             isMobileMenuOpen
               ? "translate-x-0"
@@ -155,12 +155,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </aside>
 
       {/* Main Content - centered with small gaps from sidebars */}
-      <main className="flex-1 w-full max-w-full min-h-screen bg-white shadow-lg mx-0 lg:mx-12 overflow-x-hidden">
+      <main className="flex-1 w-full max-w-full h-full overflow-y-auto bg-white shadow-lg mx-0 lg:mx-12">
         {children}
       </main>
 
       {/* Right Sidebar - hidden on mobile/tablet */}
-      <aside className="w-[300px] flex-shrink-0 h-screen sticky top-0 hidden xl:block">
+      <aside className="w-[300px] flex-shrink-0 h-full overflow-y-auto hidden xl:block">
         <RightSidebar
           searchFilter={searchFilter}
           onFilterChange={handleFilterChange}
