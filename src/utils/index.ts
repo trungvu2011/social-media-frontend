@@ -327,6 +327,42 @@ export async function getAllUsers(): Promise<UserProfile[]> {
   });
 }
 
+export type SearchUsersResponse = {
+  total: number;
+  page: number;
+  limit: number;
+  users: Array<{
+    _id: string;
+    userName: string;
+    fullName?: string;
+    avatar?: string;
+  }>;
+};
+
+export async function searchUsers(
+  key: string,
+  params: { page?: number; limit?: number } = {}
+): Promise<SearchUsersResponse> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+
+  const trimmed = key.trim();
+  if (!trimmed) {
+    throw new Error("Search keyword is required");
+  }
+
+  const query = new URLSearchParams();
+  query.set("key", trimmed);
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+
+  return api<SearchUsersResponse>(`/users/search?${query.toString()}`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
 export async function deleteUser(userId: string): Promise<void> {
   const token =
     localStorage.getItem("access_token") ||

@@ -1,4 +1,4 @@
-import { Home, HelpCircle, LogOut, User, Bell } from "lucide-react";
+import { House, LifeBuoy, LogOut, User, Bell } from "lucide-react";
 import AppIcon from "../../assets/socialhub-horizontal.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -7,10 +7,10 @@ import { NotificationBadge } from "./NotificationBadge";
 
 export default function LeftSidebar() {
   const menuItems = [
-    { id: "", icon: Home, label: "Feed" },
+    { id: "", icon: House, label: "Feed" },
     { id: "notifications", icon: Bell, label: "Notifications" },
     { id: "profile", icon: User, label: "Profile" },
-    { id: "help", icon: HelpCircle, label: "Help & Support" },
+    { id: "help", icon: LifeBuoy, label: "Help & Support" },
   ];
 
   const [authUser] = useState<any>(() => {
@@ -50,17 +50,6 @@ export default function LeftSidebar() {
         <Link to="/" className="flex items-center gap-2">
           <img src={AppIcon} alt="Logo" className="w-40 h-15 rounded-xl" />
         </Link>
-      </div>
-
-      {/* Search */}
-      <div className="px-4 pb-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        </div>
       </div>
 
       {/* Navigation */}
