@@ -14,6 +14,7 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AdminPage from "./pages/admin/AdminPage";
 import { ChatPage } from "./pages/chat/ChatPage";
+import BannedPage from "./pages/BannedPage";
 
 const ROUTERS = {
   HOME: "/",
@@ -27,6 +28,7 @@ const ROUTERS = {
   RESET_PASSWORD: "/reset-password",
   ADMIN: "/admin",
   CHAT: "/chat",
+  BANNED: "/banned",
 };
 
 function App() {
@@ -80,48 +82,119 @@ function App() {
             />
 
             <Route
+              path={ROUTERS.BANNED}
+              element={<BannedPage />}
+            />
+
+            <Route
               path={ROUTERS.HOME}
-              element={authUser ? <HomePage /> : <Navigate to="/login" />}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <HomePage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route
               path={ROUTERS.PROFILE}
-              element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <ProfilePage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route
               path={ROUTERS.FOLLOWS}
-              element={authUser ? <FollowListPage /> : <Navigate to="/login" />}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <FollowListPage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route
               path={ROUTERS.NOTIFICATIONS}
               element={
-                authUser ? <NotificationPage /> : <Navigate to="/login" />
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <NotificationPage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
               }
             />
             <Route
               path={ROUTERS.POST}
-              element={authUser ? <PostPage /> : <Navigate to="/login" />}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <PostPage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
 
             <Route
               path={ROUTERS.ADMIN}
               element={
-                authUser && authUser.role === "admin" ? (
-                  <AdminPage />
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    authUser.role === "admin" ? (
+                      <AdminPage />
+                    ) : (
+                      <Navigate to={ROUTERS.HOME} />
+                    )
+                  )
                 ) : (
-                  <Navigate to={ROUTERS.HOME} />
+                  <Navigate to="/login" />
                 )
               }
             />
 
             <Route
               path={ROUTERS.CHAT}
-              element={authUser ? <ChatPage /> : <Navigate to="/login" />}
+              element={
+                authUser ? (
+                  authUser.isBanned ? (
+                    <Navigate to="/banned" />
+                  ) : (
+                    <ChatPage />
+                  )
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
 
             <Route
               path="*"
               element={
-                <Navigate to={authUser ? ROUTERS.HOME : ROUTERS.LOGIN} />
+                <Navigate to={authUser ? (authUser.isBanned ? "/banned" : ROUTERS.HOME) : ROUTERS.LOGIN} />
               }
             />
           </Routes>

@@ -122,6 +122,17 @@ export async function signOut(): Promise<void> {
     });
   } catch (e) {
     console.warn("Sign out API failed:", e);
+  } finally {
+    // Clear all auth data
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("ban_reason");
+    localStorage.removeItem("banned_at");
+    
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("auth_user");
+    sessionStorage.removeItem("ban_reason");
+    sessionStorage.removeItem("banned_at");
   }
 }
 
@@ -258,6 +269,9 @@ export type UserProfile = {
   updatedAt: string;
   postCount?: number;
   role?: "user" | "admin";
+  isBanned?: boolean;
+  bannedAt?: string;
+  banReason?: string;
 };
 
 export async function getProfile(): Promise<UserProfile> {
@@ -585,16 +599,25 @@ export async function markAllNotificationsRead(): Promise<void> {
 
 // ---------- Report API ----------
 export async function createReport(
-  postId: string,
+  targetId: string,
   reason: string,
-  details?: string
+  details: string | undefined,
+  reportType: 'post' | 'comment'
 ): Promise<void> {
   const token =
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token");
+  
+  const body: any = { reason, details, reportType };
+  if (reportType === 'post') {
+    body.postId = targetId;
+  } else {
+    body.commentId = targetId;
+  }
+  
   await api(`/reports`, {
     method: "POST",
-    body: { postId, reason, details },
+    body,
     token: token || undefined,
   });
 }
@@ -607,7 +630,8 @@ export type Report = {
     fullName: string;
     avatar?: string;
   };
-  postId: {
+  reportType: 'post' | 'comment';
+  postId?: {
     _id: string;
     text?: string;
     content?: string;
@@ -617,6 +641,18 @@ export type Report = {
       userName: string;
       avatar?: string;
     };
+    createdAt: string;
+  };
+  commentId?: {
+    _id: string;
+    content?: string;
+    image?: string;
+    authorId: {
+      fullName: string;
+      userName: string;
+      avatar?: string;
+    };
+    postId: string;
     createdAt: string;
   };
   reason: string;
@@ -635,7 +671,8 @@ export type GetReportsResponse = {
 export async function getReports(
   page: number = 1,
   limit: number = 10,
-  status?: string
+  status?: string,
+  reportType?: 'post' | 'comment'
 ): Promise<GetReportsResponse> {
   const token =
     localStorage.getItem("access_token") ||
@@ -644,6 +681,7 @@ export async function getReports(
   query.set("page", String(page));
   query.set("limit", String(limit));
   if (status) query.set("status", status);
+  if (reportType) query.set("reportType", reportType);
 
   return api<GetReportsResponse>(`/reports?${query.toString()}`, {
     method: "GET",
@@ -715,6 +753,27 @@ export async function getConversationMessages(
     meta: { total: number; page: number; limit: number; pages: number };
   }>(`/messages/${conversationId}?${query.toString()}`, {
     method: "GET",
+    token: token || undefined,
+  });
+}
+// ---------- Ban/Unban User API ----------
+export async function banUser(userId: string, reason: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/users/admin/${userId}/ban`, {
+    method: "POST",
+    body: { reason },
+    token: token || undefined,
+  });
+}
+
+export async function unbanUser(userId: string): Promise<void> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  await api(`/users/admin/${userId}/unban`, {
+    method: "POST",
     token: token || undefined,
   });
 }

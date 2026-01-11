@@ -23,6 +23,16 @@ function LoginPage() {
         const { access_token } = tokenResponse;
         const { user, accessToken: serverToken } = await googleLogin(access_token);
         
+        // Check if user is banned
+        if ((user as any).isBanned) {
+          const store = rememberMe ? window.localStorage : window.sessionStorage;
+          store.setItem("ban_reason", (user as any).banReason || "No reason provided");
+          store.setItem("banned_at", (user as any).bannedAt || new Date().toISOString());
+          store.setItem("access_token", serverToken);
+          navigate("/banned", { replace: true });
+          return;
+        }
+        
         const store = rememberMe ? window.localStorage : window.sessionStorage;
         store.setItem("auth_user", JSON.stringify(user));
         store.setItem("access_token", serverToken);
@@ -49,6 +59,16 @@ function LoginPage() {
       );
       if (!user || !accessToken) {
         setError("Unexpected response from server.");
+        return;
+      }
+
+      // Check if user is banned
+      if ((user as any).isBanned) {
+        const store = rememberMe ? window.localStorage : window.sessionStorage;
+        store.setItem("ban_reason", (user as any).banReason || "No reason provided");
+        store.setItem("banned_at", (user as any).bannedAt || new Date().toISOString());
+        store.setItem("access_token", accessToken);
+        navigate("/banned", { replace: true });
         return;
       }
 

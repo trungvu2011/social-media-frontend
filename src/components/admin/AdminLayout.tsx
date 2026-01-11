@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { signOut } from "../../utils";
 
 interface AdminLayoutProps {
@@ -13,11 +13,10 @@ export default function AdminLayout({
   activeTab,
   onTabChange,
 }: AdminLayoutProps) {
-  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   return (

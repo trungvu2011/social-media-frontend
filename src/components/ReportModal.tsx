@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { createReport } from '../utils';
 
 interface ReportModalProps {
-  postId: string;
+  postId?: string;
+  commentId?: string;
   onClose: () => void;
 }
 
@@ -14,7 +15,7 @@ const REPORT_REASONS = [
   { value: "other", label: "Other" },
 ];
 
-const ReportModal: React.FC<ReportModalProps> = ({ postId, onClose }) => {
+const ReportModal: React.FC<ReportModalProps> = ({ postId, commentId, onClose }) => {
   const [reason, setReason] = useState(REPORT_REASONS[0].value);
   const [details, setDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +24,9 @@ const ReportModal: React.FC<ReportModalProps> = ({ postId, onClose }) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await createReport(postId, reason, details);
+      const reportType = postId ? 'post' : 'comment';
+      const targetId = postId || commentId || '';
+      await createReport(targetId, reason, details, reportType);
       alert("Report submitted successfully. Thank you!");
       onClose();
     } catch (error) {
@@ -44,7 +47,9 @@ const ReportModal: React.FC<ReportModalProps> = ({ postId, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Report Post</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Report {postId ? 'Post' : 'Comment'}
+          </h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -56,7 +61,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ postId, onClose }) => {
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Why are you reporting this post?
+              Why are you reporting this {postId ? 'post' : 'comment'}?
             </label>
             <select
               value={reason}

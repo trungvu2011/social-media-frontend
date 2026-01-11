@@ -5,6 +5,8 @@ import {
   deleteUser,
   deletePost,
   getAdminStats,
+  banUser,
+  unbanUser,
 } from "../../utils";
 import type {
   UserProfile,
@@ -16,6 +18,7 @@ import DeleteModal from "../../components/admin/DeleteModal";
 import PostDetailModal from "../../components/admin/PostDetailModal";
 import DashboardOverview from "../../components/admin/DashboardOverview";
 import ReportManagement from "../../components/admin/ReportManagement";
+import BanUserModal from "../../components/admin/BanUserModal";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "posts" | "reports">("dashboard");
@@ -37,6 +40,12 @@ export default function AdminPage() {
     isOpen: boolean;
     post: BackendPostListItem | null;
   }>({ isOpen: false, post: null });
+
+  const [banModal, setBanModal] = useState<{
+    isOpen: boolean;
+    userId: string;
+    userName: string;
+  }>({ isOpen: false, userId: "", userName: "" });
 
   useEffect(() => {
     fetchData();
@@ -103,6 +112,38 @@ export default function AdminPage() {
       setDeleteModal({ ...deleteModal, isOpen: false });
     } catch (error) {
       alert("Failed to delete item");
+    }
+  };
+
+  const handleBan = async (reason: string) => {
+    try {
+      await banUser(banModal.userId, reason);
+      // Update user in state
+      setUsers(users.map(u => 
+        u._id === banModal.userId 
+          ? { ...u, isBanned: true, banReason: reason, bannedAt: new Date().toISOString() }
+          : u
+      ));
+      setBanModal({ isOpen: false, userId: "", userName: "" });
+      alert("User banned successfully");
+    } catch (error) {
+      alert("Failed to ban user");
+    }
+  };
+
+  const handleUnban = async (userId: string) => {
+    if (!window.confirm("Are you sure you want to unban this user?")) return;
+    try {
+      await unbanUser(userId);
+      // Update user in state
+      setUsers(users.map(u => 
+        u._id === userId 
+          ? { ...u, isBanned: false, banReason: undefined, bannedAt: undefined }
+          : u
+      ));
+      alert("User unbanned successfully");
+    } catch (error) {
+      alert("Failed to unban user");
     }
   };
 
@@ -196,12 +237,34 @@ export default function AdminPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => openDeleteUserModal(user)}
-                      className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded shadow-sm font-bold transition-colors"
-                    >
-                      🗑️ DELETE
-                    </button>
+                    <div className="flex gap-2 justify-end">
+                      {user.isBanned ? (
+                        <>
+                          <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded" title={user.banReason}>
+                            BANNED
+                          </span>
+                          <button
+                            onClick={() => handleUnban(user._id)}
+                            className="text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded shadow-sm font-bold transition-colors"
+                          >
+                            ✅ UNBAN
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setBanModal({ isOpen: true, userId: user._id, userName: user.userName })}
+                          className="text-white bg-orange-600 hover:bg-orange-700 px-3 py-1.5 rounded shadow-sm font-bold transition-colors"
+                        >
+                          🚫 BAN
+                        </button>
+                      )}
+                      <button
+                        onClick={() => openDeleteUserModal(user)}
+                        className="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded shadow-sm font-bold transition-colors"
+                      >
+                        🗑️ DELETE
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -296,6 +359,13 @@ export default function AdminPage() {
         isOpen={postDetailModal.isOpen}
         post={postDetailModal.post}
         onClose={() => setPostDetailModal({ isOpen: false, post: null })}
+      />
+
+      <BanUserModal
+        isOpen={banModal.isOpen}
+        userName={banModal.userName}
+        onConfirm={handleBan}
+        onCancel={() => setBanModal({ isOpen: false, userId: "", userName: "" })}
       />
     </AdminLayout>
   );

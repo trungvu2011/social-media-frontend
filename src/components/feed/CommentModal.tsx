@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { X, Send, Image as ImageIcon, Trash2, MoreHorizontal } from "lucide-react";
+import { X, Send, Image as ImageIcon, Trash2, MoreHorizontal, Flag } from "lucide-react";
 import {
   getPostComments,
   addComment,
@@ -10,6 +10,7 @@ import {
 } from "../../utils";
 import type { Post as PostType } from "../../types/social";
 import Post from "./Post";
+import ReportModal from "../ReportModal";
 
 interface CommentModalProps {
   post: PostType;
@@ -36,6 +37,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [reportCommentId, setReportCommentId] = useState<string | null>(null);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -262,6 +264,16 @@ const CommentModal: React.FC<CommentModalProps> = ({
                               Delete
                             </button>
                           )}
+                          <button
+                            onClick={() => {
+                              setOpenOptionsId(null);
+                              setReportCommentId(comment._id);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                          >
+                            <Flag className="w-4 h-4" />
+                            Report
+                          </button>
                         </div>
                       </>
                     )}
@@ -383,6 +395,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Report Comment Modal */}
+      {reportCommentId && (
+        <ReportModal
+          commentId={reportCommentId}
+          onClose={() => setReportCommentId(null)}
+        />
       )}
     </div>
   );

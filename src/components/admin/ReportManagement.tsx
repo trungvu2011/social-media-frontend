@@ -9,13 +9,14 @@ export default function ReportManagement() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [activeTab, setActiveTab] = useState<'post' | 'comment'>('post');
   const [selectedPost, setSelectedPost] = useState<BackendPostListItem | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const data = await getReports(page, 10);
+      const data = await getReports(page, 10, undefined, activeTab);
       setReports(data.reports);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -25,6 +26,11 @@ export default function ReportManagement() {
     }
   };
 
+  useEffect(() => {
+    setPage(1); // Reset to page 1 when changing tabs
+    fetchReports();
+  }, [activeTab]);
+  
   useEffect(() => {
     fetchReports();
   }, [page]);
@@ -69,13 +75,41 @@ export default function ReportManagement() {
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Tabs */}
+      <div className="border-b border-gray-200">
+        <nav className="flex -mb-px">
+          <button
+            onClick={() => setActiveTab('post')}
+            className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'post'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Post Reports
+          </button>
+          <button
+            onClick={() => setActiveTab('comment')}
+            className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'comment'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Comment Reports
+          </button>
+        </nav>
+      </div>
+      
       <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reporter</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Post Content</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">
+              {activeTab === 'post' ? 'Post Content' : 'Comment Content'}
+            </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
@@ -103,7 +137,9 @@ export default function ReportManagement() {
                 {report.details && <div className="text-xs text-gray-500 mt-1">{report.details}</div>}
               </td>
               <td className="px-6 py-4">
-                  {report.postId ? (
+                  {activeTab === 'post' ? (
+                    // Post content
+                    report.postId ? (
                       <div className="text-sm text-gray-600">
                           <p className="line-clamp-2">{report.postId.text || report.postId.content || "(No text content)"}</p>
                           {report.postId.images && report.postId.images.length > 0 && (
@@ -116,8 +152,27 @@ export default function ReportManagement() {
                               Author: {report.postId.authorId?.userName || "Unknown"}
                            </div>
                       </div>
-                  ) : (
+                    ) : (
                       <span className="text-sm text-red-500 italic">Post deleted or unavailable</span>
+                    )
+                  ) : (
+                    // Comment content
+                    report.commentId ? (
+                      <div className="text-sm text-gray-600">
+                          <p className="line-clamp-2">{report.commentId.content || "(No text content)"}</p>
+                          {report.commentId.image && (
+                              <div className="mt-1 text-xs text-blue-500 flex items-center gap-1">
+                                  <ExternalLink className="w-3 h-3" />
+                                  Has image
+                              </div>
+                          )}
+                           <div className="mt-1 text-xs text-gray-400">
+                              Author: {report.commentId.authorId?.userName || "Unknown"}
+                           </div>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-red-500 italic">Comment deleted or unavailable</span>
+                    )
                   )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -142,14 +197,14 @@ export default function ReportManagement() {
                         {report.postId && (
                             <>
                              <button
-                                onClick={() => handleViewPost(report.postId._id)}
+                                onClick={() => handleViewPost(report.postId!._id)}
                                 className="text-blue-600 hover:text-blue-900 p-1 bg-blue-50 rounded hover:bg-blue-100"
                                 title="View Post"
                             >
                                 <Eye className="w-4 h-4" />
                             </button>
                              <button 
-                                onClick={() => handleDeletePost(report._id, report.postId._id)}
+                                onClick={() => handleDeletePost(report._id, report.postId!._id)}
                                 className="text-red-600 hover:text-red-900 p-1 bg-red-50 rounded hover:bg-red-100"
                                 title="Delete Post & Resolve"
                             >
