@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { X, Send, Image as ImageIcon, Trash2 } from "lucide-react";
+import { X, Send, Image as ImageIcon, Trash2, MoreHorizontal } from "lucide-react";
 import {
   getPostComments,
   addComment,
@@ -33,6 +33,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [openOptionsId, setOpenOptionsId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -136,15 +139,21 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!window.confirm("Delete this comment?")) return;
+    if (isDeleting) return;
+    
+    setIsDeleting(true);
     try {
       await deleteComment(commentId);
       setComments((prev) => prev.filter((c) => c._id !== commentId));
       if (onCommentChange) {
         onCommentChange(-1);
       }
+      setDeleteConfirmId(null);
     } catch (error) {
       console.error("Failed to delete comment", error);
+      alert('Unable to delete comment. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -183,7 +192,26 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </div>
           )}
 
-          {comments.map((comment) => (
+          {comments.map((comment) => {
+            // Check if current user can delete: post owner or comment author
+            const postOwnerId = post.user.id;
+            const currentUserId = currentUser?._id;
+            const commentAuthorId = comment.authorId?._id;
+                        
+            console.log('Comment delete check:', {
+              currentUserId,
+              commentAuthorId,
+              postOwnerId,
+              currentUser,
+              comment
+            });
+            
+            const canDelete = currentUser && (
+              currentUserId === commentAuthorId || 
+              currentUserId === postOwnerId
+            );
+            
+            return (
             <div key={comment._id} className="flex gap-3 group">
               <img 
                 src={comment.authorId?.avatar || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
@@ -191,33 +219,61 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 className="w-8 h-8 rounded-full object-cover mt-1 flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <div className="bg-gray-100 rounded-2xl p-3 inline-block max-w-full">
-                  <div className="font-semibold text-gray-900 text-sm mb-1">
-                    {comment.authorId?.fullName || comment.authorId?.userName || "Unknown"}
-                  </div>
-                  {comment.content && (
-                    <p className="text-gray-800 text-sm whitespace-pre-wrap break-words">{comment.content}</p>
-                  )}
-                  {comment.image && (
-                    <div className="mt-2 rounded-lg overflow-hidden max-w-sm border border-gray-200">
-                      <img src={comment.image} alt="Comment attachment" className="w-full h-auto object-cover" />
+                <div className="flex items-center gap-2">
+                  <div className="bg-gray-100 rounded-2xl p-3 inline-block max-w-full">
+                    <div className="font-semibold text-gray-900 text-sm mb-1">
+                      {comment.authorId?.fullName || comment.authorId?.userName || "Unknown"}
                     </div>
-                  )}
+                    {comment.content && (
+                      <p className="text-gray-800 text-sm whitespace-pre-wrap break-words">{comment.content}</p>
+                    )}
+                    {comment.image && (
+                      <div className="mt-2 rounded-lg overflow-hidden max-w-sm border border-gray-200">
+                        <img src={comment.image} alt="Comment attachment" className="w-full h-auto object-cover" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Three-dot menu - right next to comment bubble */}
+                  <div className="relative flex-shrink-0">
+                    <button
+                      onClick={() => setOpenOptionsId(openOptionsId === comment._id ? null : comment._id)}
+                      className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                    </button>
+                    
+                    {openOptionsId === comment._id && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-10 cursor-default" 
+                          onClick={() => setOpenOptionsId(null)}
+                        ></div>
+                        <div className="absolute left-0 mt-1 w-40 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-100">
+                          {canDelete && (
+                            <button
+                              onClick={() => {
+                                setOpenOptionsId(null);
+                                setDeleteConfirmId(comment._id);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-4 mt-1 ml-2 text-xs text-gray-500">
                   <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                  {(currentUser?._id === comment.authorId?._id) && (
-                    <button 
-                      onClick={() => handleDelete(comment._id)}
-                      className="text-red-500 hover:underline opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1"
-                    >
-                      <Trash2 size={12} /> Delete
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {loading && (
              <div className="text-center text-gray-500 py-4">Loading comments...</div>
@@ -293,9 +349,41 @@ const CommentModal: React.FC<CommentModalProps> = ({
                  </button>
                </div>
              </div>
-          </form>
-        </div>
+           </form>
+         </div>
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => !isDeleting && setDeleteConfirmId(null)}
+        >
+          <div 
+            className="bg-white rounded-lg p-6 max-w-sm w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-2">Delete Comment?</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

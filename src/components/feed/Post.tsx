@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { Post as PostType } from '../../types/social';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Flag } from 'lucide-react';
-import { likePost, unlikePost } from '../../utils';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Flag, Trash2 } from 'lucide-react';
+import { likePost, unlikePost, deletePost as deletePostApi } from '../../utils';
 import { useSocketContext } from '../../context/SocketContext';
 
 interface PostProps {
@@ -41,6 +41,8 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
   // State for report/options
   const [showOptions, setShowOptions] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Sync local state when prop updates (e.g. feed refresh)
   React.useEffect(() => {
@@ -129,6 +131,27 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
       setIsLiking(false);
     }
   };
+
+  // Handle delete post
+  const handleDelete = async () => {
+    if (isDeleting) return;
+    
+    setIsDeleting(true);
+    try {
+      await deletePostApi(post.id);
+      // Reload the page to refresh the feed
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+      alert('Unable to delete post. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  // Check if current user is the author
+  const isAuthor = authUser && (authUser.id === post.user.id || authUser._id === post.user.id);
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -189,6 +212,18 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                 onClick={() => setShowOptions(false)}
               ></div>
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-100">
+                {isAuthor && (
+                  <button
+                    onClick={() => {
+                      setShowOptions(false);
+                      setShowDeleteConfirm(true);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Post
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setShowOptions(false);
@@ -197,7 +232,7 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                 >
                   <Flag className="w-4 h-4" />
-                  Report Post
+                  Report
                 </button>
               </div>
             </>
@@ -315,6 +350,38 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
             onClose={() => setShowReportModal(false)}
           />
         </React.Suspense>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => !isDeleting && setShowDeleteConfirm(false)}
+        >
+          <div 
+            className="bg-white rounded-lg p-6 max-w-sm w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-2">Delete Post?</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
