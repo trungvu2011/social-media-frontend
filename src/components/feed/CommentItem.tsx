@@ -181,7 +181,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   }}
                   className="font-semibold hover:underline cursor-pointer"
               >
-                  {showReplies ? "Hide replies" : `View ${comment.replyCount || replies.length} replies`}
+                  {loadingReplies ? "Loading..." : (showReplies ? "Hide replies" : `View ${comment.replyCount || replies.length} replies`)}
               </button>
           ) : (
             <button
@@ -246,12 +246,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
                             // User said: "chô nhập comment bên trong luôn" implies visible.
                             autoFocus={isReplying} 
                             onSubmit={(content, image) => onReplySubmit ? onReplySubmit(content, image, comment._id) : Promise.resolve()}
-                            onCancel={() => {
-                                // If we close input, do we hide replies? No, probably just stop "replying" state?
-                                // Check intent. If I cancel, I probably just want to clear input or close thread?
-                                // Let's just forward cancel.
-                                if (onCancelReply) onCancelReply();
-                            }}
                             placeholder={`Reply to ${comment.authorId.userName}...`}
                         />
                     </div>

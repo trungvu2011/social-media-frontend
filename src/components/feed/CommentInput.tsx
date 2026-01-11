@@ -16,7 +16,6 @@ const CommentInput: React.FC<CommentInputProps> = ({
   onSubmit,
   placeholder = "Write a comment...",
   autoFocus = false,
-  onCancel,
   className = "",
 }) => {
   const [content, setContent] = useState("");
