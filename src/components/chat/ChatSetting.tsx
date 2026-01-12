@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Settings,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { type ChatUser } from "../../utils";
 
@@ -16,6 +17,7 @@ interface ChatSettingProps {
 }
 
 const ChatSetting = ({ otherUser }: ChatSettingProps) => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-[350px] w-full bg-white p-4 rounded-xl my-4 shadow-md border border-gray-200">
       {/* Header Section */}
@@ -39,27 +41,27 @@ const ChatSetting = ({ otherUser }: ChatSettingProps) => {
         <h2 className="text-2xl font-bold">
           {otherUser?.fullName || otherUser?.userName || ""}
         </h2>
-        <p className="text-gray-400 text-sm mt-1">Active 2 hours ago</p>
+        <p className="text-gray-400 text-sm mt-1">{t("Messages.Settings.Active")} 2 hours ago</p>
       </div>
 
       {/* Quick Actions */}
       <div className="flex justify-around mb-8 px-4">
-        <ActionButton icon={<User size={22} />} label="Profile" />
-        <ActionButton icon={<BellOff size={22} />} label="Notification" />
-        <ActionButton icon={<Search size={22} />} label="Search" />
+        <ActionButton icon={<User size={22} />} label={t("Messages.Settings.Actions.Profile")} />
+        <ActionButton icon={<BellOff size={22} />} label={t("Messages.Settings.Actions.Notification")} />
+        <ActionButton icon={<Search size={22} />} label={t("Messages.Settings.Actions.Search")} />
       </div>
 
       {/* Accordion Menu */}
       <div className="space-y-2">
         <MenuItem
           icon={<Settings size={20} />}
-          title="Information and Settings"
+          title={t("Messages.Settings.Menu.Information")}
         />
-        <MenuItem icon={<Settings size={20} />} title="Chat Customization" />
-        <MenuItem icon={<ImageIcon size={20} />} title="Media & Files" />
+        <MenuItem icon={<Settings size={20} />} title={t("Messages.Settings.Menu.Customization")} />
+        <MenuItem icon={<ImageIcon size={20} />} title={t("Messages.Settings.Menu.Media")} />
         <MenuItem
           icon={<ShieldCheck size={20} />}
-          title="Privacy and Support"
+          title={t("Messages.Settings.Menu.Privacy")}
         />
       </div>
     </div>

@@ -4,18 +4,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signOut } from "../../utils";
 import { NotificationBadge } from "./NotificationBadge";
+import { useTranslation } from "react-i18next";
 
 interface LeftSidebarProps {
   onClose?: () => void;
 }
 
 export default function LeftSidebar({ onClose }: LeftSidebarProps) {
+  const { t } = useTranslation();
   const menuItems = [
-    { id: "", icon: House, label: "Feed" },
-    { id: "notifications", icon: Bell, label: "Notifications" },
-    { id: "profile", icon: User, label: "Profile" },
-    { id: "chat", icon: MessageCircle, label: "Messages" },
-    { id: "settings", icon: Settings, label: "Settings" },
+    { id: "", icon: House, label: t("Sidebar.Feed") },
+    { id: "notifications", icon: Bell, label: t("Sidebar.Notifications") },
+    { id: "profile", icon: User, label: t("Sidebar.Profile") },
+    { id: "chat", icon: MessageCircle, label: t("Sidebar.Messages") },
+    { id: "settings", icon: Settings, label: t("Sidebar.Settings") },
   ];
 
   const [authUser] = useState<any>(() => {
@@ -54,7 +56,7 @@ export default function LeftSidebar({ onClose }: LeftSidebarProps) {
       {/* Logo Area (Hidden on Desktop as it's in Header now) */}
       <div className="lg:hidden p-5 flex items-center justify-between">
          {/* Spacer or Title if needed, or just Close button */}
-         <div className="font-bold text-xl text-gray-800">Menu</div>
+         <div className="font-bold text-xl text-gray-800">{t("Sidebar.Menu")}</div>
         {/* Close button for mobile */}
         {onClose && (
           <button
@@ -130,7 +132,7 @@ export default function LeftSidebar({ onClose }: LeftSidebarProps) {
           <button
             onClick={handleLogout}
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-            title="Logout"
+            title={t("Sidebar.Logout")}
           >
             <LogOut className="w-5 h-5" />
           </button>

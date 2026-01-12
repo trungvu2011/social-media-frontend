@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import { sendOTPChangePassword, changePassword } from "../../utils";
-import { Lock, Mail, Key, ShieldCheck, ChevronRight, ArrowLeft, Settings as SettingsIcon } from "lucide-react";
+import { Lock, Mail, Key, ShieldCheck, ChevronRight, ArrowLeft, Settings as SettingsIcon, Globe, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { languageNames, flagEmojis } from "../../i18n";
 
 // Sub-component for Change Password Flow
 const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -24,15 +27,15 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
     // Validate passwords
     if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
-      setError("Vui lòng nhập đầy đủ thông tin mật khẩu.");
+      setError(t("Please enter all password fields."));
       return;
     }
     if (formData.newPassword !== formData.confirmPassword) {
-      setError("Mật khẩu mới không khớp.");
+      setError(t("New password does not match confirmation."));
       return;
     }
     if (formData.newPassword.length < 6) {
-      setError("Mật khẩu mới phải có ít nhất 6 ký tự.");
+      setError(t("New password must be at least 6 characters."));
       return;
     }
 
@@ -40,10 +43,10 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       setLoading(true);
       const res = await sendOTPChangePassword();
       setOtpToken(res.otpToken);
-      setSuccess("Mã OTP đã được gửi đến email của bạn.");
+      setSuccess(t("OTP sent to your email."));
       setStep(2);
     } catch (err: any) {
-      setError(err?.message || "Không thể gửi mã OTP. Vui lòng thử lại.");
+      setError(err?.message || t("Failed to send OTP. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -55,12 +58,12 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     setSuccess(null);
 
     if (!otpToken) {
-      setError("Phiên làm việc hết hạn, vui lòng lấy lại mã OTP.");
+      setError(t("Session expired, please request OTP again."));
       setStep(1);
       return;
     }
     if (!formData.otp) {
-      setError("Vui lòng nhập mã OTP.");
+      setError(t("Please enter OTP."));
       return;
     }
 
@@ -72,7 +75,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         otp: formData.otp,
         otpToken,
       });
-      setSuccess("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+      setSuccess(t("Password changed successfully! Please login again."));
       setFormData({
         oldPassword: "",
         newPassword: "",
@@ -82,7 +85,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       setStep(1);
       setOtpToken(null);
     } catch (err: any) {
-      setError(err?.message || "Đổi mật khẩu thất bại.");
+      setError(err?.message || t("Failed to change password."));
     } finally {
       setLoading(false);
     }
@@ -101,7 +104,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                Đổi mật khẩu
+                {t("Change Password")}
             </h2>
         </div>
         
@@ -109,7 +112,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             <div className="mb-6 p-4 bg-blue-50 text-blue-700 rounded-lg text-sm flex items-start gap-3">
                 <ShieldCheck className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <p>
-                    Để bảo vệ tài khoản, chúng tôi yêu cầu xác thực 2 bước (2FA) qua email khi đổi mật khẩu.
+                    {t("For your security, we require 2-step verification (2FA) via email when changing your password.")}
                 </p>
             </div>
 
@@ -128,7 +131,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               <form onSubmit={handleGetOTP} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mật khẩu hiện tại
+                    {t("Current Password")}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -139,14 +142,14 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         setFormData({ ...formData, oldPassword: e.target.value })
                       }
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Nhập mật khẩu hiện tại"
+                      placeholder={t("Enter current password")}
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mật khẩu mới
+                    {t("New Password")}
                   </label>
                   <div className="relative">
                     <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -157,14 +160,14 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         setFormData({ ...formData, newPassword: e.target.value })
                       }
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Nhập mật khẩu mới"
+                      placeholder={t("Enter new password")}
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Xác nhận mật khẩu mới
+                    {t("Confirm New Password")}
                   </label>
                   <div className="relative">
                     <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -178,7 +181,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         })
                       }
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Nhập lại mật khẩu mới"
+                      placeholder={t("Confirm new password")}
                     />
                   </div>
                 </div>
@@ -193,7 +196,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                     ) : (
                       <>
-                        Tiếp tục (Gửi OTP) <Mail className="w-4 h-4" />
+                        {t("Continue (Send OTP)")} <Mail className="w-4 h-4" />
                       </>
                     )}
                   </button>
@@ -205,15 +208,15 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     <div className="bg-indigo-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Mail className="w-8 h-8 text-indigo-600" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900">Xác thực OTP</h3>
+                    <h3 className="text-lg font-medium text-gray-900">{t("Verify OTP")}</h3>
                     <p className="text-sm text-gray-500">
-                        Mã xác thực đã được gửi đến email của bạn.
+                        {t("An authentication code has been sent to your email.")}
                     </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-center text-gray-700 mb-2">
-                    Nhập mã OTP (6 số)
+                    {t("Enter OTP (6 digits)")}
                   </label>
                   <input
                     type="text"
@@ -233,7 +236,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     onClick={handleBackStep}
                     className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    Quay lại
+                    {t("Back")}
                   </button>
                   <button
                     type="submit"
@@ -243,7 +246,7 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                      {loading ? (
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       ) : (
-                        "Xác nhận đổi mật khẩu"
+                        t("Confirm Change")
                       )}
                   </button>
                 </div>
@@ -255,52 +258,104 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 };
 
 const SettingsPage: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const [view, setView] = useState<'menu' | 'change_password'>('menu');
+
+    const changeLanguage = (lng: string) => {
+      i18n.changeLanguage(lng);
+    };
 
     return (
         <Layout>
             <div className="max-w-2xl mx-auto py-8 px-4">
                 <h1 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <SettingsIcon className="w-6 h-6 text-indigo-600" />
-                    Cài đặt & Quyền riêng tư
+                    {t("Settings.Title")}
                 </h1>
 
                 {view === 'menu' ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50/50">
-                            <h2 className="font-semibold text-gray-700">Tài khoản</h2>
-                        </div>
-                        <div className="divide-y divide-gray-100">
-                            <button 
-                                onClick={() => setView('change_password')}
-                                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                        <Lock className="w-5 h-5" />
+                    <div className="space-y-6">
+                      {/* Language Settings */}
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                          <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+                              <h2 className="font-semibold text-gray-700">{t("Settings.Language")}</h2>
+                          </div>
+                          <div className="divide-y divide-gray-100">
+                             <div className="p-4">
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                      <Globe className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <div className="font-medium text-gray-900">Đổi mật khẩu</div>
-                                        <div className="text-sm text-gray-500">Cập nhật mật khẩu và bảo mật</div>
+                                      <div className="font-medium text-gray-900">{t("Settings.Language")}</div>
+                                      <div className="text-sm text-gray-500">
+                                        {languageNames[i18n.language] || i18n.language} {flagEmojis[i18n.language]}
+                                      </div>
                                     </div>
+                                  </div>
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-gray-400" />
-                            </button>
-                            
-                            {/* Placeholder for future options */}
-                            <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left opacity-50 cursor-not-allowed">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-                                        <ShieldCheck className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <div className="font-medium text-gray-900">Quyền riêng tư (Sắp ra mắt)</div>
-                                        <div className="text-sm text-gray-500">Quản lý ai có thể thấy bài viết của bạn</div>
-                                    </div>
+                                
+                                <div className="grid grid-cols-2 gap-3">
+                                  {Object.keys(languageNames).map((lng) => (
+                                    <button
+                                      key={lng}
+                                      onClick={() => changeLanguage(lng)}
+                                      className={`flex items-center justify-between px-4 py-2 rounded-lg border ${
+                                        i18n.language === lng
+                                          ? "border-indigo-600 bg-indigo-50 text-indigo-700"
+                                          : "border-gray-200 hover:bg-gray-50 text-gray-700"
+                                      }`}
+                                    >
+                                      <span className="flex items-center gap-2">
+                                        <span>{flagEmojis[lng]}</span>
+                                        <span>{languageNames[lng]}</span>
+                                      </span>
+                                      {i18n.language === lng && <Check className="w-4 h-4" />}
+                                    </button>
+                                  ))}
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-gray-400" />
-                            </button>
-                        </div>
+                             </div>
+                          </div>
+                      </div>
+
+                      {/* Account Settings */}
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                          <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+                              <h2 className="font-semibold text-gray-700">{t("Settings.Title")}</h2>
+                          </div>
+                          <div className="divide-y divide-gray-100">
+                              <button 
+                                  onClick={() => setView('change_password')}
+                                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left"
+                              >
+                                  <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                          <Lock className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                          <div className="font-medium text-gray-900">{t("Change Password")}</div>
+                                          <div className="text-sm text-gray-500">{t("Update password and security")}</div>
+                                      </div>
+                                  </div>
+                                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                              </button>
+                              
+                              {/* Placeholder for future options */}
+                              <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left opacity-50 cursor-not-allowed">
+                                  <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                          <ShieldCheck className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                          <div className="font-medium text-gray-900">Privacy (Coming Soon)</div>
+                                          <div className="text-sm text-gray-500">Manage who can see your posts</div>
+                                      </div>
+                                  </div>
+                                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                              </button>
+                          </div>
+                      </div>
                     </div>
                 ) : (
                     <ChangePasswordView onBack={() => setView('menu')} />

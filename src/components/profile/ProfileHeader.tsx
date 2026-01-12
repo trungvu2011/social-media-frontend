@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Profile } from "../../types/social";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface ProfileHeaderProps {
   profile: Profile;
@@ -15,6 +16,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onFollowToggle,
   initialIsFollowing = false 
 }) => {
+  const { t } = useTranslation();
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -43,9 +45,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const getFollowButtonText = () => {
     if (isFollowing) {
-      return isHovering ? "Unfollow" : "Following";
+      return isHovering ? t("Profile.Unfollow") : t("Profile.Following");
     }
-    return "Follow";
+    return t("Profile.Follow");
   };
 
   const getFollowButtonClass = () => {
@@ -128,7 +130,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               ${isCurrentUser ? 'cursor-default' : 'cursor-pointer'}
             `}
           >
-            {isCurrentUser ? "Edit Profile" : getFollowButtonText()}
+            {isCurrentUser ? t("Profile.EditProfile") : getFollowButtonText()}
           </button>
         </div>
 
@@ -138,7 +140,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="text-2xl font-bold text-gray-900">
               {formatNumber(profile.stats.posts)}
             </div>
-            <div className="text-sm text-gray-500 font-medium">Posts</div>
+            <div className="text-sm text-gray-500 font-medium">{t("Profile.Stats.Posts")}</div>
           </div>
           
           <Link 
@@ -148,7 +150,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="text-2xl font-bold text-gray-900 hover:text-blue-600">
               {formatNumber(profile.stats.followers)}
             </div>
-            <div className="text-sm text-gray-500 font-medium">Followers</div>
+            <div className="text-sm text-gray-500 font-medium">{t("Profile.Stats.Followers")}</div>
           </Link>
           
           <Link 
@@ -158,7 +160,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="text-2xl font-bold text-gray-900 hover:text-blue-600">
               {profile.stats.following}
             </div>
-            <div className="text-sm text-gray-500 font-medium">Following</div>
+            <div className="text-sm text-gray-500 font-medium">{t("Profile.Stats.Following")}</div>
           </Link>
         </div>
 

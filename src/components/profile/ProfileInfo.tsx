@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { Profile, Story } from "../../types/social";
+import { useTranslation } from "react-i18next";
 
 interface ProfileInfoProps {
   profile: Profile;
@@ -24,6 +25,7 @@ const Tooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, 
 };
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
+  const { t } = useTranslation();
   const [showFullBio, setShowFullBio] = useState(false);
   const bioPreview =
     profile.bio.slice(0, 120) + (profile.bio.length > 120 ? "..." : "");
@@ -32,7 +34,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Bio */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Bio</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("Profile.Bio.Title")}</h2>
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-gray-700 leading-relaxed">
             {showFullBio ? profile.bio : bioPreview}
@@ -42,7 +44,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
               onClick={() => setShowFullBio(!showFullBio)}
               className="text-blue-500 hover:text-blue-600 text-sm font-medium mt-3 flex items-center"
             >
-              {showFullBio ? "Show Less" : "Read More"}
+              {showFullBio ? t("Profile.Bio.ShowLess") : t("Profile.Bio.ReadMore")}
               <svg
                 className={`w-4 h-4 ml-1 transform ${
                   showFullBio ? "rotate-180" : ""
@@ -66,7 +68,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
       {/* Story Highlights */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          My Story Highlights
+          {t("Profile.Stories.Title")}
         </h2>
         <div className="flex space-x-4 overflow-x-auto pb-4">
           {stories.length > 0 ? (
@@ -86,7 +88,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-sm">No stories yet</p>
+            <p className="text-gray-500 text-sm">{t("Profile.Empty.Stories")}</p>
           )}
         </div>
       </div>
@@ -94,7 +96,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
       {/* Contact Information */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Contact Information
+          {t("Profile.Contact.Title")}
         </h2>
         <div className="space-y-4 bg-gray-50 rounded-lg p-4">
           {profile.phone && (
@@ -109,7 +111,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-gray-500 mb-1">Phone Number</div>
+                <div className="text-xs text-gray-500 mb-1">{t("Profile.Contact.Phone")}</div>
                 <Tooltip text={profile.phone}>
                   <div className="font-medium text-gray-900 text-sm break-all">
                     {profile.phone}
@@ -132,7 +134,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-gray-500 mb-1">Email Address</div>
+                <div className="text-xs text-gray-500 mb-1">{t("Profile.Contact.Email")}</div>
                 <Tooltip text={profile.email}>
                   <div className="font-medium text-gray-900 text-sm break-all">
                     {profile.email}
@@ -158,7 +160,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profile, stories }) => {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-gray-500 mb-1">Website</div>
+                <div className="text-xs text-gray-500 mb-1">{t("Profile.Contact.Website")}</div>
                 <Tooltip text={profile.website}>
                   <a
                     href={`https://${profile.website}`}

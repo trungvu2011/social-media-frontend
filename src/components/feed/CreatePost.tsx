@@ -1,8 +1,10 @@
 import { Send, Paperclip, Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPost } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 const CreatePost = () => {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [images, setImages] = useState<Array<{ file: File; preview: string }>>(
     []
@@ -86,7 +88,7 @@ const CreatePost = () => {
         {/* Text Input */}
         <input
           type="text"
-          placeholder="What's new?"
+          placeholder={t("Feed.CreatePostPlaceholder")}
           className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 text-base focus:outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -102,19 +104,14 @@ const CreatePost = () => {
           >
             <Image className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          {/* <button
-            type="button"
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
-          >
-            <Smile className="w-5 h-5" />
-          </button> */}
+          
           <button
             className="flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white px-2 sm:px-5 py-2 sm:py-2.5 rounded-full font-medium text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             onClick={() => onSubmit()}
             disabled={submitting || (!text.trim() && images.length === 0)}
           >
             <span className="hidden sm:inline">
-              {submitting ? "..." : "Post"}
+              {submitting ? t("Feed.Posting") : t("Feed.PostButton")}
             </span>
             <Send className="w-4 h-4" />
           </button>

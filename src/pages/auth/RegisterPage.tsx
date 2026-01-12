@@ -6,8 +6,10 @@ import { useGoogleLogin } from '@react-oauth/google';
 import RegisterImage from "../../assets/register_image.png";
 
 import SocialHubLogo from "../../assets/socialhub-horizontal.png";
+import { useTranslation, Trans } from "react-i18next";
 
 function RegisterPage() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -40,7 +42,7 @@ function RegisterPage() {
         navigate("/", { replace: true });
         window.location.reload();
       } catch (err: any) {
-        setError(err?.message || "Google Login failed.");
+        setError(err?.message || t("Auth.GoogleLoginFailed"));
       } finally {
         setLoading(false);
       }
@@ -62,12 +64,12 @@ function RegisterPage() {
     setSuccess("");
 
     if (!agreed) {
-      setError("Please agree to the terms and privacy policies.");
+      setError(t("Auth.Error.AgreeTerms"));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("Auth.Error.PasswordMatch"));
       return;
     }
 
@@ -76,10 +78,10 @@ function RegisterPage() {
     setLoading(true);
     try {
       await signUp(userName, fullName, formData.email, formData.password);
-      setSuccess("Registration successful. Please log in.");
+      setSuccess(t("Auth.Success.Registration"));
       setTimeout(() => navigate("/login", { replace: true }), 800);
     } catch (err: any) {
-      setError(err?.message || "Registration failed. Please try again.");
+      setError(err?.message || t("Auth.Error.RegistrationFailed"));
     } finally {
       setLoading(false);
     }
@@ -104,9 +106,9 @@ function RegisterPage() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign up</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t("Auth.SignUpTitle")}</h1>
             <p className="text-gray-600">
-              Let's get you all set up so you can access your personal account.
+              {t("Auth.SignUpSubtitle")}
             </p>
           </div>
 
@@ -114,7 +116,7 @@ function RegisterPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
-                  First Name
+                  {t("Auth.FirstName")}
                 </label>
                 <input
                   type="text"
@@ -128,7 +130,7 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
-                  Last Name
+                  {t("Auth.LastName")}
                 </label>
                 <input
                   type="text"
@@ -145,7 +147,7 @@ function RegisterPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
-                  Email
+                  {t("Auth.Email")}
                 </label>
                 <input
                   type="email"
@@ -159,7 +161,7 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
-                  Username
+                  {t("Auth.Username")}
                 </label>
                 <input
                   type="text"
@@ -175,7 +177,7 @@ function RegisterPage() {
 
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">
-                Password
+                {t("Auth.Password")}
               </label>
               <div className="relative">
                 <input
@@ -203,7 +205,7 @@ function RegisterPage() {
 
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">
-                Confirm Password
+                {t("Auth.ConfirmPassword")}
               </label>
               <div className="relative">
                 <input
@@ -248,20 +250,9 @@ function RegisterPage() {
                 className="w-4 h-4 border border-gray-300 rounded cursor-pointer mt-0.5"
               />
               <span className="text-sm text-gray-600">
-                I agree to all the{" "}
-                <a
-                  href="#"
-                  className="text-red-600 hover:text-red-700 font-medium"
-                >
-                  Terms
-                </a>{" "}
-                and{" "}
-                <a
-                  href="#"
-                  className="text-red-600 hover:text-red-700 font-medium"
-                >
-                  Privacy Policies
-                </a>
+                <Trans i18nKey="Auth.AgreeTerms">
+                  I agree to all the <a href="#" className="text-red-600 hover:text-red-700 font-medium">Terms</a> and <a href="#" className="text-red-600 hover:text-red-700 font-medium">Privacy Policies</a>
+                </Trans>
               </span>
             </label>
 
@@ -273,22 +264,22 @@ function RegisterPage() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
-                  Creating account...
+                  {t("Auth.CreatingAccount")}
                 </>
               ) : (
-                "Create account"
+                t("Auth.CreateAccount")
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 text-sm">
-              Already have an account?{" "}
+              {t("Auth.HaveAccount")}{" "}
               <a
                 href="/login"
                 className="text-red-600 hover:text-red-700 font-semibold"
               >
-                Login
+                {t("Login")}
               </a>
             </p>
           </div>
@@ -300,7 +291,7 @@ function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Or Sign up with
+                  {t("Auth.OrSignUpWith")}
                 </span>
               </div>
             </div>
@@ -321,7 +312,7 @@ function RegisterPage() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                <span>Sign up with Google</span>
+                <span>{t("Auth.SignUpGoogle")}</span>
               </button>
             </div>
           </div>

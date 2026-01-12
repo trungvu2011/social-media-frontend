@@ -1,4 +1,5 @@
 import { type ChatUser, type ChatConversation } from "../../utils/index";
+import { useTranslation } from "react-i18next";
 
 interface ChatSidebarProps {
   conversations: ChatConversation[];
@@ -13,6 +14,8 @@ export const ChatSidebar = ({
   onSelectConversation,
   currentUserId,
 }: ChatSidebarProps) => {
+  const { t } = useTranslation();
+  
   const getOtherUser = (members: ChatUser[]): ChatUser | undefined => {
     return members.find((m) => m._id !== currentUserId);
   };
@@ -37,14 +40,14 @@ export const ChatSidebar = ({
     <div className="bg-white border-r border-gray-200 flex flex-col h-full w-full md:w-80">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800">Messages</h2>
+        <h2 className="text-xl font-semibold text-gray-800">{t("Messages.Sidebar.Title")}</h2>
       </div>
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
           <div className="p-4 text-center text-gray-500">
-            Chưa có cuộc trò chuyện nào
+            {t("Messages.Sidebar.NoConversations")}
           </div>
         ) : (
           conversations.map((conversation) => {
@@ -97,7 +100,7 @@ export const ChatSidebar = ({
                       >
                         {otherUser?.fullName ||
                           otherUser?.userName ||
-                          "Unknown"}
+                          t("Messages.Sidebar.Unknown")}
                       </h3>
                       <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
                         {formatTime(lastMessage?.createdAt)}
@@ -110,7 +113,7 @@ export const ChatSidebar = ({
                           : "text-gray-600"
                       }`}
                     >
-                      {lastMessage?.content || "Chưa có tin nhắn"}
+                      {lastMessage?.content || t("Messages.Sidebar.NoMessages")}
                     </p>
                   </div>
                 </div>

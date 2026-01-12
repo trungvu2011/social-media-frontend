@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { Post as PostType } from "../../types/social";
 import Post from "../feed/Post";
+import { useTranslation } from "react-i18next";
 
 interface ProfilePostsProps {
   posts: PostType[];
@@ -10,8 +11,8 @@ interface ProfilePostsProps {
 type FilterType = "all" | "photos" | "videos";
 
 const ProfilePosts: React.FC<ProfilePostsProps> = ({ posts, username }) => {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
-
 
   const filteredPosts = useMemo(() => {
     if (activeFilter === "all") {
@@ -41,34 +42,34 @@ const ProfilePosts: React.FC<ProfilePostsProps> = ({ posts, username }) => {
       {/* Posts Header */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold text-gray-900">Posts</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("Profile.Stats.Posts")}</h2>
           <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setActiveFilter("all")}
               className={getFilterButtonClass("all")}
             >
-              All
+              {t("Profile.Filter.All")}
             </button>
             <button
               onClick={() => setActiveFilter("photos")}
               className={getFilterButtonClass("photos")}
             >
-              Photos
+              {t("Profile.Filter.Photos")}
             </button>
             <button
               onClick={() => setActiveFilter("videos")}
               className={getFilterButtonClass("videos")}
             >
-              Videos
+              {t("Profile.Filter.Videos")}
             </button>
           </div>
         </div>
         
         {/* Filter info */}
         <div className="text-sm text-gray-500 mt-2">
-          {activeFilter === "all" && `Showing all ${posts.length} posts`}
-          {activeFilter === "photos" && `Showing ${filteredPosts.length} posts with photos`}
-          {activeFilter === "videos" && `Showing ${filteredPosts.length} posts with videos`}
+          {activeFilter === "all" && t("Profile.Filter.ShowingAll", { count: posts.length })}
+          {activeFilter === "photos" && t("Profile.Filter.ShowingPhotos", { count: filteredPosts.length })}
+          {activeFilter === "videos" && t("Profile.Filter.ShowingVideos", { count: filteredPosts.length })}
         </div>
       </div>
 
@@ -128,14 +129,14 @@ const ProfilePosts: React.FC<ProfilePostsProps> = ({ posts, username }) => {
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             {activeFilter === "all" 
-              ? `@${username} hasn't posted yet`
-              : `No ${activeFilter} found`
+              ? t("Profile.Empty.UserNoPosts", { username })
+              : t("Profile.Empty." + (activeFilter === "photos" ? "Photos" : "Videos"))
             }
           </h3>
           <p className="text-gray-500 max-w-sm mx-auto">
             {activeFilter === "all" 
-              ? "When they share posts, they'll appear here."
-              : `Try switching to "All" to see all posts.`
+              ? t("Profile.Empty.UserNoPostsDesc")
+              : t("Profile.Empty.TryAll")
             }
           </p>
         </div>

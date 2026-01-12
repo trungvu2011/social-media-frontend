@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSocketContext } from "../../context/SocketContext";
 import { RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface NewPostsBannerProps {
   onLoadNewPosts: () => void;
 }
 
 export const NewPostsBanner = ({ onLoadNewPosts }: NewPostsBannerProps) => {
+  const { t } = useTranslation();
   const { socket } = useSocketContext();
   const [newPostCount, setNewPostCount] = useState(0);
 
@@ -38,9 +40,9 @@ export const NewPostsBanner = ({ onLoadNewPosts }: NewPostsBannerProps) => {
     >
       <RefreshCw size={20} />
       <span className="font-medium">
-        {newPostCount} new {newPostCount === 1 ? "post" : "posts"} available
+        {t("Feed.NewPostsAvailable", { count: newPostCount })}
       </span>
-      <span className="text-blue-100 text-sm">Click to load</span>
+      <span className="text-blue-100 text-sm">{t("Feed.ClickToLoad")}</span>
     </div>
   );
 };

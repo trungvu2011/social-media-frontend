@@ -27,8 +27,10 @@ import {
   Grid,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const ProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const { username } = useParams<{ username: string }>();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -107,7 +109,7 @@ const ProfilePage: React.FC = () => {
         }
 
         if (!userProfile || !userId) {
-          if (isMounted) setError(`User @${username} not found`);
+          if (isMounted) setError(t("Profile.NotFoundMessage", { username }));
           setLoading(false);
           return;
         }
@@ -180,10 +182,7 @@ const ProfilePage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-    return () => {
-      isMounted = false;
-    };
-  }, [username, authUser?.id, authUser?.userName]);
+  }, [username, authUser?.id, authUser?.userName, t]); // Added t to deps
 
   // Fetch liked posts when tab changes to "likes"
   useEffect(() => {
@@ -191,9 +190,6 @@ const ProfilePage: React.FC = () => {
     const fetchLiked = async () => {
       if (activeTab === "likes" && profile?._id) {
         try {
-          // Check if we need to set loading for just this tab part,
-          // or if we rely on initial load. Let's do silent update or small indicator if needed.
-          // For now just fetch.
           const res = await getLikedPosts(profile._id);
           if (isMounted && res.data) {
             const userLikedPosts = res.data.map(
@@ -212,24 +208,12 @@ const ProfilePage: React.FC = () => {
                 commentCount: p.commentCount ?? 0,
                 shares: 0,
                 createdAt: p.createdAt,
-                isLiked: true, // Since we are in liked tab, presumably they are liked by the viewer if viewer == profileUser.
-                // BUT: if viewer != profileUser, it just means these are posts LIKED BY profileUser.
-                // Whether VIEWER likes them is a different story.
-                // Current API getLikedPostsByUser returns post details.
-                // Does it return 'likes' array of the post? Yes (from populate).
-                // So real isLiked calculation:
+                isLiked: true,
               })
             );
 
             // Re-calculate isLiked for the CURRENT VIEWER
             const finalPosts = userLikedPosts.map((p) => {
-              // p.likes from API response data (if populated correctly)
-              // But wait, the API getLikedPostsByUser maps fields manually.
-              // We need to ensure 'likes' array is in the response of getLikedPostsByUser
-              // I added 'likes' to populate logic? NO.
-              // In like.controller.js I selected "text content images authorId commentCount createdAt updatedAt".
-              // I MISSED 'likes'. I should add 'likes' to the select string in controller.
-              // For now, let's assume isLiked=true if we are viewing our own profile's liked tab.
               return { ...p, isLiked: true };
             });
 
@@ -265,7 +249,6 @@ const ProfilePage: React.FC = () => {
 
   const navigateToFollows = (type: "followers" | "following") => {
     if (!profile) return;
-    // Pass userId and fullName in state so FollowListPage doesn't have to guess or fetch it again
     navigate(`/profile/${profile.userName}/${type}`, {
       state: {
         userId: profile._id,
@@ -393,7 +376,7 @@ const ProfilePage: React.FC = () => {
       <Layout>
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Loading profile...</p>
+          <p className="mt-4 text-gray-500">{t("Profile.Loading")}</p>
         </div>
       </Layout>
     );
@@ -404,13 +387,13 @@ const ProfilePage: React.FC = () => {
       <Layout>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="text-red-500 text-xl font-semibold mb-4">
-            Profile Not Found
+            {t("Profile.NotFoundTitle")}
           </div>
           <p className="text-gray-600 mb-4">
-            {error || `The user @${username} does not exist.`}
+            {error || t("Profile.NotFoundMessage", { username })}
           </p>
           <Link to="/" className="text-indigo-600 hover:underline">
-            Go back to home
+            {t("Profile.GoHome")}
           </Link>
         </div>
       </Layout>
@@ -493,7 +476,7 @@ const ProfilePage: React.FC = () => {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full font-medium text-sm transition-colors"
                 >
                   <Edit3 className="w-4 h-4" />
-                  Edit Profile
+                  {t("Profile.EditProfile")}
                 </button>
               ) : (
                 <>
@@ -507,12 +490,13 @@ const ProfilePage: React.FC = () => {
                     }`}
                   >
                     <UserPlus className="w-4 h-4" />
-                    {isFollowing ? "Following" : "Follow"}
+                    {isFollowing ? t("Profile.Following") : t("Profile.Follow")}
                   </button>
                   <button
                     type="button"
                     onClick={handleMessage}
                     className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                    title={t("Profile.Message")}
                   >
                     <MessageCircle className="w-5 h-5 text-gray-600" />
                   </button>
@@ -535,7 +519,7 @@ const ProfilePage: React.FC = () => {
               </h1>
               {profile.isVerified && (
                 <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  ✓ Verified
+                  ✓ {t("Profile.Verified")}
                 </span>
               )}
             </div>
@@ -575,7 +559,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {posts.length}
               </div>
-              <div className="text-sm text-gray-500">Posts</div>
+              <div className="text-sm text-gray-500">{t("Profile.Stats.Posts")}</div>
             </div>
             <div
               className="text-center cursor-pointer hover:opacity-80 transition-opacity"
@@ -584,7 +568,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {followerCount}
               </div>
-              <div className="text-sm text-gray-500">Followers</div>
+              <div className="text-sm text-gray-500">{t("Profile.Stats.Followers")}</div>
             </div>
             <div
               className="text-center cursor-pointer hover:opacity-80 transition-opacity"
@@ -593,7 +577,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {followingCount}
               </div>
-              <div className="text-sm text-gray-500">Following</div>
+              <div className="text-sm text-gray-500">{t("Profile.Stats.Following")}</div>
             </div>
           </div>
         </div>
@@ -610,7 +594,7 @@ const ProfilePage: React.FC = () => {
             }`}
           >
             <Grid className="w-4 h-4" />
-            Posts
+            {t("Profile.Tabs.Posts")}
           </button>
           <button
             type="button"
@@ -622,7 +606,7 @@ const ProfilePage: React.FC = () => {
             }`}
           >
             <Heart className="w-4 h-4" />
-            Likes
+            {t("Profile.Tabs.Likes")}
           </button>
         </div>
       </div>
@@ -633,7 +617,7 @@ const ProfilePage: React.FC = () => {
           posts.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
               <Grid className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No posts yet</p>
+              <p className="text-gray-500">{t("Profile.Empty.Posts")}</p>
             </div>
           ) : (
             posts.map((post) => <Post key={post.id} post={post} />)
@@ -641,7 +625,7 @@ const ProfilePage: React.FC = () => {
         ) : likedPosts.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
             <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No liked posts yet</p>
+            <p className="text-gray-500">{t("Profile.Empty.Likes")}</p>
           </div>
         ) : (
           likedPosts.map((post) => <Post key={post.id} post={post} />)
@@ -653,7 +637,7 @@ const ProfilePage: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold">Edit Profile</h2>
+              <h2 className="text-lg font-semibold">{t("Profile.EditModal.Title")}</h2>
               <button
                 type="button"
                 onClick={() => setShowEditModal(false)}
@@ -665,7 +649,7 @@ const ProfilePage: React.FC = () => {
             <form onSubmit={handleEditSubmit} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
+                  {t("Profile.EditModal.FullName")}
                 </label>
                 <input
                   type="text"
@@ -677,12 +661,12 @@ const ProfilePage: React.FC = () => {
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Your full name"
+                  placeholder={t("Profile.EditModal.Placeholders.FullName")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bio
+                  {t("Profile.EditModal.Bio")}
                 </label>
                 <textarea
                   value={editFormData.bio}
@@ -694,12 +678,12 @@ const ProfilePage: React.FC = () => {
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={3}
-                  placeholder="Tell us about yourself"
+                  placeholder={t("Profile.EditModal.Placeholders.Bio")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Genre / Interests
+                  {t("Profile.EditModal.Genre")}
                 </label>
                 <input
                   type="text"
@@ -711,12 +695,12 @@ const ProfilePage: React.FC = () => {
                     }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Music, Tech, Sports..."
+                  placeholder={t("Profile.EditModal.Placeholders.Genre")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Birthday
+                  {t("Profile.EditModal.Birthday")}
                 </label>
                 <input
                   type="date"
@@ -736,14 +720,14 @@ const ProfilePage: React.FC = () => {
                   onClick={() => setShowEditModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t("Profile.EditModal.Cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
                   className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
                 >
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving ? t("Profile.EditModal.Saving") : t("Profile.EditModal.Save")}
                 </button>
               </div>
             </form>

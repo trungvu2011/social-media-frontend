@@ -3,8 +3,10 @@ import { Eye, EyeOff, Loader } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import SocialHubLogo from "../../assets/socialhub-horizontal.png";
 import { api } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 function ResetPasswordPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
@@ -22,17 +24,17 @@ function ResetPasswordPage() {
     setMessage("");
 
     if (!token) {
-      setError("Invalid or missing token.");
+      setError(t("Auth.Error.InvalidToken"));
       return;
     }
 
     if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters long.");
+      setError(t("Auth.Error.PasswordLength"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("Auth.Error.PasswordMatch"));
       return;
     }
 
@@ -46,7 +48,7 @@ function ResetPasswordPage() {
           body: { token, newPassword },
         }
       );
-      setMessage(message || "Password has been reset successfully.");
+      setMessage(message || t("Auth.Success.PasswordReset"));
       
       // Redirect to login after success
       setTimeout(() => {
@@ -54,7 +56,7 @@ function ResetPasswordPage() {
       }, 2000);
     } catch (err: any) {
       setError(
-        err.message || "An error occurred. Please try again."
+        err.message || t("Auth.Error.Generic")
       );
     } finally {
       setLoading(false);
@@ -69,15 +71,15 @@ function ResetPasswordPage() {
             <img src={SocialHubLogo} alt="SocialHub" className="h-10 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Reset Password
+            {t("Auth.ResetPassword")}
           </h1>
-          <p className="text-gray-600">Enter your new password below</p>
+          <p className="text-gray-600">{t("Auth.ResetPasswordSubtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-2">
-              New Password
+              {t("Auth.NewPassword")}
             </label>
             <div className="relative">
               <input
@@ -104,7 +106,7 @@ function ResetPasswordPage() {
 
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-2">
-              Confirm Password
+              {t("Auth.ConfirmPassword")}
             </label>
             <input
               type="password"
@@ -136,10 +138,10 @@ function ResetPasswordPage() {
             {loading ? (
               <>
                 <Loader className="w-4 h-4 animate-spin" />
-                Resetting...
+                {t("Auth.Resetting")}
               </>
             ) : (
-              "Reset Password"
+              t("Auth.ResetPassword")
             )}
           </button>
         </form>

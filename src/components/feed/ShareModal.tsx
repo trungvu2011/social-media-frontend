@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, Send } from "lucide-react";
 import { type Post } from "../../types/social";
 import { sharePost } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 interface ShareModalProps {
   post: Post;
@@ -10,6 +11,7 @@ interface ShareModalProps {
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [caption, setCaption] = useState("");
   const [isSharing, setIsSharing] = useState(false);
 
@@ -33,7 +35,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => 
       onClose();
     } catch (error) {
       console.error("Failed to share post:", error);
-      alert("Failed to share post. Please try again.");
+      alert(t("Share.Failed"));
     } finally {
       setIsSharing(false);
     }
@@ -50,7 +52,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => 
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h3 className="font-semibold text-lg text-gray-900">Share Post</h3>
+          <h3 className="font-semibold text-lg text-gray-900">{t("Share.Title")}</h3>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -76,13 +78,13 @@ const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => 
               <div className="font-semibold text-gray-900">
                 {authUser?.displayName || authUser?.userName}
               </div>
-              <div className="text-xs text-gray-500">Share to Feed</div>
+              <div className="text-xs text-gray-500">{t("Share.ShareToFeed")}</div>
             </div>
           </div>
 
           {/* Caption Input */}
           <textarea
-            placeholder="Say something about this..."
+            placeholder={t("Share.Placeholder")}
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             className="w-full min-h-[100px] resize-none border-none focus:ring-0 text-lg placeholder-gray-400 p-0 mb-4"
@@ -117,7 +119,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => 
                 onClick={onClose}
                 className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
             >
-                Cancel
+                {t("Share.Cancel")}
             </button>
           <button
             onClick={handleShare}
@@ -125,11 +127,11 @@ const ShareModal: React.FC<ShareModalProps> = ({ post, onClose, onSuccess }) => 
             className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             {isSharing ? (
-              "Sharing..."
+              t("Share.Sharing")
             ) : (
                 <>
                     <Send className="w-4 h-4" />
-                    Share Now
+                    {t("Share.ShareNow")}
                 </>
             )}
           </button>

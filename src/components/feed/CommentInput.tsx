@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Send, Image as ImageIcon, X } from "lucide-react";
 import type { UserProfile } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 interface CommentInputProps {
   currentUser: UserProfile | null;
@@ -14,10 +15,13 @@ interface CommentInputProps {
 const CommentInput: React.FC<CommentInputProps> = ({
   currentUser,
   onSubmit,
-  placeholder = "Write a comment...",
+  placeholder,
   autoFocus = false,
   className = "",
 }) => {
+  const { t } = useTranslation();
+  const inputPlaceholder = placeholder || t("Comments.Placeholder");
+
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -95,7 +99,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
                 ref={textareaRef}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder={placeholder}
+                placeholder={inputPlaceholder}
                 className="w-full bg-gray-100 text-gray-900 rounded-2xl py-2 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none min-h-[40px] max-h-32 text-sm"
                 rows={1}
                 onKeyDown={(e) => {

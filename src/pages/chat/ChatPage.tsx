@@ -7,8 +7,10 @@ import AppIcon from "../../assets/socialhub-horizontal.png";
 import { useLocation } from "react-router-dom";
 import { type ChatUser } from "../../utils";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const ChatPage = () => {
+  const { t } = useTranslation();
   const [showMobileSidebar, setShowMobileSidebar] = useState(true);
   const {
     conversations,
@@ -134,10 +136,10 @@ export const ChatPage = () => {
           <div className="flex-1 hidden md:flex items-center justify-center bg-gray-50">
             <div className="text-center">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                Chào mừng đến với Chat
+                {t("Messages.Welcome.Title")}
               </h3>
               <p className="text-gray-500">
-                Chọn một cuộc trò chuyện để bắt đầu nhắn tin
+                {t("Messages.Welcome.Subtitle")}
               </p>
             </div>
           </div>

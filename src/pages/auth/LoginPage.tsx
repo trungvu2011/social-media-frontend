@@ -6,8 +6,10 @@ import { login, googleLogin } from "../../utils";
 import type { LoginSuccessResponse } from "../../utils";
 import LoginImage from "../../assets/login_image.png";
 import SocialHubLogo from "../../assets/socialhub-horizontal.png";
+import { useTranslation } from "react-i18next";
 
 function LoginPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -40,7 +42,7 @@ function LoginPage() {
         navigate("/", { replace: true });
         window.location.reload();
       } catch (err: any) {
-        setError(err?.message || "Google Login failed.");
+        setError(err?.message || t("Auth.GoogleLoginFailed"));
       } finally {
         setLoading(false);
       }
@@ -58,7 +60,7 @@ function LoginPage() {
         password
       );
       if (!user || !accessToken) {
-        setError("Unexpected response from server.");
+        setError(t("Auth.UnexpectedError"));
         return;
       }
 
@@ -79,7 +81,7 @@ function LoginPage() {
       navigate("/", { replace: true });
       setTimeout(() => window.location.reload(), 0);
     } catch (err: any) {
-      setError(err?.message || "Network error. Please check your connection.");
+      setError(err?.message || t("Auth.NetworkError"));
     } finally {
       setLoading(false);
     }
@@ -100,14 +102,14 @@ function LoginPage() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Login</h1>
-            <p className="text-gray-600">Login to access your account</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t("Auth.LoginTitle")}</h1>
+            <p className="text-gray-600">{t("Auth.LoginSubtitle")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">
-                Email
+                {t("Auth.Email")}
               </label>
               <input
                 type="email"
@@ -121,7 +123,7 @@ function LoginPage() {
 
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-2">
-                Password
+                {t("Auth.Password")}
               </label>
               <div className="relative">
                 <input
@@ -160,13 +162,13 @@ function LoginPage() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 border border-gray-300 rounded cursor-pointer"
                 />
-                <span className="text-sm text-gray-700">Remember me</span>
+                <span className="text-sm text-gray-700">{t("Auth.RememberMe")}</span>
               </label>
               <a
                 href="/forgot-password"
                 className="text-sm text-red-600 hover:text-red-700 font-medium"
               >
-                Forgot Password
+                {t("Auth.ForgotPassword")}
               </a>
             </div>
 
@@ -178,22 +180,22 @@ function LoginPage() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
-                  Logging in...
+                  {t("Auth.LoggingIn")}
                 </>
               ) : (
-                "Login"
+                t("Auth.LoginTitle")
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 text-sm">
-              Don't have an account?{" "}
+              {t("Auth.NoAccount")}{" "}
               <a
                 href="/register"
                 className="text-red-600 hover:text-red-700 font-semibold"
               >
-                sign up
+                {t("Auth.SignUp")}
               </a>
             </p>
           </div>
@@ -205,7 +207,7 @@ function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Or login with
+                  {t("Auth.OrLoginWith")}
                 </span>
               </div>
             </div>
@@ -226,7 +228,7 @@ function LoginPage() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                <span>Login with Google</span>
+                <span>{t("Auth.LoginGoogle")}</span>
               </button>
             </div>
           </div>

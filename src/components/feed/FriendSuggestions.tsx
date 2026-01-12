@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getFriendSuggestions, followUser, type UserProfile } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 const FriendSuggestions = () => {
+  const { t } = useTranslation();
   const [suggestions, setSuggestions] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,15 +54,15 @@ const FriendSuggestions = () => {
   return (
     <div className="p-4 border-b border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Friend Suggestions</h3>
+        <h3 className="font-semibold text-gray-900">{t("Feed.FriendSuggestions")}</h3>
         {/* <button className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-          See All
+          {t("Feed.SeeAll")}
           <ArrowRight className="w-4 h-4" />
         </button> */}
       </div>
 
       {loading ? (
-        <div className="text-center text-gray-500 text-sm py-4">Loading...</div>
+        <div className="text-center text-gray-500 text-sm py-4">{t("Feed.LoadingSuggestions")}</div>
       ) : (
         <div className="space-y-3">
           {suggestions.map((user) => (
@@ -82,6 +84,7 @@ const FriendSuggestions = () => {
               <button
                 onClick={() => handleFollow(user._id)}
                 className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                title={t("Follow")}
               >
                 <Plus className="w-5 h-5 text-gray-400 hover:text-indigo-600" />
               </button>

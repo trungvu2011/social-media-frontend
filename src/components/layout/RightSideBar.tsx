@@ -10,8 +10,10 @@ import {
   type FollowUser,
 } from "../../utils";
 import FriendSuggestions from "../feed/FriendSuggestions";
+import { useTranslation } from "react-i18next";
 
 const RightSidebar = () => {
+  const { t } = useTranslation();
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [upcomingBirthdays, setUpcomingBirthdays] = useState<FollowUser[]>([]);
@@ -80,7 +82,7 @@ const RightSidebar = () => {
       {/* Profile Activity */}
       <div className="p-4 border-b border-gray-200">
         <h3 className="font-semibold text-gray-900 mb-4">
-          Profile Activity
+          {t("RightSidebar.ProfileActivity")}
         </h3>
         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4">
           {/* Followers */}
@@ -95,7 +97,7 @@ const RightSidebar = () => {
               <div className="text-2xl font-bold text-indigo-600">
                 {followerCount}
               </div>
-              <div className="text-xs text-gray-500">Followers</div>
+              <div className="text-xs text-gray-500">{t("RightSidebar.Followers")}</div>
             </div>
           </Link>
 
@@ -104,7 +106,7 @@ const RightSidebar = () => {
             to={`/profile/${authUser?.userName}/following`}
             className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-indigo-600 transition-colors"
           >
-            <div className="font-medium">{followingCount} Following</div>
+            <div className="font-medium">{followingCount} {t("RightSidebar.Following")}</div>
           </Link>
         </div>
       </div>
@@ -112,7 +114,7 @@ const RightSidebar = () => {
       {/* Upcoming Events */}
       <div className="p-4">
         <h3 className="font-semibold text-gray-900 mb-4">
-          Upcoming Birthdays
+          {t("RightSidebar.UpcomingBirthdays")}
         </h3>
         <div className="space-y-3">
           {upcomingBirthdays.length > 0 ? (
@@ -136,7 +138,7 @@ const RightSidebar = () => {
             ))
           ) : (
             <div className="text-center text-gray-400 text-sm py-2">
-              No upcoming birthdays
+              {t("RightSidebar.NoBirthdays")}
             </div>
           )}
         </div>

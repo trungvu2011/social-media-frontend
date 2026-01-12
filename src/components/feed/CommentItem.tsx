@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MoreHorizontal, Trash2, Flag } from "lucide-react";
 import { type Comment, type UserProfile, getPostComments } from "../../utils";
 import CommentInput from "./CommentInput";
+import { useTranslation } from "react-i18next";
 
 interface CommentItemProps {
   comment: Comment;
@@ -30,6 +31,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onReplySubmit,
   onCancelReply,
 }) => {
+  const { t } = useTranslation();
   const [replies, setReplies] = useState<Comment[]>([]);
   const [showReplies, setShowReplies] = useState(false);
   const [loadingReplies, setLoadingReplies] = useState(false);
@@ -104,7 +106,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               to={`/profile/${comment.authorId?.userName || ""}`}
               className="font-semibold text-gray-900 text-sm mb-1 hover:underline block"
             >
-              {comment.authorId?.fullName || comment.authorId?.userName || "Unknown"}
+              {comment.authorId?.fullName || comment.authorId?.userName || t("Comments.Unknown")}
             </Link>
             <p className="text-gray-800 text-sm whitespace-pre-wrap break-words">
               {comment.content}
@@ -145,7 +147,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <Trash2 className="w-4 h-4" />
-                      Delete
+                      {t("Comments.Delete")}
                     </button>
                   )}
                   <button
@@ -156,7 +158,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                   >
                     <Flag className="w-4 h-4" />
-                    Report
+                    {t("Comments.Report")}
                   </button>
                 </div>
               </>
@@ -181,7 +183,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   }}
                   className="font-semibold hover:underline cursor-pointer"
               >
-                  {loadingReplies ? "Loading..." : (showReplies ? "Hide replies" : `View ${comment.replyCount || replies.length} replies`)}
+                  {loadingReplies ? t("Comments.Loading") : (showReplies ? t("Comments.HideReplies") : t("Comments.ViewReplies", { count: comment.replyCount || replies.length }))}
               </button>
           ) : (
             <button
@@ -194,7 +196,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 }}
                 className={`font-semibold hover:underline cursor-pointer ${isReplying ? 'text-blue-500' : ''}`}
             >
-                {isReplying ? "Cancel" : "Reply"}
+                {isReplying ? t("Comments.Cancel") : t("Comments.Reply")}
             </button>
           )}
         </div>
@@ -246,7 +248,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                             // User said: "chô nhập comment bên trong luôn" implies visible.
                             autoFocus={isReplying} 
                             onSubmit={(content, image) => onReplySubmit ? onReplySubmit(content, image, comment._id) : Promise.resolve()}
-                            placeholder={`Reply to ${comment.authorId.userName}...`}
+                            placeholder={t("Comments.ReplyTo", { name: comment.authorId.userName })}
                         />
                     </div>
                 )}
@@ -257,22 +259,22 @@ const CommentItem: React.FC<CommentItemProps> = ({
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
-              <h3 className="text-lg font-semibold mb-2">Delete Comment?</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("Comments.ConfirmDeleteTitle")}</h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this comment?
+                {t("Comments.ConfirmDeleteMessage")}
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteConfirm(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Cancel
+                  {t("Comments.Cancel")}
                 </button>
                 <button
                   onClick={() => onDelete(comment._id)}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
-                  Delete
+                  {t("Comments.Confirm")}
                 </button>
               </div>
             </div>

@@ -3,12 +3,14 @@ import { Link, useNavigate, createSearchParams } from "react-router-dom";
 import { Menu, Search, ArrowLeft, X } from "lucide-react";
 import AppIconHorizontal from "../../assets/socialhub-horizontal.png";
 import AppIcon from "../../assets/app_icon.png";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
   onToggleMobileMenu: () => void;
 }
 
 export default function Header({ onToggleMobileMenu }: HeaderProps) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +56,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
             <input
               ref={inputRef}
               type="text"
-              placeholder="Search..."
+              placeholder={t("Header.SearchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -111,7 +113,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search people or posts..."
+                placeholder={t("Header.SearchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}

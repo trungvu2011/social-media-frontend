@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, type KeyboardEvent } from "react";
 import { Send } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -12,6 +13,7 @@ export const MessageInput = ({
   onTyping,
   disabled,
 }: MessageInputProps) => {
+  const { t } = useTranslation();
   const [message, setMessage] = useState("");
   const typingTimeoutRef = useRef<number | null>(null);
 
@@ -62,7 +64,7 @@ export const MessageInput = ({
           value={message}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
-          placeholder="Type a message..."
+          placeholder={t("Messages.Input.Placeholder")}
           disabled={disabled}
           rows={1}
           className="flex-1 resize-none border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"

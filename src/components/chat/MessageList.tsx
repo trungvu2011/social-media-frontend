@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { type ChatMessage, type ChatUser } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -18,6 +19,7 @@ export const MessageList = ({
   hasMore,
   onLoadMore,
 }: MessageListProps) => {
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const isFirstLoadRef = useRef(true);
@@ -59,7 +61,7 @@ export const MessageList = ({
       <div className="space-y-4">
       {loading && (
         <div className="text-center py-2">
-          <span className="text-sm text-gray-500">Đang tải...</span>
+          <span className="text-sm text-gray-500">{t("Messages.List.Loading")}</span>
         </div>
       )}
 

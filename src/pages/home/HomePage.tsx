@@ -7,8 +7,10 @@ import { useEffect, useState } from "react";
 import { getAllPosts, getFollowedPosts, type BackendPostListItem } from "../../utils";
 import type { Post as SocialPost } from "../../types/social";
 import Header from "./Header";
+import { useTranslation } from "react-i18next";
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation();
   const [feedType, setFeedType] = useState("forYou");
   const [posts, setPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,7 +66,7 @@ const HomePage: React.FC = () => {
         setPosts(mapped);
       } catch (e: any) {
         if (!isMounted) return;
-        setError(e?.message || "Failed to load posts");
+        setError(e?.message || t("Feed.LoadFailed"));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -75,7 +77,7 @@ const HomePage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [feedType]);
+  }, [feedType, t]);
 
   const handleLoadNewPosts = async () => {
     try {
@@ -112,7 +114,7 @@ const HomePage: React.FC = () => {
       <div className="mt-4">
         {loading && (
           <div className="text-center text-gray-500 py-8">
-            Loading posts...
+            {t("Feed.LoadingPosts")}
           </div>
         )}
         {error && !loading && (
@@ -121,8 +123,8 @@ const HomePage: React.FC = () => {
         {!loading && !error && posts.length === 0 && (
           <div className="text-center text-gray-500 py-8">
             {feedType === "following" 
-              ? "No posts from people you follow yet."
-              : "No posts yet. Be the first to post!"}
+              ? t("Feed.NoFollowedPosts")
+              : t("Feed.NoPosts")}
           </div>
         )}
         {!loading &&

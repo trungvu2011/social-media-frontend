@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Flag, Trash2 } from 'lucide-react';
 import { likePost, unlikePost, deletePost as deletePostApi } from '../../utils';
 import { useSocketContext } from '../../context/SocketContext';
+import { useTranslation } from "react-i18next";
 
 interface PostProps {
   post: PostType;
@@ -20,6 +21,7 @@ interface PostProps {
 }
 
 const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
+  const { t } = useTranslation();
   // Get current user for checks
   const authUser = (() => {
     try {
@@ -159,10 +161,10 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
-    if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
-    return `${Math.floor(diffInSeconds / 86400)}d`;
+    if (diffInSeconds < 60) return t("Post.Time.JustNow");
+    if (diffInSeconds < 3600) return t("Post.Time.Minutes", { count: Math.floor(diffInSeconds / 60) });
+    if (diffInSeconds < 86400) return t("Post.Time.Hours", { count: Math.floor(diffInSeconds / 3600) });
+    return t("Post.Time.Days", { count: Math.floor(diffInSeconds / 86400) });
   };
 
   return (
@@ -223,7 +225,7 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Delete Post
+                    {t("Post.DeletePost")}
                   </button>
                 )}
                 <button
@@ -234,7 +236,7 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                 >
                   <Flag className="w-4 h-4" />
-                  Report
+                  {t("Post.ReportPost")}
                 </button>
               </div>
             </>
@@ -318,9 +320,9 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
 
       {/* Post Stats */}
       <div className="px-4 py-2 flex items-center gap-4 text-xs text-gray-500">
-        <span>{likeCount} Likes</span>
-        <span>{commentCount} Comments</span>
-        <span>{post.shares} Share</span>
+        <span>{t("Post.Likes", { count: likeCount })}</span>
+        <span>{t("Post.Comments", { count: commentCount })}</span>
+        <span>{t("Post.Shares", { count: post.shares })}</span>
       </div>
 
       {/* Post Actions */}
@@ -333,21 +335,21 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
           }`}
         >
           <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-          <span>Like</span>
+          <span>{t("Post.LikeAction")}</span>
         </button>
         <button 
           onClick={onCommentClick ? onCommentClick : () => setShowComments(true)}
           className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
         >
           <MessageCircle className="w-5 h-5" />
-          <span>Comment</span>
+          <span>{t("Post.CommentAction")}</span>
         </button>
         <button 
           onClick={() => setShowShareModal(true)}
           className="flex-1 flex items-center justify-center gap-2 py-3 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
         >
           <Share2 className="w-5 h-5" />
-          <span>Share</span>
+          <span>{t("Post.ShareAction")}</span>
         </button>
       </div>
 
@@ -422,22 +424,22 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
             className="bg-white rounded-lg p-6 max-w-sm w-full mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold mb-2">Delete Post?</h3>
-            <p className="text-gray-600 mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <h3 className="text-lg font-semibold mb-2">{t("Post.DeleteConfirmTitle")}</h3>
+            <p className="text-gray-600 mb-6">{t("Post.DeleteConfirmMessage")}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={isDeleting}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
-                Cancel
+                {t("Post.Cancel")}
               </button>
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? t("Post.Deleting") : t("Post.Delete")}
               </button>
             </div>
           </div>

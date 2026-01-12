@@ -8,8 +8,10 @@ import {
 } from "../../utils";
 import Layout from "../../components/layout/Layout";
 import Post from "../../components/feed/Post";
+import { useTranslation } from "react-i18next";
 
 export default function SearchPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const [filter, setFilter] = useState<"people" | "post">("people");
@@ -39,7 +41,7 @@ export default function SearchPage() {
         }
       } catch (err: any) {
         console.error("Search failed:", err);
-        setError("Failed to load search results.");
+        setError(t("Search.Error"));
       } finally {
         setLoading(false);
       }
@@ -81,7 +83,7 @@ export default function SearchPage() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto py-6 px-4">
-        <h1 className="text-2xl font-bold mb-6">Search Results for "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("Search.Title", { query })}</h1>
 
         {/* Filter Tabs */}
         <div className="flex border-b border-gray-200 mb-6">
@@ -93,7 +95,7 @@ export default function SearchPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            People
+            {t("Search.Tabs.People")}
           </button>
           <button
             onClick={() => setFilter("post")}
@@ -103,12 +105,12 @@ export default function SearchPage() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            Posts
+            {t("Search.Tabs.Posts")}
           </button>
         </div>
 
         {/* Results Area */}
-        {loading && <div className="text-center text-gray-500 py-8">Searching...</div>}
+        {loading && <div className="text-center text-gray-500 py-8">{t("Search.Loading")}</div>}
         
         {error && <div className="text-center text-red-500 py-8">{error}</div>}
 
@@ -137,12 +139,12 @@ export default function SearchPage() {
                       to={`/profile/${user.userName}`}
                       className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-100 transition-colors"
                     >
-                      View Profile
+                      {t("Search.ViewProfile")}
                     </Link>
                   </div>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-8">No people found.</div>
+                <div className="text-center text-gray-500 py-8">{t("Search.Empty.People")}</div>
               )
             ) : (
               // Post Results
@@ -153,7 +155,7 @@ export default function SearchPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-8">No posts found.</div>
+                <div className="text-center text-gray-500 py-8">{t("Search.Empty.Posts")}</div>
               )
             )}
           </div>

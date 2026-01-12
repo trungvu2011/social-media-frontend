@@ -12,6 +12,7 @@ import type { Post as PostType } from "../../types/social";
 import Post from "./Post";
 import ReportModal from "../ReportModal";
 import CommentItem from "./CommentItem";
+import { useTranslation } from "react-i18next";
 
 import CommentInput from "./CommentInput";
 
@@ -26,6 +27,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   onClose,
   onCommentChange,
 }) => {
+  const { t } = useTranslation();
   const postId = post.id;
   const [comments, setComments] = useState<Comment[]>([]);
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
@@ -132,7 +134,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
     } catch (error) {
       console.error("Failed to post comment", error);
-      alert("Failed to post comment");
+      alert(t("Comments.PostFailed"));
     }
   };
 
@@ -145,7 +147,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
       }
     } catch (error) {
       console.error("Failed to delete comment", error);
-      alert('Unable to delete comment. Please try again.');
+      alert(t("Comments.DeleteFailed"));
     }
   };
 
@@ -159,7 +161,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
       <div className="relative bg-white w-full max-w-2xl h-[80vh] rounded-xl flex flex-col shadow-2xl overflow-hidden border border-gray-200">
         
         <div className="flex items-center justify-between p-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h3 className="text-xl font-bold text-gray-900 text-center w-full">Post</h3>
+          <h3 className="text-xl font-bold text-gray-900 text-center w-full">{t("Comments.Title")}</h3>
           <button 
             onClick={onClose}
             className="absolute right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition"
@@ -185,7 +187,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
           <div className="p-4 space-y-4">
           {comments.length === 0 && !loading && (
             <div className="text-center text-gray-500 mt-10">
-              No comments yet. Be the first to share your thoughts!
+              {t("Comments.NoComments")}
             </div>
           )}
 
@@ -206,7 +208,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
           ))}
 
           {loading && (
-             <div className="text-center text-gray-500 py-4">Loading comments...</div>
+             <div className="text-center text-gray-500 py-4">{t("Comments.Loading")}</div>
           )}
 
           {hasMore && !loading && comments.length > 0 && (
@@ -214,31 +216,24 @@ const CommentModal: React.FC<CommentModalProps> = ({
               onClick={handleLoadMore}
               className="w-full text-blue-500 hover:text-blue-600 text-sm py-2 font-medium"
             >
-              View more comments
+              {t("Comments.ViewMore")}
             </button>
           )}
           </div>
         </div>
 
-        {/* Global Footer Input - Visible only when NOT replying to specific comment or always visible? 
-            Usually always visible for top-level comments. but if replying, maybe hide it? 
-            User said "another comment line at reply place". 
-            Let's keep global for Top Level, and disable or hide if replying inline? 
-            For now, let's keep it but if replyingTo is set, maybe it shouldn't confuse user.
-            Actually, if inline input is open, user is focused there.
-        */}
         <div className="p-4 border-t border-gray-100 bg-white">
           {!replyingTo && (
             <CommentInput 
                 currentUser={currentUser}
                 onSubmit={(content, image) => handleCommentSubmit(content, image)}
-                placeholder="Write a comment..."
+                placeholder={t("Comments.Placeholder")}
             />
           )}
           {replyingTo && (
               <div className="text-center text-sm text-gray-500 py-2 bg-gray-50 rounded">
-                  Replying to <strong>{replyingTo.authorId.userName}</strong> above... 
-                  <button onClick={handleCancelReply} className="ml-2 text-blue-500 hover:underline">Cancel</button>
+                  {t("Comments.ReplyingTo")} <strong>{replyingTo.authorId.userName}</strong>... 
+                  <button onClick={handleCancelReply} className="ml-2 text-blue-500 hover:underline">{t("Comments.Cancel")}</button>
               </div>
           )}
         </div>

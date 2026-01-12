@@ -1,3 +1,324 @@
 {
-  "Hello": "Hello"
+  "Hello": "Hello",
+  "Welcome": "Welcome to Social Media",
+  "Login": "Login",
+  "Register": "Register",
+  "For you": "For you",
+  "Following": "Following",
+  "Sidebar": {
+    "Home": "Home",
+    "Feed": "Feed",
+    "Notifications": "Notifications",
+    "Profile": "Profile",
+    "Messages": "Messages",
+    "Settings": "Settings",
+    "Logout": "Logout",
+    "Menu": "Menu"
+  },
+  "Share": {
+    "Title": "Share Post",
+    "ShareToFeed": "Share to Feed",
+    "Placeholder": "Say something about this...",
+    "Cancel": "Cancel",
+    "ShareNow": "Share Now",
+    "Sharing": "Sharing...",
+    "Success": "Post shared successfully",
+    "Failed": "Failed to share post. Please try again."
+  },
+  "Messages": {
+    "Welcome": {
+      "Title": "Welcome to Chat",
+      "Subtitle": "Select a conversation to start messaging"
+    },
+    "Sidebar": {
+      "Title": "Messages",
+      "NoConversations": "No conversations yet",
+      "NoMessages": "No messages yet",
+      "Unknown": "Unknown"
+    },
+    "Window": {
+      "Typing": "Typing...",
+      "Back": "Back to conversations"
+    },
+    "Settings": {
+      "Active": "Active",
+      "Actions": {
+        "Profile": "Profile",
+        "Notification": "Notification",
+        "Search": "Search"
+      },
+      "Menu": {
+        "Information": "Information and Settings",
+        "Customization": "Chat Customization",
+        "Media": "Media & Files",
+        "Privacy": "Privacy and Support"
+      }
+    },
+    "Input": {
+      "Placeholder": "Type a message..."
+    },
+    "List": {
+      "Loading": "Loading..."
+    }
+  },
+  "Settings": {
+    "Title": "Settings",
+    "Theme": "Theme",
+    "Language": "Language"
+  },
+  "Auth": {
+    "LoginTitle": "Login",
+    "LoginSubtitle": "Login to access your account",
+    "SignUpTitle": "Sign up",
+    "SignUpSubtitle": "Let's get you all set up so you can access your personal account.",
+    "Email": "Email",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "Username": "Username",
+    "Password": "Password",
+    "ConfirmPassword": "Confirm Password",
+    "RememberMe": "Remember me",
+    "ForgotPassword": "Forgot Password",
+    "ForgotPasswordSubtitle": "Enter your email to receive a password reset link",
+    "ResetPassword": "Reset Password",
+    "ResetPasswordSubtitle": "Enter your new password below",
+    "NoAccount": "Don't have an account?",
+    "HaveAccount": "Already have an account?",
+    "SignUp": "sign up",
+    "BackToLogin": "Back to login",
+    "OrLoginWith": "Or login with",
+    "OrSignUpWith": "Or Sign up with",
+    "LoginGoogle": "Login with Google",
+    "SignUpGoogle": "Sign up with Google",
+    "LoggingIn": "Logging in...",
+    "CreatingAccount": "Creating account...",
+    "Sending": "Sending...",
+    "Resetting": "Resetting...",
+    "CreateAccount": "Create account",
+    "SendResetLink": "Send Reset Link",
+    "GoogleLoginFailed": "Google Login failed.",
+    "UnexpectedError": "Unexpected response from server.",
+    "NetworkError": "Network error. Please check your connection.",
+    "AgreeTerms": "I agree to all the <0>Terms</0> and <1>Privacy Policies</1>",
+    "Error": {
+      "AgreeTerms": "Please agree to the terms and privacy policies.",
+      "PasswordMatch": "Passwords do not match.",
+      "PasswordLength": "Password must be at least 6 characters long.",
+      "RegistrationFailed": "Registration failed. Please try again.",
+      "InvalidToken": "Invalid or missing token.",
+      "Generic": "An error occurred. Please try again."
+    },
+    "Success": {
+      "Registration": "Registration successful. Please log in.",
+      "ResetLinkSent": "Password reset link has been sent to your email.",
+      "PasswordReset": "Password has been reset successfully."
+    }
+  },
+  "Feed": {
+    "LoadingPosts": "Loading posts...",
+    "NoPosts": "No posts yet. Be the first to post!",
+    "NoFollowedPosts": "No posts from people you follow yet.",
+    "RefreshFailed": "Failed to refresh feed",
+    "LoadFailed": "Failed to load posts",
+    "CreatePostPlaceholder": "What's new?",
+    "PostButton": "Post",
+    "Posting": "Posting...",
+    "NewPostsAvailable_one": "{{count}} new post available",
+    "NewPostsAvailable_other": "{{count}} new posts available",
+    "ClickToLoad": "Click to load",
+    "FriendSuggestions": "Friend Suggestions",
+    "LoadingSuggestions": "Loading...",
+    "SeeAll": "See All"
+  },
+  "Post": {
+    "Likes": "{{count}} Likes",
+    "Comments": "{{count}} Comments",
+    "Shares": "{{count}} Share",
+    "LikeAction": "Like",
+    "CommentAction": "Comment",
+    "ShareAction": "Share",
+    "DeletePost": "Delete Post",
+    "ReportPost": "Report",
+    "DeleteConfirmTitle": "Delete Post?",
+    "DeleteConfirmMessage": "Are you sure you want to delete this post? This action cannot be undone.",
+    "Cancel": "Cancel",
+    "Delete": "Delete",
+    "Deleting": "Deleting...",
+    "Time": {
+      "JustNow": "just now",
+      "Minutes": "{{count}}m",
+      "Hours": "{{count}}h",
+      "Days": "{{count}}d"
+    }
+  },
+  "Comments": {
+    "Title": "Comments",
+    "PostFailed": "Failed to post comment",
+    "DeleteFailed": "Unable to delete comment. Please try again.",
+    "Loading": "Loading comments...",
+    "NoComments": "No comments yet. Be the first to comment!",
+    "ViewMore": "View more comments",
+    "Placeholder": "Write a comment...",
+    "ReplyingTo": "Replying to",
+    "Cancel": "Cancel",
+    "Delete": "Delete",
+    "Report": "Report",
+    "Reply": "Reply",
+    "HideReplies": "Hide replies",
+    "ViewReplies": "View {{count}} replies",
+    "ReplyTo": "Reply to {{name}}...",
+    "Unknown": "Unknown",
+    "ConfirmDeleteTitle": "Delete Comment?",
+    "ConfirmDeleteMessage": "Are you sure you want to delete this comment?",
+    "Confirm": "Delete",
+    "Header": "Comments",
+    "ReplyPlaceholder": "Reply to {{username}}..."
+  },
+  "Profile": {
+    "Loading": "Loading profile...",
+    "NotFoundTitle": "Profile Not Found",
+    "NotFoundMessage": "The user @{{username}} does not exist.",
+    "GoHome": "Go back to home",
+    "EditProfile": "Edit Profile",
+    "Follow": "Follow",
+    "Following": "Following",
+    "Unfollow": "Unfollow",
+    "Message": "Message",
+    "Verified": "Verified",
+    "Stats": {
+      "Posts": "Posts",
+      "Followers": "Followers",
+      "Following": "Following"
+    },
+    "Tabs": {
+      "Posts": "Posts",
+      "Likes": "Likes"
+    },
+    "Empty": {
+      "Posts": "No posts yet",
+      "Likes": "No liked posts yet",
+      "Stories": "No stories yet",
+      "Photos": "No photos found",
+      "Videos": "No videos found",
+      "UserNoPosts": "@{{username}} hasn't posted yet",
+      "UserNoPostsDesc": "When they share posts, they'll appear here.",
+      "TryAll": "Try switching to \"All\" to see all posts."
+    },
+    "Bio": {
+      "Title": "Bio",
+      "ShowLess": "Show Less",
+      "ReadMore": "Read More"
+    },
+    "Stories": {
+      "Title": "My Story Highlights"
+    },
+    "Contact": {
+      "Title": "Contact Information",
+      "Phone": "Phone Number",
+      "Email": "Email Address",
+      "Website": "Website"
+    },
+    "EditModal": {
+      "Title": "Edit Profile",
+      "FullName": "Full Name",
+      "Bio": "Bio",
+      "Genre": "Genre / Interests",
+      "Birthday": "Birthday",
+      "Cancel": "Cancel",
+      "Save": "Save Changes",
+      "Saving": "Saving...",
+      "Placeholders": {
+        "FullName": "Your full name",
+        "Bio": "Tell us about yourself",
+        "Genre": "Music, Tech, Sports..."
+      }
+    },
+    "Filter": {
+      "All": "All",
+      "Photos": "Photos",
+      "Videos": "Videos",
+      "ShowingAll": "Showing all {{count}} posts",
+      "ShowingPhotos": "Showing {{count}} posts with photos",
+      "ShowingVideos": "Showing {{count}} posts with videos"
+    }
+  },
+  "Change Password": "Change Password",
+  "Update password and security": "Update password and security",
+  "Current Password": "Current Password",
+  "Enter current password": "Enter current password",
+  "New Password": "New Password",
+  "Enter new password": "Enter new password",
+  "Confirm New Password": "Confirm New Password",
+  "Confirm new password": "Confirm new password",
+  "Continue (Send OTP)": "Continue (Send OTP)",
+  "Verify OTP": "Verify OTP",
+  "An authentication code has been sent to your email.": "An authentication code has been sent to your email.",
+  "Enter OTP (6 digits)": "Enter OTP (6 digits)",
+  "Back": "Back",
+  "Confirm Change": "Confirm Change",
+  "OTP sent to your email.": "OTP sent to your email.",
+  "Failed to send OTP. Please try again.": "Failed to send OTP. Please try again.",
+  "Password changed successfully! Please login again.": "Password changed successfully! Please login again.",
+  "Failed to change password.": "Failed to change password.",
+  "Session expired, please request OTP again.": "Session expired, please request OTP again.",
+  "Please enter OTP.": "Please enter OTP.",
+  "Please enter all password fields.": "Please enter all password fields.",
+  "New password does not match confirmation.": "New password does not match confirmation.",
+  "New password must be at least 6 characters.": "New password must be at least 6 characters.",
+  "For your security, we require 2-step verification (2FA) via email when changing your password.": "For your security, we require 2-step verification (2FA) via email when changing your password.",
+  "RightSidebar": {
+    "ProfileActivity": "Profile Activity",
+    "Followers": "Followers",
+    "Following": "Following",
+    "UpcomingBirthdays": "Upcoming Birthdays",
+    "NoBirthdays": "No upcoming birthdays"
+  },
+  "Notifications": {
+    "Title": "Notifications",
+    "MarkAllRead": "Mark all as read",
+    "Loading": "Loading notifications...",
+    "Empty": {
+      "Title": "No notifications yet",
+      "Description": "When you get likes, comments or follows, they'll show up here."
+    }
+  },
+  "FollowList": {
+    "Tabs": {
+      "Followers": "Followers",
+      "Following": "Following"
+    },
+    "Loading": {
+      "Followers": "Loading followers...",
+      "Following": "Loading following..."
+    },
+    "Empty": {
+      "Followers": "No followers yet",
+      "Following": "No following yet",
+      "FollowersDesc": "When someone follows this account, they'll appear here.",
+      "FollowingDesc": "When this account follows someone, they'll appear here."
+    }
+  },
+  "NotificationTypes": {
+    "like": "liked your post",
+    "comment": "commented on your post",
+    "follow": "started following you"
+  },
+  "Search": {
+    "Title": "Search Results for \"{{query}}\"",
+    "Placeholder": "Search people or posts...",
+    "Tabs": {
+      "People": "People",
+      "Posts": "Posts"
+    },
+    "Loading": "Searching...",
+    "Error": "Failed to load search results.",
+    "Empty": {
+      "People": "No people found.",
+      "Posts": "No posts found."
+    },
+    "ViewProfile": "View Profile"
+  },
+  "Header": {
+    "SearchPlaceholder": "Search people or posts..."
+  }
 }

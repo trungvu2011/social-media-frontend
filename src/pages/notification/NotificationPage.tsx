@@ -11,10 +11,12 @@ import type { Post as PostType } from "../../types/social";
 import { Heart, MessageCircle, UserPlus, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const CommentModal = React.lazy(() => import("../../components/feed/CommentModal"));
 
 const NotificationPage = () => {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [activePost, setActivePost] = useState<PostType | null>(null);
@@ -122,13 +124,13 @@ const NotificationPage = () => {
         )}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200">
           <div className="flex items-center justify-between p-4">
-            <h1 className="text-xl font-bold text-gray-900">Notifications</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t("Notifications.Title")}</h1>
             {notifications.some((n) => !n.isRead) && (
               <button
                 onClick={handleMarkAllRead}
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
               >
-                <Check className="w-4 h-4" /> Mark all as read
+                <Check className="w-4 h-4" /> {t("Notifications.MarkAllRead")}
               </button>
             )}
           </div>
@@ -138,7 +140,7 @@ const NotificationPage = () => {
           {loading ? (
             <div className="py-12 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto"></div>
-              <p className="mt-4 text-gray-500">Loading notifications...</p>
+              <p className="mt-4 text-gray-500">{t("Notifications.Loading")}</p>
             </div>
           ) : notifications.length > 0 ? (
             <div className="divide-y divide-gray-100">
@@ -166,7 +168,7 @@ const NotificationPage = () => {
                         </Link>
                         {" "}
                         <span className="text-gray-600 inline">
-                          {notification.content}
+                          {t(`NotificationTypes.${notification.type}`)}
                         </span>
                       </div>
                       <div className="text-xs text-gray-400">
@@ -197,10 +199,10 @@ const NotificationPage = () => {
                 <Heart className="w-8 h-8 text-gray-300" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No notifications yet
+                {t("Notifications.Empty.Title")}
               </h3>
               <p className="text-gray-500">
-                When you get likes, comments or follows, they'll show up here.
+                {t("Notifications.Empty.Description")}
               </p>
             </div>
           )}

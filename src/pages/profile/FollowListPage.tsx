@@ -4,8 +4,10 @@ import Layout from "../../components/layout/Layout";
 import UserCard from "../../components/UserCard";
 import type { FollowUser } from "../../types/social";
 import { getFollowers, getFollowing, followUser, unfollowUser, getProfileById } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 const FollowListPage: React.FC = () => {
+  const { t } = useTranslation();
   const { username, type } = useParams<{ username: string; type: "followers" | "following" }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -182,7 +184,7 @@ const FollowListPage: React.FC = () => {
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              Followers
+              {t("FollowList.Tabs.Followers")}
               {activeTab === "followers" && (
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-full"></div>
               )}
@@ -196,7 +198,7 @@ const FollowListPage: React.FC = () => {
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              Following
+              {t("FollowList.Tabs.Following")}
               {activeTab === "following" && (
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-full"></div>
               )}
@@ -209,7 +211,9 @@ const FollowListPage: React.FC = () => {
           {loading ? (
             <div className="py-12 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-500">Loading {activeTab}...</p>
+              <p className="mt-4 text-gray-500">
+                  {activeTab === "followers" ? t("FollowList.Loading.Followers") : t("FollowList.Loading.Following")}
+              </p>
             </div>
           ) : users.length > 0 ? (
             users.map((user) => (
@@ -230,12 +234,12 @@ const FollowListPage: React.FC = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No {activeTab} yet
+                {activeTab === "followers" ? t("FollowList.Empty.Followers") : t("FollowList.Empty.Following")}
               </h3>
               <p className="text-gray-500 max-w-sm mx-auto">
                 {activeTab === "followers" 
-                  ? "When someone follows this account, they'll appear here." 
-                  : "When this account follows someone, they'll appear here."
+                  ? t("FollowList.Empty.FollowersDesc") 
+                  : t("FollowList.Empty.FollowingDesc")
                 }
               </p>
             </div>

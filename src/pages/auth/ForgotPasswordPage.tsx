@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Loader } from "lucide-react";
 import SocialHubLogo from "../../assets/socialhub-horizontal.png";
 import { api } from "../../utils";
+import { useTranslation } from "react-i18next";
 
 function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -23,10 +25,10 @@ function ForgotPasswordPage() {
           body: { email },
         }
       );
-      setMessage(message || "Password reset link has been sent to your email.");
+      setMessage(message || t("Auth.Success.ResetLinkSent"));
     } catch (err: any) {
       setError(
-        err.message || "An error occurred. Please try again."
+        err.message || t("Auth.Error.Generic")
       );
     } finally {
       setLoading(false);
@@ -41,17 +43,17 @@ function ForgotPasswordPage() {
             <img src={SocialHubLogo} alt="SocialHub" className="h-12 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Forgot Password
+            {t("Auth.ForgotPassword")}
           </h1>
           <p className="text-gray-600">
-            Enter your email to receive a password reset link
+            {t("Auth.ForgotPasswordSubtitle")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-2">
-              Email
+              {t("Auth.Email")}
             </label>
             <input
               type="email"
@@ -83,22 +85,22 @@ function ForgotPasswordPage() {
             {loading ? (
               <>
                 <Loader className="w-4 h-4 animate-spin" />
-                Sending...
+                {t("Auth.Sending")}
               </>
             ) : (
-              "Send Reset Link"
+              t("Auth.SendResetLink")
             )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
-            Remember your password?{" "}
+            {t("Auth.BackToLogin")}{" "}
             <a
               href="/login"
               className="text-blue-600 hover:text-blue-700 font-semibold"
             >
-              Back to login
+              {t("Login")}
             </a>
           </p>
         </div>

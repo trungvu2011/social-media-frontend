@@ -1,3 +1,319 @@
 {
-  "Hello": "Xin chào"
+  "Hello": "Xin chào",
+  "Welcome": "Chào mừng đến với Mạng Xã Hội",
+  "Login": "Đăng nhập",
+  "Register": "Đăng ký",
+  "For you": "Dành cho bạn",
+  "Following": "Đang theo dõi",
+  "Sidebar": {
+    "Home": "Trang chủ",
+    "Feed": "Bảng tin",
+    "Notifications": "Thông báo",
+    "Profile": "Hồ sơ",
+    "Messages": "Tin nhắn",
+    "Settings": "Cài đặt",
+    "Logout": "Đăng xuất",
+    "Menu": "Danh mục"
+  },
+  "Share": {
+    "Title": "Chia sẻ bài viết",
+    "ShareToFeed": "Chia sẻ lên bảng tin",
+    "Placeholder": "Viết gì đó về bài viết này...",
+    "Cancel": "Hủy",
+    "ShareNow": "Chia sẻ ngay",
+    "Sharing": "Đang chia sẻ...",
+    "Success": "Chia sẻ bài viết thành công",
+    "Failed": "Chia sẻ thất bại. Vui lòng thử lại."
+  },
+  "Messages": {
+    "Welcome": {
+      "Title": "Chào mừng đến với Chat",
+      "Subtitle": "Chọn một cuộc trò chuyện để bắt đầu nhắn tin"
+    },
+    "Sidebar": {
+      "Title": "Tin nhắn",
+      "NoConversations": "Chưa có cuộc trò chuyện nào",
+      "NoMessages": "Chưa có tin nhắn",
+      "Unknown": "Người dùng"
+    },
+    "Window": {
+      "Typing": "Đang nhập...",
+      "Back": "Quay lại"
+    },
+    "Settings": {
+      "Active": "Hoạt động",
+      "Actions": {
+        "Profile": "Hồ sơ",
+        "Notification": "Thông báo",
+        "Search": "Tìm kiếm"
+      },
+      "Menu": {
+        "Information": "Thông tin và Cài đặt",
+        "Customization": "Tùy chỉnh chat",
+        "Media": "Phương tiện & Tệp",
+        "Privacy": "Quyền riêng tư & Hỗ trợ"
+      }
+    },
+    "Input": {
+      "Placeholder": "Nhập tin nhắn..."
+    },
+    "List": {
+      "Loading": "Đang tải..."
+    }
+  },
+  "Settings": {
+    "Title": "Cài đặt",
+    "Theme": "Giao diện",
+    "Language": "Ngôn ngữ"
+  },
+  "Auth": {
+    "LoginTitle": "Đăng nhập",
+    "LoginSubtitle": "Đăng nhập để truy cập tài khoản của bạn",
+    "SignUpTitle": "Đăng ký",
+    "SignUpSubtitle": "Thiết lập thông tin để truy cập tài khoản cá nhân của bạn.",
+    "Email": "Email",
+    "FirstName": "Tên",
+    "LastName": "Họ",
+    "Username": "Tên đăng nhập",
+    "Password": "Mật khẩu",
+    "ConfirmPassword": "Xác nhận mật khẩu",
+    "RememberMe": "Ghi nhớ đăng nhập",
+    "ForgotPassword": "Quên mật khẩu",
+    "ForgotPasswordSubtitle": "Nhập email của bạn để nhận liên kết đặt lại mật khẩu",
+    "ResetPassword": "Đặt lại mật khẩu",
+    "ResetPasswordSubtitle": "Nhập mật khẩu mới của bạn bên dưới",
+    "NoAccount": "Chưa có tài khoản?",
+    "HaveAccount": "Đã có tài khoản?",
+    "SignUp": "đăng ký ngay",
+    "BackToLogin": "Quay lại đăng nhập",
+    "OrLoginWith": "Hoặc đăng nhập với",
+    "OrSignUpWith": "Hoặc đăng ký với",
+    "LoginGoogle": "Đăng nhập bằng Google",
+    "SignUpGoogle": "Đăng ký bằng Google",
+    "LoggingIn": "Đang đăng nhập...",
+    "CreatingAccount": "Đang tạo tài khoản...",
+    "Sending": "Đang gửi...",
+    "Resetting": "Đang đặt lại...",
+    "CreateAccount": "Tạo tài khoản",
+    "SendResetLink": "Gửi liên kết",
+    "GoogleLoginFailed": "Đăng nhập Google thất bại.",
+    "UnexpectedError": "Phản hồi không mong đợi từ máy chủ.",
+    "NetworkError": "Lỗi mạng. Vui lòng kiểm tra kết nối.",
+    "AgreeTerms": "Tôi đồng ý với tất cả <0>Điều khoản</0> và <1>Chính sách bảo mật</1>",
+    "Error": {
+      "AgreeTerms": "Vui lòng đồng ý với các điều khoản và chính sách bảo mật.",
+      "PasswordMatch": "Mật khẩu không khớp.",
+      "PasswordLength": "Mật khẩu phải có ít nhất 6 ký tự.",
+      "RegistrationFailed": "Đăng ký thất bại. Vui lòng thử lại.",
+      "InvalidToken": "Token không hợp lệ hoặc bị thiếu.",
+      "Generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "Success": {
+      "Registration": "Đăng ký thành công. Vui lòng đăng nhập.",
+      "ResetLinkSent": "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.",
+      "PasswordReset": "Mật khẩu đã được đặt lại thành công."
+    }
+  },
+  "Feed": {
+    "LoadingPosts": "Đang tải bài viết...",
+    "NoPosts": "Chưa có bài viết nào. Hãy là người đầu tiên đăng bài!",
+    "NoFollowedPosts": "Chưa có bài viết từ những người bạn theo dõi.",
+    "RefreshFailed": "Làm mới bảng tin thất bại",
+    "LoadFailed": "Tải bài viết thất bại",
+    "CreatePostPlaceholder": "Bạn đang nghĩ gì?",
+    "PostButton": "Đăng",
+    "Posting": "Đang đăng...",
+    "NewPostsAvailable_one": "{{count}} bài viết mới",
+    "NewPostsAvailable_other": "{{count}} bài viết mới",
+    "ClickToLoad": "Nhấn để tải",
+    "FriendSuggestions": "Gợi ý kết bạn",
+    "LoadingSuggestions": "Đang tải...",
+    "SeeAll": "Xem tất cả"
+  },
+  "Post": {
+    "Likes": "{{count}} Lượt thích",
+    "Comments": "{{count}} Bình luận",
+    "Shares": "{{count}} Chia sẻ",
+    "LikeAction": "Thích",
+    "CommentAction": "Bình luận",
+    "ShareAction": "Chia sẻ",
+    "DeletePost": "Xóa bài viết",
+    "ReportPost": "Báo cáo",
+    "DeleteConfirmTitle": "Xóa bài viết?",
+    "DeleteConfirmMessage": "Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.",
+    "Cancel": "Hủy",
+    "Delete": "Xóa",
+    "Deleting": "Đang xóa...",
+    "Time": {
+      "JustNow": "vừa xong",
+      "Minutes": "{{count}} phút",
+      "Hours": "{{count}} giờ",
+      "Days": "{{count}} ngày"
+    }
+  },
+  "Comments": {
+    "Title": "Bình luận",
+    "PostFailed": "Không thể đăng bình luận",
+    "DeleteFailed": "Không thể xóa bình luận. Vui lòng thử lại.",
+    "Loading": "Đang tải bình luận...",
+    "NoComments": "Chưa có bình luận nào. Hãy là người đầu tiên bình luận!",
+    "ViewMore": "Xem thêm bình luận",
+    "Placeholder": "Viết bình luận...",
+    "ReplyingTo": "Đang trả lời",
+    "Cancel": "Hủy",
+    "Delete": "Xóa",
+    "Report": "Báo cáo",
+    "Reply": "Trả lời",
+    "HideReplies": "Ẩn câu trả lời",
+    "ViewReplies": "Xem {{count}} câu trả lời",
+    "ReplyTo": "Trả lời {{name}}...",
+    "ReplyPlaceholder": "Trả lời {{username}}..."
+  },
+  "Profile": {
+    "Loading": "Đang tải hồ sơ...",
+    "NotFoundTitle": "Không tìm thấy hồ sơ",
+    "NotFoundMessage": "Người dùng @{{username}} không tồn tại.",
+    "GoHome": "Quay về trang chủ",
+    "EditProfile": "Chỉnh sửa trang cá nhân",
+    "Follow": "Theo dõi",
+    "Following": "Đang theo dõi",
+    "Unfollow": "Hủy theo dõi",
+    "Message": "Nhắn tin",
+    "Verified": "Đã xác minh",
+    "Stats": {
+      "Posts": "Bài viết",
+      "Followers": "Người theo dõi",
+      "Following": "Đang theo dõi"
+    },
+    "Tabs": {
+      "Posts": "Bài viết",
+      "Likes": "Đã thích"
+    },
+    "Empty": {
+      "Posts": "Chưa có bài viết nào",
+      "Likes": "Chưa có bài viết đã thích",
+      "Stories": "Chưa có tin nổi bật",
+      "Photos": "Không tìm thấy ảnh",
+      "Videos": "Không tìm thấy video",
+      "UserNoPosts": "@{{username}} chưa có bài viết nào",
+      "UserNoPostsDesc": "Khi họ chia sẻ bài viết, chúng sẽ xuất hiện ở đây.",
+      "TryAll": "Thử chuyển sang \"Tất cả\" để xem tất cả bài viết."
+    },
+    "Bio": {
+      "Title": "Giới thiệu",
+      "ShowLess": "Thu gọn",
+      "ReadMore": "Xem thêm"
+    },
+    "Stories": {
+      "Title": "Tin nổi bật"
+    },
+    "Contact": {
+      "Title": "Thông tin liên hệ",
+      "Phone": "Điện thoại",
+      "Email": "Email",
+      "Website": "Website"
+    },
+    "EditModal": {
+      "Title": "Chỉnh sửa hồ sơ",
+      "FullName": "Họ và tên",
+      "Bio": "Tiểu sử",
+      "Genre": "Sở thích / Chủ đề",
+      "Birthday": "Ngày sinh",
+      "Cancel": "Hủy",
+      "Save": "Lưu thay đổi",
+      "Saving": "Đang lưu...",
+      "Placeholders": {
+        "FullName": "Tên đầy đủ của bạn",
+        "Bio": "Giới thiệu về bản thân bạn",
+        "Genre": "Âm nhạc, Công nghệ, Thể thao..."
+      }
+    },
+    "Filter": {
+      "All": "Tất cả",
+      "Photos": "Ảnh",
+      "Videos": "Video",
+      "ShowingAll": "Đang hiển thị tất cả {{count}} bài viết",
+      "ShowingPhotos": "Đang hiển thị {{count}} bài viết có ảnh",
+      "ShowingVideos": "Đang hiển thị {{count}} bài viết có video"
+    }
+  },
+  "Change Password": "Đổi mật khẩu",
+  "Update password and security": "Cập nhật mật khẩu và bảo mật",
+  "Current Password": "Mật khẩu hiện tại",
+  "Enter current password": "Nhập mật khẩu hiện tại",
+  "New Password": "Mật khẩu mới",
+  "Enter new password": "Nhập mật khẩu mới",
+  "Confirm New Password": "Xác nhận mật khẩu mới",
+  "Confirm new password": "Nhập lại mật khẩu mới",
+  "Continue (Send OTP)": "Tiếp tục (Gửi OTP)",
+  "Verify OTP": "Xác thực OTP",
+  "An authentication code has been sent to your email.": "Mã xác thực đã được gửi đến email của bạn.",
+  "Enter OTP (6 digits)": "Nhập mã OTP (6 số)",
+  "Back": "Quay lại",
+  "Confirm Change": "Xác nhận thay đổi",
+  "OTP sent to your email.": "OTP đã được gửi đến email của bạn.",
+  "Failed to send OTP. Please try again.": "Gửi OTP thất bại. Vui lòng thử lại.",
+  "Password changed successfully! Please login again.": "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.",
+  "Failed to change password.": "Đổi mật khẩu thất bại.",
+  "Session expired, please request OTP again.": "Phiên làm việc hết hạn, vui lòng yêu cầu lại OTP.",
+  "Please enter OTP.": "Vui lòng nhập mã OTP.",
+  "Please enter all password fields.": "Vui lòng nhập đầy đủ các trường mật khẩu.",
+  "New password does not match confirmation.": "Mật khẩu mới không khớp.",
+  "New password must be at least 6 characters.": "Mật khẩu mới phải có ít nhất 6 ký tự.",
+  "For your security, we require 2-step verification (2FA) via email when changing your password.": "Để bảo mật, chúng tôi yêu cầu xác thực 2 bước (2FA) qua email khi đổi mật khẩu.",
+  "RightSidebar": {
+    "ProfileActivity": "Hoạt động hồ sơ",
+    "Followers": "Người theo dõi",
+    "Following": "Đang theo dõi",
+    "UpcomingBirthdays": "Sinh nhật sắp tới",
+    "NoBirthdays": "Không có sinh nhật sắp tới"
+  },
+  "Notifications": {
+    "Title": "Thông báo",
+    "MarkAllRead": "Đánh dấu tất cả là đã đọc",
+    "Loading": "Đang tải thông báo...",
+    "Empty": {
+      "Title": "Chưa có thông báo nào",
+      "Description": "Khi bạn nhận được lượt thích, bình luận hoặc theo dõi, chúng sẽ hiển thị ở đây."
+    }
+  },
+  "FollowList": {
+    "Tabs": {
+      "Followers": "Người theo dõi",
+      "Following": "Đang theo dõi"
+    },
+    "Loading": {
+      "Followers": "Đang tải người theo dõi...",
+      "Following": "Đang tải danh sách theo dõi..."
+    },
+    "Empty": {
+      "Followers": "Chưa có người theo dõi",
+      "Following": "Chưa theo dõi ai",
+      "FollowersDesc": "Khi ai đó theo dõi tài khoản này, họ sẽ xuất hiện ở đây.",
+      "FollowingDesc": "Khi tài khoản này theo dõi ai đó, họ sẽ xuất hiện ở đây."
+    }
+  },
+  "NotificationTypes": {
+    "like": "đã thích bài viết của bạn",
+    "comment": "đã bình luận về bài viết của bạn",
+    "follow": "đã bắt đầu theo dõi bạn"
+  },
+  "Search": {
+    "Title": "Kết quả tìm kiếm cho \"{{query}}\"",
+    "Placeholder": "Tìm kiếm mọi người hoặc bài viết...",
+    "Tabs": {
+      "People": "Mọi người",
+      "Posts": "Bài viết"
+    },
+    "Loading": "Đang tìm kiếm...",
+    "Error": "Không thể tải kết quả tìm kiếm.",
+    "Empty": {
+      "People": "Không tìm thấy người nào.",
+      "Posts": "Không tìm thấy bài viết nào."
+    },
+    "ViewProfile": "Xem hồ sơ"
+  },
+  "Header": {
+    "SearchPlaceholder": "Tìm kiếm mọi người hoặc bài viết..."
+  }
 }
