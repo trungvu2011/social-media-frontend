@@ -15,7 +15,7 @@ export default function LeftSidebar({ onClose }: LeftSidebarProps) {
     { id: "notifications", icon: Bell, label: "Notifications" },
     { id: "profile", icon: User, label: "Profile" },
     { id: "chat", icon: MessageCircle, label: "Messages" },
-    { id: "help", icon: Settings, label: "Help & Support" },
+    { id: "settings", icon: Settings, label: "Settings" },
   ];
 
   const [authUser] = useState<any>(() => {

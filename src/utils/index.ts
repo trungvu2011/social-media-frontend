@@ -798,6 +798,44 @@ export async function unbanUser(userId: string): Promise<void> {
     token: token || undefined,
   });
 }
+
+// ---------- Change Password API ----------
+export async function sendOTPChangePassword(): Promise<{
+  message: string;
+  otpToken: string;
+}> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<{ message: string; otpToken: string }>(
+    `/users/send-otp-change-password`,
+    {
+      method: "POST",
+      token: token || undefined,
+    }
+  );
+}
+
+export type ChangePasswordData = {
+  oldPassword?: string;
+  newPassword?: string;
+  otp?: string;
+  otpToken?: string;
+};
+
+export async function changePassword(
+  data: ChangePasswordData
+): Promise<{ message: string }> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<{ message: string }>(`/users/change-password`, {
+    method: "POST",
+    body: data,
+    token: token || undefined,
+  });
+}
+
 // ---------- Share Post API ----------
 export const sharePost = (postId: string, text: string) => {
   const token =
