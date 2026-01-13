@@ -47,7 +47,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col w-full max-w-full relative">
-      <Header onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+      <Header
+        onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      />
 
       <div className="flex flex-1 pt-0 justify-center">
         {/* Overlay backdrop for mobile menu */}
@@ -75,10 +77,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-full bg-gray-50 px-4 pb-4 pt-0 lg:px-6 lg:pb-6 lg:pt-0">
-          <div className="max-w-3xl mx-auto h-full">
-            {children}
-          </div>
+        <main className="flex-1 w-full max-w-full bg-gray-50 px-4 pb-4 pt-0 lg:px-6 lg:pb-6 lg:pt-0 mt-16">
+          <div className="max-w-3xl mx-auto h-full">{children}</div>
         </main>
 
         {/* Right Sidebar - hidden on mobile/tablet */}

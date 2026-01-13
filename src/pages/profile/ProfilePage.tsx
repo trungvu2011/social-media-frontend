@@ -417,7 +417,7 @@ const ProfilePage: React.FC = () => {
         style={{ display: "none" }}
       />
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-16">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Cover Photo */}
         <div className="relative h-48 md:h-64 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
           {profile.backgroundImage && (
@@ -558,7 +558,9 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {posts.length}
               </div>
-              <div className="text-sm text-gray-500">{t("Profile.Stats.Posts")}</div>
+              <div className="text-sm text-gray-500">
+                {t("Profile.Stats.Posts")}
+              </div>
             </div>
             <div
               className="text-center cursor-pointer hover:opacity-80 transition-opacity"
@@ -567,7 +569,9 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {followerCount}
               </div>
-              <div className="text-sm text-gray-500">{t("Profile.Stats.Followers")}</div>
+              <div className="text-sm text-gray-500">
+                {t("Profile.Stats.Followers")}
+              </div>
             </div>
             <div
               className="text-center cursor-pointer hover:opacity-80 transition-opacity"
@@ -576,7 +580,9 @@ const ProfilePage: React.FC = () => {
               <div className="text-xl font-bold text-gray-900">
                 {followingCount}
               </div>
-              <div className="text-sm text-gray-500">{t("Profile.Stats.Following")}</div>
+              <div className="text-sm text-gray-500">
+                {t("Profile.Stats.Following")}
+              </div>
             </div>
           </div>
         </div>
@@ -636,7 +642,9 @@ const ProfilePage: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold">{t("Profile.EditModal.Title")}</h2>
+              <h2 className="text-lg font-semibold">
+                {t("Profile.EditModal.Title")}
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowEditModal(false)}
@@ -726,7 +734,9 @@ const ProfilePage: React.FC = () => {
                   disabled={isSaving}
                   className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
                 >
-                  {isSaving ? t("Profile.EditModal.Saving") : t("Profile.EditModal.Save")}
+                  {isSaving
+                    ? t("Profile.EditModal.Saving")
+                    : t("Profile.EditModal.Save")}
                 </button>
               </div>
             </form>

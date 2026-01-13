@@ -13,7 +13,9 @@ import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const CommentModal = React.lazy(() => import("../../components/feed/CommentModal"));
+const CommentModal = React.lazy(
+  () => import("../../components/feed/CommentModal")
+);
 
 const NotificationPage = () => {
   const { t } = useTranslation();
@@ -57,35 +59,39 @@ const NotificationPage = () => {
 
     if (notification.type === "follow") {
       navigate(`/profile/${notification.senderId.userName}`);
-    } else if ((notification.type === "like" || notification.type === "comment") && notification.referenceId) {
-       // Fetch post and open modal
-       try {
+    } else if (
+      (notification.type === "like" || notification.type === "comment") &&
+      notification.referenceId
+    ) {
+      // Fetch post and open modal
+      try {
         const postData: any = await getPostById(notification.referenceId);
         // Map to frontend Post type (simplified mapping, similar to HomePage)
         // Note: Ideally we share the mapping logic
         const post: PostType = {
-           id: postData._id,
-           content: postData.content,
-           images: postData.images,
-           likes: postData.likes,
-           commentCount: postData.commentCount,
-           shares: 0,
-           createdAt: postData.createdAt,
-           user: {
-             id: postData.authorId._id,
-             username: postData.authorId.userName,
-             displayName: postData.authorId.fullName || postData.authorId.userName,
-             avatar: postData.authorId.avatar,
-             isVerified: false
-           },
-           isLiked: false // Will be set by Post component
+          id: postData._id,
+          content: postData.content,
+          images: postData.images,
+          likes: postData.likes,
+          commentCount: postData.commentCount,
+          shares: 0,
+          createdAt: postData.createdAt,
+          user: {
+            id: postData.authorId._id,
+            username: postData.authorId.userName,
+            displayName:
+              postData.authorId.fullName || postData.authorId.userName,
+            avatar: postData.authorId.avatar,
+            isVerified: false,
+          },
+          isLiked: false, // Will be set by Post component
         };
         setActivePost(post);
-       } catch (error) {
-         console.error("Failed to fetch post for notification", error);
-         // Fallback to navigation
-         navigate(`/post/${notification.referenceId}`);
-       }
+      } catch (error) {
+        console.error("Failed to fetch post for notification", error);
+        // Fallback to navigation
+        navigate(`/post/${notification.referenceId}`);
+      }
     }
   };
 
@@ -94,7 +100,7 @@ const NotificationPage = () => {
       await markAllNotificationsRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       // Dispatch event to reset badge count
-      window.dispatchEvent(new CustomEvent('notifications:markAllRead'));
+      window.dispatchEvent(new CustomEvent("notifications:markAllRead"));
     } catch (error) {
       console.error("Failed to mark all as read", error);
     }
@@ -105,7 +111,9 @@ const NotificationPage = () => {
       case "like":
         return <Heart className="w-5 h-5 text-red-500 fill-red-500" />;
       case "comment":
-        return <MessageCircle className="w-5 h-5 text-blue-500 fill-blue-500" />;
+        return (
+          <MessageCircle className="w-5 h-5 text-blue-500 fill-blue-500" />
+        );
       case "follow":
         return <UserPlus className="w-5 h-5 text-green-500 fill-green-500" />;
       default:
@@ -117,16 +125,18 @@ const NotificationPage = () => {
     <Layout>
       <div className="max-w-2xl mx-auto">
         {activePost && (
-           <React.Suspense fallback={null}>
-             <CommentModal 
-                post={activePost} 
-                onClose={() => setActivePost(null)}
-             />
-           </React.Suspense>
+          <React.Suspense fallback={null}>
+            <CommentModal
+              post={activePost}
+              onClose={() => setActivePost(null)}
+            />
+          </React.Suspense>
         )}
-        <div className="sticky top-16 z-10 bg-white border-b border-gray-200">
+        <div className="sticky top-16 z-10">
           <div className="flex items-center justify-between p-4">
-            <h1 className="text-xl font-bold text-gray-900">{t("Notifications.Title")}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {t("Notifications.Title")}
+            </h1>
             {notifications.some((n) => !n.isRead) && (
               <button
                 onClick={handleMarkAllRead}
@@ -138,7 +148,7 @@ const NotificationPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-18">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           {loading ? (
             <div className="py-12 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto"></div>
@@ -166,9 +176,9 @@ const NotificationPage = () => {
                           className="font-semibold text-gray-900 hover:underline inline"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {notification.senderId.fullName || notification.senderId.userName}
-                        </Link>
-                        {" "}
+                          {notification.senderId.fullName ||
+                            notification.senderId.userName}
+                        </Link>{" "}
                         <span className="text-gray-600 inline">
                           {t(`NotificationTypes.${notification.type}`)}
                         </span>
@@ -176,20 +186,23 @@ const NotificationPage = () => {
                       <div className="text-xs text-gray-400">
                         {new Date(notification.createdAt).toLocaleDateString()}{" "}
                         •{" "}
-                        {new Date(notification.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(notification.createdAt).toLocaleTimeString(
+                          [],
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                       </div>
                     </div>
 
                     {/* Sender Avatar */}
                     {notification.senderId.avatar && (
-                       <img 
-                         src={notification.senderId.avatar} 
-                         className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
-                         alt=""
-                       />
+                      <img
+                        src={notification.senderId.avatar}
+                        className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
+                        alt=""
+                      />
                     )}
                   </div>
                 </div>
