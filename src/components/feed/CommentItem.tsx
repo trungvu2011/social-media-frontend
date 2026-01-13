@@ -4,6 +4,7 @@ import { MoreHorizontal, Trash2, Flag } from "lucide-react";
 import { type Comment, type UserProfile, getPostComments } from "../../utils";
 import CommentInput from "./CommentInput";
 import { useTranslation } from "react-i18next";
+import ImageLightbox from "../common/ImageLightbox";
 
 interface CommentItemProps {
   comment: Comment;
@@ -39,6 +40,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   
   const [openOptions, setOpenOptions] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  // State for image lightbox
+  const [showLightbox, setShowLightbox] = useState(false);
 
   // Check if current user can delete: post owner or comment author
   const isPostOwner = currentUser?._id === postOwnerId;
@@ -116,7 +120,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 <img
                   src={comment.image}
                   alt="Comment attachment"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                  onClick={() => setShowLightbox(true)}
                 />
               </div>
             )}
@@ -210,10 +215,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     const isLast = index === replies.length - 1 && !isReplying;
                     
                     return (
-                        <div key={reply._id} className="relative pl-9">
+                        <div key={reply._id} className="relative pl-5">
                             {/* Vertical Line Segment */}
                             <div 
-                                className={`absolute left-0 top-0 w-[2px] bg-gray-200 -ml-[11px] ${isLast ? 'h-[20px]' : 'h-full'}`}
+                                className={`absolute left-0 top-0 w-[2px] bg-gray-200 -ml-[11px] ${isLast ? 'h-[24px]' : 'h-full'}`}
                             ></div>
                             
                             {/* Squared Connector */}
@@ -237,10 +242,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
                 {/* Inline Reply Input - Always show if expanding or explicitly replying */}
                 {(isReplying || showReplies) && (
-                    <div className="relative pl-9 mt-2">
+                    <div className="relative pl-5 mt-2">
                          {/* Lines for Input - distinct squared connection */}
-                         <div className="absolute left-0 top-0 w-[2px] bg-gray-200 -ml-[11px] h-[20px]"></div>
-                         <div className="absolute left-0 top-0 w-[18px] h-[20px] border-b-[2px] border-l-[2px] border-gray-200 -ml-[11px]"></div>
+                         <div className="absolute left-0 top-[-8px] w-[2px] bg-gray-200 -ml-[11px] h-[20px]"></div>
+                         <div className="absolute left-0 top-0 w-[18px] h-[24px] border-b-[2px] border-l-[2px] border-gray-200 -ml-[11px]"></div>
                         
                         <CommentInput
                             currentUser={currentUser}
@@ -281,6 +286,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
           </div>
         )}
       </div>
+
+      {/* Image Lightbox */}
+      {showLightbox && comment.image && (
+        <ImageLightbox
+          images={[comment.image]}
+          currentIndex={0}
+          onClose={() => setShowLightbox(false)}
+        />
+      )}
     </div>
   );
 };

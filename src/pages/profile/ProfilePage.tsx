@@ -20,7 +20,6 @@ import {
   Mail,
   UserPlus,
   MessageCircle,
-  MoreHorizontal,
   Camera,
   Edit3,
   Heart,
@@ -418,7 +417,7 @@ const ProfilePage: React.FC = () => {
         style={{ display: "none" }}
       />
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-16">
         {/* Cover Photo */}
         <div className="relative h-48 md:h-64 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
           {profile.backgroundImage && (
@@ -502,12 +501,12 @@ const ProfilePage: React.FC = () => {
                   </button>
                 </>
               )}
-              <button
+              {/* <button
                 type="button"
                 className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
               >
                 <MoreHorizontal className="w-5 h-5 text-gray-600" />
-              </button>
+              </button> */}
             </div>
           </div>
 

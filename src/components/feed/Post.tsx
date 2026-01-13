@@ -5,6 +5,7 @@ import { Heart, MessageCircle, Share2, MoreHorizontal, Flag, Trash2 } from 'luci
 import { likePost, unlikePost, deletePost as deletePostApi } from '../../utils';
 import { useSocketContext } from '../../context/SocketContext';
 import { useTranslation } from "react-i18next";
+import ImageLightbox from '../common/ImageLightbox';
 
 interface PostProps {
   post: PostType;
@@ -47,6 +48,11 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // State for image lightbox
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [showLightbox, setShowLightbox] = useState(false);
 
   // Sync local state when prop updates (e.g. feed refresh)
   React.useEffect(() => {
@@ -165,7 +171,7 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
     if (diffInSeconds < 3600) return t("Post.Time.Minutes", { count: Math.floor(diffInSeconds / 60) });
     if (diffInSeconds < 86400) return t("Post.Time.Hours", { count: Math.floor(diffInSeconds / 3600) });
     return t("Post.Time.Days", { count: Math.floor(diffInSeconds / 86400) });
-  };
+  };  
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -277,16 +283,35 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                 {Array.isArray(post.sharedPost.images) && post.sharedPost.images.length > 0 && (
                    <div className="rounded-lg overflow-hidden">
                       {post.sharedPost.images.length === 1 ? (
-                        <img src={post.sharedPost.images[0]} alt="" className="w-full h-48 object-cover" />
+                        <img 
+                          src={post.sharedPost.images[0]} 
+                          alt="" 
+                          className="w-full max-h-[360px] object-cover cursor-pointer hover:opacity-95 transition-opacity" 
+                          onClick={() => {
+                            setLightboxImages(post.sharedPost?.images || []);
+                            setLightboxIndex(0);
+                            setShowLightbox(true);
+                          }}
+                        />
                       ) : (
                          <div className="grid grid-cols-2 gap-1">
                              {post.sharedPost.images.slice(0, 4).map((src, idx) => (
-                                <img key={idx} src={src} alt="" className="w-full h-32 object-cover" />
+                                <img 
+                                  key={idx} 
+                                  src={src} 
+                                  alt="" 
+                                  className="w-full h-32 object-cover cursor-pointer hover:opacity-95 transition-opacity" 
+                                  onClick={() => {
+                                    setLightboxImages(post.sharedPost?.images || []);
+                                    setLightboxIndex(idx);
+                                    setShowLightbox(true);
+                                  }}
+                                />
                              ))}
                          </div>
                       )}
                    </div>
-                )}
+                 )}
              </div>
            </div>
         ) : (
@@ -297,8 +322,13 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                 <img
                   src={post.images[0]}
                   alt="post"
-                  className="w-full h-64 object-cover"
+                  className="w-full max-h-[480px] object-cover cursor-pointer hover:opacity-95 transition-opacity"
                   loading="lazy"
+                  onClick={() => {
+                    setLightboxImages(post.images || []);
+                    setLightboxIndex(0);
+                    setShowLightbox(true);
+                  }}
                 />
               ) : (
                 <div className="grid grid-cols-2 gap-1">
@@ -307,8 +337,13 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
                       key={idx}
                       src={src}
                       alt={`post ${idx + 1}`}
-                      className="w-full h-40 object-cover"
+                      className="w-full h-40 object-cover cursor-pointer hover:opacity-95 transition-opacity"
                       loading="lazy"
+                      onClick={() => {
+                        setLightboxImages(post.images || []);
+                        setLightboxIndex(idx);
+                        setShowLightbox(true);
+                      }}
                     />
                   ))}
                 </div>
@@ -412,6 +447,16 @@ const Post: React.FC<PostProps> = ({ post, onCommentClick }) => {
             }}
           />
         </React.Suspense>
+      )}
+
+      {/* Image Lightbox */}
+      {showLightbox && (
+        <ImageLightbox
+          images={lightboxImages}
+          currentIndex={lightboxIndex}
+          onClose={() => setShowLightbox(false)}
+          onNavigate={(index) => setLightboxIndex(index)}
+        />
       )}
 
       {/* Delete Confirmation Modal */}

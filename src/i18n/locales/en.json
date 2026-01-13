@@ -64,7 +64,9 @@
   "Settings": {
     "Title": "Settings",
     "Theme": "Theme",
-    "Language": "Language"
+    "Language": "Language",
+    "Privacy": "Privacy (Coming Soon)",
+    "PrivacyDesc": "Manage who can see your posts"
   },
   "Auth": {
     "LoginTitle": "Login",
@@ -301,6 +303,7 @@
   "NotificationTypes": {
     "like": "liked your post",
     "comment": "commented on your post",
+    "reply": "replied to your comment",
     "follow": "started following you"
   },
   "Search": {

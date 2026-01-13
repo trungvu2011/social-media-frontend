@@ -100,7 +100,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder={inputPlaceholder}
-                className="w-full bg-gray-100 text-gray-900 rounded-2xl py-2 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none min-h-[40px] max-h-32 text-sm"
+                className="w-full bg-gray-100 text-gray-900 rounded-2xl py-2 pl-4 pr-20 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none min-h-[40px] max-h-32 text-sm placeholder:truncate placeholder:whitespace-nowrap placeholder:overflow-ellipsis"
                 rows={1}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -121,18 +121,18 @@ const CommentInput: React.FC<CommentInputProps> = ({
                     accept="image/*"
                     onChange={handleImageSelect}
                 />
-                <div className="absolute right-2 bottom-1.5 flex items-center gap-1">
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full transition"
+                        className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full transition flex items-center justify-center"
                     >
                         <ImageIcon size={18} />
                     </button>
                     <button
                         type="submit"
                         disabled={(!content.trim() && !image) || submitting}
-                        className="p-1 text-blue-500 hover:bg-blue-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center"
                     >
                         <Send size={18} />
                     </button>

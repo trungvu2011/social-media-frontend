@@ -64,7 +64,9 @@
   "Settings": {
     "Title": "Cài đặt",
     "Theme": "Giao diện",
-    "Language": "Ngôn ngữ"
+    "Language": "Ngôn ngữ",
+    "Privacy": "Quyền riêng tư (Sắp ra mắt)",
+    "PrivacyDesc": "Quản lý ai có thể xem bài viết của bạn"
   },
   "Auth": {
     "LoginTitle": "Đăng nhập",
@@ -296,6 +298,7 @@
   "NotificationTypes": {
     "like": "đã thích bài viết của bạn",
     "comment": "đã bình luận về bài viết của bạn",
+    "reply": "đã trả lời bình luận của bạn",
     "follow": "đã bắt đầu theo dõi bạn"
   },
   "Search": {

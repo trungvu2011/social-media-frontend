@@ -223,7 +223,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
 
         <div className="p-4 border-t border-gray-100 bg-white">
-          {!replyingTo && (
+          <CommentInput 
+                currentUser={currentUser}
+                onSubmit={(content, image) => handleCommentSubmit(content, image)}
+                placeholder={t("Comments.Placeholder")}
+            />
+          {/* {!replyingTo && (
             <CommentInput 
                 currentUser={currentUser}
                 onSubmit={(content, image) => handleCommentSubmit(content, image)}
@@ -235,7 +240,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   {t("Comments.ReplyingTo")} <strong>{replyingTo.authorId.userName}</strong>... 
                   <button onClick={handleCancelReply} className="ml-2 text-blue-500 hover:underline">{t("Comments.Cancel")}</button>
               </div>
-          )}
+          )} */}
         </div>
       </div>
       

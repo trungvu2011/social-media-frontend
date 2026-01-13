@@ -618,6 +618,17 @@ export async function markAllNotificationsRead(): Promise<void> {
   });
 }
 
+export async function getUnreadNotificationCount(): Promise<{ count: number }> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<{ count: number }>(`/notifications/unread-count`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+
 // ---------- Report API ----------
 export async function createReport(
   targetId: string,
@@ -777,6 +788,17 @@ export async function getConversationMessages(
     token: token || undefined,
   });
 }
+
+export async function getUnreadMessageCount(): Promise<{ count: number }> {
+  const token =
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
+  return api<{ count: number }>(`/messages/unread-count`, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
 // ---------- Ban/Unban User API ----------
 export async function banUser(userId: string, reason: string): Promise<void> {
   const token =

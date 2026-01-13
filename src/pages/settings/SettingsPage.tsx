@@ -260,9 +260,11 @@ const ChangePasswordView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 const SettingsPage: React.FC = () => {
     const { t, i18n } = useTranslation();
     const [view, setView] = useState<'menu' | 'change_password'>('menu');
+    const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
 
     const changeLanguage = (lng: string) => {
       i18n.changeLanguage(lng);
+      setLanguageDropdownOpen(false);
     };
 
     return (
@@ -276,13 +278,13 @@ const SettingsPage: React.FC = () => {
                 {view === 'menu' ? (
                     <div className="space-y-6">
                       {/* Language Settings */}
-                      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                          <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                          <div className="p-4 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
                               <h2 className="font-semibold text-gray-700">{t("Settings.Language")}</h2>
                           </div>
                           <div className="divide-y divide-gray-100">
                              <div className="p-4">
-                                <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                                       <Globe className="w-5 h-5" />
@@ -294,26 +296,39 @@ const SettingsPage: React.FC = () => {
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-3">
-                                  {Object.keys(languageNames).map((lng) => (
+                                  
+                                  {/* Dropdown Button */}
+                                  <div className="relative">
                                     <button
-                                      key={lng}
-                                      onClick={() => changeLanguage(lng)}
-                                      className={`flex items-center justify-between px-4 py-2 rounded-lg border ${
-                                        i18n.language === lng
-                                          ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-                                          : "border-gray-200 hover:bg-gray-50 text-gray-700"
-                                      }`}
+                                      onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition-colors"
                                     >
-                                      <span className="flex items-center gap-2">
-                                        <span>{flagEmojis[lng]}</span>
-                                        <span>{languageNames[lng]}</span>
-                                      </span>
-                                      {i18n.language === lng && <Check className="w-4 h-4" />}
+                                      <span>{flagEmojis[i18n.language]}</span>
+                                      <span className="font-medium">{languageNames[i18n.language]}</span>
+                                      <ChevronRight className={`w-4 h-4 transition-transform ${languageDropdownOpen ? 'rotate-90' : ''}`} />
                                     </button>
-                                  ))}
+                                    
+                                    {/* Dropdown Menu */}
+                                    {languageDropdownOpen && (
+                                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                                        {Object.keys(languageNames).map((lng) => (
+                                          <button
+                                            key={lng}
+                                            onClick={() => changeLanguage(lng)}
+                                            className={`w-full flex items-center justify-between px-4 py-2 hover:bg-gray-50 transition-colors ${
+                                              i18n.language === lng ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'
+                                            }`}
+                                          >
+                                            <span className="flex items-center gap-2">
+                                              <span>{flagEmojis[lng]}</span>
+                                              <span>{languageNames[lng]}</span>
+                                            </span>
+                                            {i18n.language === lng && <Check className="w-4 h-4 text-indigo-600" />}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                              </div>
                           </div>
@@ -348,8 +363,8 @@ const SettingsPage: React.FC = () => {
                                           <ShieldCheck className="w-5 h-5" />
                                       </div>
                                       <div>
-                                          <div className="font-medium text-gray-900">Privacy (Coming Soon)</div>
-                                          <div className="text-sm text-gray-500">Manage who can see your posts</div>
+                                          <div className="font-medium text-gray-900">{t("Settings.Privacy")}</div>
+                                          <div className="text-sm text-gray-500">{t("Settings.PrivacyDesc")}</div>
                                       </div>
                                   </div>
                                   <ChevronRight className="w-5 h-5 text-gray-400" />

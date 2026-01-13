@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSocketContext } from "../../context/SocketContext";
 import { useLocation } from "react-router-dom";
-import { getUnreadNotificationCount } from "../../utils";
+import { getUnreadMessageCount } from "../../utils";
 
-export const NotificationBadge = () => {
+export const MessageBadge = () => {
   const { socket } = useSocketContext();
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
@@ -12,19 +12,19 @@ export const NotificationBadge = () => {
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
-        const { count } = await getUnreadNotificationCount();
+        const { count } = await getUnreadMessageCount();
         setUnreadCount(count);
       } catch (error) {
-        console.error("Failed to fetch unread count:", error);
+        console.error("Failed to fetch unread message count:", error);
       }
     };
 
     fetchUnreadCount();
   }, []);
 
-  // Reset count when visiting notifications page
+  // Reset count when visiting chat page
   useEffect(() => {
-    if (location.pathname === "/notifications") {
+    if (location.pathname === "/chat") {
       setUnreadCount(0);
     }
   }, [location.pathname]);
@@ -32,23 +32,17 @@ export const NotificationBadge = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewNotification = () => {
-      // Don't increment if already on notifications page
-      if (location.pathname !== "/notifications") {
+    const handleNewMessage = () => {
+      // Don't increment if already on chat page
+      if (location.pathname !== "/chat") {
         setUnreadCount((prev) => prev + 1);
       }
     };
 
-    const handleMarkAllRead = () => {
-      setUnreadCount(0);
-    };
-
-    socket.on("notification:new", handleNewNotification);
-    window.addEventListener('notifications:markAllRead', handleMarkAllRead);
+    socket.on("message:new", handleNewMessage);
 
     return () => {
-      socket.off("notification:new", handleNewNotification);
-      window.removeEventListener('notifications:markAllRead', handleMarkAllRead);
+      socket.off("message:new", handleNewMessage);
     };
   }, [socket, location.pathname]);
 
@@ -61,4 +55,3 @@ export const NotificationBadge = () => {
     </span>
   );
 };
-
