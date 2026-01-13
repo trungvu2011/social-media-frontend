@@ -323,5 +323,14 @@
   },
   "Header": {
     "SearchPlaceholder": "Search people or posts..."
+  },
+  "Banned": {
+    "Title": "Account Banned",
+    "Message": "Your account has been suspended and you cannot access the platform.",
+    "Reason": "Reason:",
+    "BannedOn": "Banned on:",
+    "Logout": "Logout",
+    "ContactSupport": "If you believe this is a mistake, please contact support.",
+    "DefaultReason": "You have violated our community guidelines."
   }
 }

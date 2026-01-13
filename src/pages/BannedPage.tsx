@@ -1,9 +1,12 @@
 import { signOut } from "../utils";
 
+import { useTranslation } from "react-i18next";
+
 export default function BannedPage() {
+  const { t } = useTranslation();
   
   // Get ban reason from localStorage (set during login)
-  const banReason = localStorage.getItem("ban_reason") || "You have violated our community guidelines.";
+  const banReason = localStorage.getItem("ban_reason") || t("Banned.DefaultReason");
   const bannedAt = localStorage.getItem("banned_at");
 
   const handleLogout = async () => {
@@ -35,23 +38,23 @@ export default function BannedPage() {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Account Banned
+          {t("Banned.Title")}
         </h1>
 
         {/* Message */}
         <div className="mb-6">
           <p className="text-gray-600 mb-4">
-            Your account has been suspended and you cannot access the platform.
+            {t("Banned.Message")}
           </p>
           
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-            <p className="text-sm font-semibold text-red-800 mb-2">Reason:</p>
+            <p className="text-sm font-semibold text-red-800 mb-2">{t("Banned.Reason")}</p>
             <p className="text-sm text-red-700">{banReason}</p>
           </div>
 
           {bannedAt && (
             <p className="text-xs text-gray-500">
-              Banned on: {new Date(bannedAt).toLocaleDateString()}
+              {t("Banned.BannedOn")} {new Date(bannedAt).toLocaleDateString()}
             </p>
           )}
         </div>
@@ -62,11 +65,11 @@ export default function BannedPage() {
             onClick={handleLogout}
             className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
           >
-            Logout
+            {t("Banned.Logout")}
           </button>
           
           <p className="text-xs text-gray-500 mt-4">
-            If you believe this is a mistake, please contact support.
+            {t("Banned.ContactSupport")}
           </p>
         </div>
       </div>

@@ -318,5 +318,14 @@
   },
   "Header": {
     "SearchPlaceholder": "Tìm kiếm mọi người hoặc bài viết..."
+  },
+  "Banned": {
+    "Title": "Tài khoản bị khóa",
+    "Message": "Tài khoản của bạn đã bị tạm ngưng và bạn không thể truy cập nền tảng.",
+    "Reason": "Lý do:",
+    "BannedOn": "Bị khóa vào ngày:",
+    "Logout": "Đăng xuất",
+    "ContactSupport": "Nếu bạn cho rằng đây là sự nhầm lẫn, vui lòng liên hệ bộ phận hỗ trợ.",
+    "DefaultReason": "Bạn đã vi phạm hướng dẫn cộng đồng của chúng tôi."
   }
 }
